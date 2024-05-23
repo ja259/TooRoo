@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/TooRoo/static/css/main.f855e6bc.css",
+    "main.js": "/TooRoo/static/js/main.e1fca643.js",
+    "static/js/453.8ab44547.chunk.js": "/TooRoo/static/js/453.8ab44547.chunk.js",
+    "index.html": "/TooRoo/index.html",
+    "main.f855e6bc.css.map": "/TooRoo/static/css/main.f855e6bc.css.map",
+    "main.e1fca643.js.map": "/TooRoo/static/js/main.e1fca643.js.map",
+    "453.8ab44547.chunk.js.map": "/TooRoo/static/js/453.8ab44547.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.f855e6bc.css",
+    "static/js/main.e1fca643.js"
+  ]
+}
