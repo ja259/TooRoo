@@ -5,6 +5,7 @@ import './App.css';
 import Login from './Login';
 import Register from './Register';
 import Feed from './Feed';
+import logo from '../public/logo.png';
 
 const App = () => {
     const [user, setUser] = useState(null);
@@ -69,6 +70,7 @@ const App = () => {
     return (
         <Router>
             <div className="App">
+                <img src={logo} alt="TooRoo Logo" className="logo" />
                 {!user ? (
                     <Routes>
                         <Route path="/login" element={<Login onLogin={handleLogin} />} />
