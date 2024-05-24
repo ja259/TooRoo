@@ -5,7 +5,7 @@ import './App.css';
 import Login from './Login';
 import Register from './Register';
 import Feed from './Feed';
-import logo from '../public/logo.png';
+import logo from './logo.png'; // Updated import path
 
 const App = () => {
     const [user, setUser] = useState(null);
