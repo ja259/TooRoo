@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import axios from 'axios';
 import './App.css';
 import Login from './Login';
 import Register from './Register';
 import Feed from './Feed';
-import logo from './logo.png'; // Updated import path
+import logo from './logo.png';
 
 const App = () => {
     const [user, setUser] = useState(null);
@@ -75,10 +75,12 @@ const App = () => {
                     <Routes>
                         <Route path="/login" element={<Login onLogin={handleLogin} />} />
                         <Route path="/register" element={<Register onRegister={handleRegister} />} />
+                        <Route path="*" element={<Navigate to="/login" />} />
                     </Routes>
                 ) : (
                     <Routes>
                         <Route path="/" element={<Feed user={user} onPost={handlePost} onLike={handleLike} />} />
+                        <Route path="*" element={<Navigate to="/" />} />
                     </Routes>
                 )}
             </div>
