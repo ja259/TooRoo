@@ -9,7 +9,13 @@ const bcrypt = require('bcryptjs');
 const app = express();
 const port = process.env.PORT || 5000;
 
-app.use(cors());
+// CORS configuration
+const corsOptions = {
+    origin: 'http://localhost:3000', // frontend server URL
+    optionsSuccessStatus: 200
+};
+
+app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
