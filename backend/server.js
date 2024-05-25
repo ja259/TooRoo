@@ -5,6 +5,11 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const nodemailer = require('nodemailer');
+const multer = require('multer');
+const { GridFsStorage } = require('multer-gridfs-storage');
+const crypto = require('crypto');
+const path = require('path');
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -31,6 +36,8 @@ const userSchema = new mongoose.Schema({
     followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     posts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],
     notifications: [{ type: String }],
+    resetPasswordToken: { type: String },
+    resetPasswordExpires: { type: Date },
     createdAt: { type: Date, default: Date.now }
 });
 
@@ -45,10 +52,34 @@ const postSchema = new mongoose.Schema({
         author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
         createdAt: { type: Date, default: Date.now }
     }],
-    createdAt: { type: Date, default: Date.now }
+    createdAt: { type: Date, default: Date.now },
+    videoUrl: { type: String },
 });
 
 const Post = mongoose.model('Post', postSchema);
+
+// Storage for multer
+const storage = new GridFsStorage({
+    url: process.env.MONGODB_URI,
+    options: { useNewUrlParser: true, useUnifiedTopology: true },
+    file: (req, file) => {
+        return new Promise((resolve, reject) => {
+            crypto.randomBytes(16, (err, buf) => {
+                if (err) {
+                    return reject(err);
+                }
+                const filename = buf.toString('hex') + path.extname(file.originalname);
+                const fileInfo = {
+                    filename: filename,
+                    bucketName: 'uploads'
+                };
+                resolve(fileInfo);
+            });
+        });
+    }
+});
+
+const upload = multer({ storage });
 
 // User registration
 app.post('/register', async (req, res) => {
@@ -70,6 +101,64 @@ app.post('/login', async (req, res) => {
 
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
     res.status(200).json({ token, user });
+});
+
+// Forgot password
+app.post('/forgot-password', async (req, res) => {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: 'User not found!' });
+
+    const token = crypto.randomBytes(20).toString('hex');
+
+    user.resetPasswordToken = token;
+    user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+
+    await user.save();
+
+    const transporter = nodemailer.createTransport({
+        service: 'Gmail',
+        auth: {
+            user: process.env.EMAIL,
+            pass: process.env.EMAIL_PASSWORD
+        }
+    });
+
+    const mailOptions = {
+        to: user.email,
+        from: process.env.EMAIL,
+        subject: 'TooRoo Password Reset',
+        text: `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n
+        Please click on the following link, or paste this into your browser to complete the process:\n\n
+        http://${req.headers.host}/reset-password/${token}\n\n
+        If you did not request this, please ignore this email and your password will remain unchanged.\n`
+    };
+
+    transporter.sendMail(mailOptions, (err) => {
+        if (err) {
+            return res.status(500).json({ message: 'Error sending email' });
+        }
+        res.status(200).json({ message: 'Email sent successfully' });
+    });
+});
+
+// Reset password
+app.post('/reset-password/:token', async (req, res) => {
+    const user = await User.findOne({
+        resetPasswordToken: req.params.token,
+        resetPasswordExpires: { $gt: Date.now() }
+    });
+    if (!user) return res.status(400).json({ message: 'Password reset token is invalid or has expired' });
+
+    const { password } = req.body;
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    user.password = hashedPassword;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+
+    await user.save();
+    res.status(200).json({ message: 'Password reset successfully' });
 });
 
 // Fetch user profile
@@ -133,8 +222,8 @@ app.post('/user/:id/unfollow', async (req, res) => {
 
 // Create a new post
 app.post('/post', async (req, res) => {
-    const { content, authorId } = req.body;
-    const newPost = new Post({ content, author: authorId });
+    const { content, authorId, videoUrl } = req.body;
+    const newPost = new Post({ content, author: authorId, videoUrl });
     await newPost.save();
 
     const author = await User.findById(authorId);

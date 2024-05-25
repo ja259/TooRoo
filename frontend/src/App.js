@@ -7,6 +7,8 @@ import Register from './Register';
 import Feed from './Feed';
 import Profile from './Profile';
 import Search from './Search';
+import ForgotPassword from './ForgotPassword';
+import ResetPassword from './ResetPassword';
 import logo from './logo.png';
 
 const App = () => {
@@ -44,10 +46,10 @@ const App = () => {
         }
     };
 
-    const handlePost = async (content) => {
+    const handlePost = async (content, videoUrl) => {
         const token = localStorage.getItem('token');
         try {
-            const response = await axios.post('http://localhost:5000/post', { content, authorId: user._id }, {
+            const response = await axios.post('http://localhost:5000/post', { content, authorId: user._id, videoUrl }, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             setUser({ ...user, posts: [response.data, ...user.posts] });
@@ -90,6 +92,8 @@ const App = () => {
                     <Routes>
                         <Route path="/login" element={<Login onLogin={handleLogin} />} />
                         <Route path="/register" element={<Register onRegister={handleRegister} />} />
+                        <Route path="/forgot-password" element={<ForgotPassword />} />
+                        <Route path="/reset-password/:token" element={<ResetPassword />} />
                         <Route path="*" element={<Navigate to="/login" />} />
                     </Routes>
                 ) : (
