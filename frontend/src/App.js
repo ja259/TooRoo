@@ -5,6 +5,8 @@ import './App.css';
 import Login from './Login';
 import Register from './Register';
 import Feed from './Feed';
+import Profile from './Profile';
+import Search from './Search';
 import logo from './logo.png';
 
 const App = () => {
@@ -67,6 +69,19 @@ const App = () => {
         }
     };
 
+    const handleComment = async (postId, content) => {
+        const token = localStorage.getItem('token');
+        try {
+            const response = await axios.post(`http://localhost:5000/post/${postId}/comment`, { userId: user._id, content }, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const updatedPosts = user.posts.map(post => post._id === postId ? response.data : post);
+            setUser({ ...user, posts: updatedPosts });
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     return (
         <Router>
             <div className="App">
@@ -79,7 +94,9 @@ const App = () => {
                     </Routes>
                 ) : (
                     <Routes>
-                        <Route path="/" element={<Feed user={user} onPost={handlePost} onLike={handleLike} />} />
+                        <Route path="/" element={<Feed user={user} onPost={handlePost} onLike={handleLike} onComment={handleComment} />} />
+                        <Route path="/profile/:id" element={<Profile />} />
+                        <Route path="/search" element={<Search />} />
                         <Route path="*" element={<Navigate to="/" />} />
                     </Routes>
                 )}
