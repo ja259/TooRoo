@@ -9,9 +9,8 @@ const bcrypt = require('bcryptjs');
 const app = express();
 const port = process.env.PORT || 5000;
 
-// CORS configuration
 const corsOptions = {
-    origin: ['http://localhost:3000', 'http://localhost:3001'], // Allow both origins
+    origin: ['http://localhost:3000', 'http://localhost:3001'],
     optionsSuccessStatus: 200
 };
 
@@ -50,7 +49,6 @@ const postSchema = new mongoose.Schema({
 
 const Post = mongoose.model('Post', postSchema);
 
-// User registration
 app.post('/register', async (req, res) => {
     const { username, email, password } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -59,7 +57,6 @@ app.post('/register', async (req, res) => {
     res.status(201).json({ message: 'User registered successfully!' });
 });
 
-// User login
 app.post('/login', async (req, res) => {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
@@ -72,7 +69,6 @@ app.post('/login', async (req, res) => {
     res.status(200).json({ token, user });
 });
 
-// Fetch user profile
 app.get('/user/me', async (req, res) => {
     const token = req.headers.authorization.split(' ')[1];
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -80,7 +76,6 @@ app.get('/user/me', async (req, res) => {
     res.status(200).json(user);
 });
 
-// Create a new post
 app.post('/post', async (req, res) => {
     const { content, authorId } = req.body;
     const newPost = new Post({ content, author: authorId });
@@ -93,7 +88,6 @@ app.post('/post', async (req, res) => {
     res.status(201).json(newPost);
 });
 
-// Like a post
 app.post('/post/:id/like', async (req, res) => {
     const { userId } = req.body;
     const post = await Post.findById(req.params.id);
