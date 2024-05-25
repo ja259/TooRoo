@@ -12,7 +12,7 @@ const Feed = ({ user, onPost, onLike }) => {
     return (
         <div>
             <form onSubmit={handleSubmit}>
-                <textarea value={content} onChange={(e) => setContent(e.target.value)} placeholder="What's on your mind?" />
+                <textarea value={content} onChange={(e) => setContent(e.target.value)} placeholder="What's on your mind?" required />
                 <button type="submit">Post</button>
             </form>
             <div>
