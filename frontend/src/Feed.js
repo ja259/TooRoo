@@ -28,3 +28,4 @@ const Feed = ({ user, onPost, onLike }) => {
 };
 
 export default Feed;
+
