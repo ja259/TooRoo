@@ -45,7 +45,7 @@ const Profile = () => {
                     'Content-Type': 'multipart/form-data'
                 }
             });
-            setVideoUrl(response.data.fileUrl);
+            setVideoUrl(response.data.fileUrl); // eslint-disable-line no-unused-vars
             setMessage('Video uploaded successfully');
         } catch (error) {
             console.error(error);
