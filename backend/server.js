@@ -10,6 +10,8 @@ const multer = require('multer');
 const { GridFsStorage } = require('multer-gridfs-storage');
 const crypto = require('crypto');
 const path = require('path');
+const analyzePreferences = require('./analyzePreferences');
+const recommendContent = require('./recommendContent');
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -57,6 +59,15 @@ const postSchema = new mongoose.Schema({
 });
 
 const Post = mongoose.model('Post', postSchema);
+
+const interactionSchema = new mongoose.Schema({
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    postId: { type: mongoose.Schema.Types.ObjectId, ref: 'Post' },
+    interactionType: { type: String, enum: ['like', 'comment', 'share', 'view'] },
+    createdAt: { type: Date, default: Date.now }
+});
+
+const Interaction = mongoose.model('Interaction', interactionSchema);
 
 // Storage for multer
 const storage = new GridFsStorage({
@@ -249,6 +260,21 @@ app.post('/post/:id/comment', async (req, res) => {
     post.comments.push({ author: userId, content });
     await post.save();
     res.status(201).json(post);
+});
+
+// Track interactions
+app.post('/interact', async (req, res) => {
+    const { userId, postId, interactionType } = req.body;
+    const interaction = new Interaction({ userId, postId, interactionType });
+    await interaction.save();
+    res.status(201).json(interaction);
+});
+
+// Recommend content
+app.get('/recommend/:userId', async (req, res) => {
+    const { userId } = req.params;
+    const recommendedPosts = await recommendContent(userId);
+    res.status(200).json(recommendedPosts);
 });
 
 // Search users and posts
