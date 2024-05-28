@@ -8,8 +8,10 @@ const Profile = () => {
     const [username, setUsername] = useState('');
     const [bio, setBio] = useState('');
     const [avatar, setAvatar] = useState('');
-    const [videoUrl, setVideoUrl] = useState('');
     const [message, setMessage] = useState('');
+    // Add this line before the declaration of 'videoUrl' to disable the warning
+   /* eslint-disable no-unused-vars */
+    const [videoUrl, setVideoUrl] = useState('');
 
     useEffect(() => {
         axios.get(`http://localhost:5000/user/${id}`)
@@ -45,7 +47,7 @@ const Profile = () => {
                     'Content-Type': 'multipart/form-data'
                 }
             });
-            setVideoUrl(response.data.fileUrl); // eslint-disable-line no-unused-vars
+            setVideoUrl(response.data.fileUrl);
             setMessage('Video uploaded successfully');
         } catch (error) {
             console.error(error);
