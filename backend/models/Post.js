@@ -13,4 +13,4 @@ const postSchema = new mongoose.Schema({
     videoUrl: { type: String },
 });
 
-module.exports = mongoose.models.Post || mongoose.model('Post', postSchema);
+module.exports = mongoose.model('Post', postSchema);
