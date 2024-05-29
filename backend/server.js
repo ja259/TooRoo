@@ -13,6 +13,10 @@ const path = require('path');
 const analyzePreferences = require('./analyzePreferences');
 const recommendContent = require('./recommendContent');
 
+const User = require('./models/User');
+const Post = require('./models/Post');
+const Interaction = require('./models/Interaction');
+
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -27,47 +31,6 @@ app.use(bodyParser.json());
 mongoose.connect(process.env.MONGODB_URI)
     .then(() => console.log('MongoDB connected...'))
     .catch(err => console.log(err));
-
-const userSchema = new mongoose.Schema({
-    username: { type: String, required: true, unique: true },
-    email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
-    avatar: { type: String },
-    bio: { type: String },
-    following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-    followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-    posts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],
-    notifications: [{ type: String }],
-    resetPasswordToken: { type: String },
-    resetPasswordExpires: { type: Date },
-    createdAt: { type: Date, default: Date.now }
-});
-
-const User = mongoose.model('User', userSchema);
-
-const postSchema = new mongoose.Schema({
-    content: { type: String, required: true },
-    author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-    comments: [{
-        content: String,
-        author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-        createdAt: { type: Date, default: Date.now }
-    }],
-    createdAt: { type: Date, default: Date.now },
-    videoUrl: { type: String },
-});
-
-const Post = require('./models/Post');
-
-const interactionSchema = new mongoose.Schema({
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    postId: { type: mongoose.Schema.Types.ObjectId, ref: 'Post' },
-    interactionType: { type: String, enum: ['like', 'comment', 'share', 'view'] },
-    createdAt: { type: Date, default: Date.now }
-});
-
-const Interaction = mongoose.model('Interaction', interactionSchema);
 
 // Storage for multer
 const storage = new GridFsStorage({
