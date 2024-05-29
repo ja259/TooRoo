@@ -2,8 +2,8 @@
 body {
   margin: 0;
   font-family: 'Roboto', sans-serif;
-  background-color: #f0f0f0;
-  color: #212121;
+  background-color: #1a1a2e;
+  color: #eaeaea;
 }
 
 a {
@@ -13,6 +13,7 @@ a {
 
 .App {
   text-align: center;
+  padding: 20px;
 }
 
 /* Logo */
@@ -25,9 +26,9 @@ a {
 form {
   margin: 20px;
   padding: 20px;
-  background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #16213e;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 input, textarea {
@@ -35,9 +36,10 @@ input, textarea {
   margin: 10px auto;
   padding: 12px;
   width: 80%;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 16px;
+  border: 1px solid #0f3460;
+  border-radius: 5px;
+  background: #0f3460;
+  color: #eaeaea;
 }
 
 input:focus, textarea:focus {
@@ -71,11 +73,11 @@ textarea {
 
 /* Profile Section */
 .profile {
-  background-color: #ffffff;
+  background-color: #16213e;
   padding: 20px;
   margin: 20px 0;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   text-align: center;
 }
 
@@ -92,7 +94,7 @@ textarea {
 }
 
 .profile p {
-  color: #757575;
+  color: #a6a6a6;
 }
 
 /* Feed Section */
@@ -103,10 +105,10 @@ textarea {
 }
 
 .post {
-  background-color: #ffffff;
+  background-color: #16213e;
   padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .post h3 {
@@ -115,7 +117,7 @@ textarea {
 }
 
 .post p {
-  color: #757575;
+  color: #a6a6a6;
   margin-bottom: 10px;
 }
 
@@ -146,17 +148,18 @@ textarea {
 
 /* Navigation Bar */
 .navbar {
-  background-color: #ffffff;
+  background-color: #16213e;
   padding: 10px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .navbar a {
   font-family: 'Roboto', sans-serif;
   font-weight: bold;
+  color: #eaeaea;
   margin: 0 15px;
 }
 
@@ -174,19 +177,22 @@ textarea {
 }
 
 .modal-content {
-  background-color: #ffffff;
+  background-color: #16213e;
   padding: 30px;
-  border-radius: 8px;
+  border-radius: 10px;
   width: 300px;
   text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .modal-content input {
   width: 100%;
   padding: 12px;
   margin-bottom: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  border: 1px solid #0f3460;
+  border-radius: 5px;
+  background: #0f3460;
+  color: #eaeaea;
   font-size: 16px;
 }
 
@@ -209,10 +215,10 @@ textarea {
   display: flex;
   overflow-x: scroll;
   padding: 10px;
-  background-color: #ffffff;
+  background-color: #16213e;
   margin: 20px 0;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .story {
@@ -227,4 +233,5 @@ textarea {
   border-radius: 50%;
   object-fit: cover;
   margin-bottom: 5px;
+  border: 2px solid #00bcd4;
 }
