@@ -13,17 +13,25 @@ import logo from './logo.png';
 
 const App = () => {
     const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (token) {
             axios.get('http://localhost:5000/user/me', {
                 headers: { 'Authorization': `Bearer ${token}` }
-            }).then(response => {
+            })
+            .then(response => {
                 setUser(response.data);
-            }).catch(error => {
+            })
+            .catch(error => {
                 console.error(error);
+            })
+            .finally(() => {
+                setLoading(false);
             });
+        } else {
+            setLoading(false);
         }
     }, []);
 
@@ -34,6 +42,7 @@ const App = () => {
             setUser(response.data.user);
         } catch (error) {
             console.error(error);
+            alert('Login failed. Please check your credentials.');
         }
     };
 
@@ -43,6 +52,7 @@ const App = () => {
             handleLogin(email, password);
         } catch (error) {
             console.error(error);
+            alert('Registration failed. Please try again.');
         }
     };
 
@@ -55,6 +65,7 @@ const App = () => {
             setUser({ ...user, posts: [response.data, ...user.posts] });
         } catch (error) {
             console.error(error);
+            alert('Failed to create post. Please try again.');
         }
     };
 
@@ -68,6 +79,7 @@ const App = () => {
             setUser({ ...user, posts: updatedPosts });
         } catch (error) {
             console.error(error);
+            alert('Failed to like post. Please try again.');
         }
     };
 
@@ -81,8 +93,13 @@ const App = () => {
             setUser({ ...user, posts: updatedPosts });
         } catch (error) {
             console.error(error);
+            alert('Failed to comment. Please try again.');
         }
     };
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <Router>
