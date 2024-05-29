@@ -12,7 +12,6 @@ const crypto = require('crypto');
 const path = require('path');
 const analyzePreferences = require('./analyzePreferences');
 const recommendContent = require('./recommendContent');
-const Post = require('./models/Post');
 
 
 const app = express();
