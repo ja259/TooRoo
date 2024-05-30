@@ -1,49 +1,23 @@
-import React, { useState } from 'react';
+import React from 'react';
+import Post from './Post';
+import './Feed.css';
 
 const Feed = ({ user, onPost, onLike, onComment }) => {
-    const [content, setContent] = useState('');
-    const [videoUrl, setVideoUrl] = useState('');
-    const [comment, setComment] = useState('');
-
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        onPost(content, videoUrl);
-        setContent('');
-        setVideoUrl('');
-    };
-
-    const handleComment = (postId) => {
-        onComment(postId, comment);
-        setComment('');
-    };
-
     return (
-        <div>
-            <form onSubmit={handleSubmit}>
-                <textarea value={content} onChange={(e) => setContent(e.target.value)} placeholder="What's on your mind?" />
-                <input type="text" value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} placeholder="Video URL" />
+        <div className="feed">
+            <form onSubmit={(e) => {
+                e.preventDefault();
+                const content = e.target.elements.content.value;
+                const videoUrl = e.target.elements.videoUrl.value;
+                onPost(content, videoUrl);
+            }}>
+                <textarea name="content" placeholder="What's on your mind?" required></textarea>
+                <input type="text" name="videoUrl" placeholder="Video URL" />
                 <button type="submit">Post</button>
             </form>
-            <div>
-                {user.posts.map(post => (
-                    <div key={post._id}>
-                        <p>{post.content}</p>
-                        {post.videoUrl && <video src={post.videoUrl} controls />}
-                        <button onClick={() => onLike(post._id)}>Like ({post.likes.length})</button>
-                        <div>
-                            <textarea value={comment} onChange={(e) => setComment(e.target.value)} placeholder="Add a comment" />
-                            <button onClick={() => handleComment(post._id)}>Comment</button>
-                        </div>
-                        <div>
-                            {post.comments.map(comment => (
-                                <div key={comment._id}>
-                                    <p>{comment.content} - {comment.author.username}</p>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                ))}
-            </div>
+            {user.posts.map(post => (
+                <Post key={post._id} post={post} onLike={onLike} onComment={onComment} />
+            ))}
         </div>
     );
 };

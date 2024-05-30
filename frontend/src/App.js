@@ -9,6 +9,7 @@ import Profile from './Profile';
 import Search from './Search';
 import ForgotPassword from './ForgotPassword';
 import ResetPassword from './ResetPassword';
+import Navbar from './Navbar';
 import logo from './logo.png';
 
 const App = () => {
@@ -104,7 +105,7 @@ const App = () => {
     return (
         <Router>
             <div className="App">
-                <img src={logo} alt="TooRoo Logo" className="logo" />
+                <Navbar user={user} />
                 {!user ? (
                     <Routes>
                         <Route path="/login" element={<Login onLogin={handleLogin} />} />

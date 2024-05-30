@@ -2,8 +2,8 @@
 body {
   margin: 0;
   font-family: 'Roboto', sans-serif;
-  background-color: #1a1a2e;
-  color: #eaeaea;
+  background-color: #f9f9f9;
+  color: #333;
 }
 
 a {
@@ -13,7 +13,8 @@ a {
 
 .App {
   text-align: center;
-  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 /* Logo */
@@ -26,9 +27,9 @@ a {
 form {
   margin: 20px;
   padding: 20px;
-  background-color: #16213e;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 input, textarea {
@@ -36,10 +37,9 @@ input, textarea {
   margin: 10px auto;
   padding: 12px;
   width: 80%;
-  border: 1px solid #0f3460;
-  border-radius: 5px;
-  background: #0f3460;
-  color: #eaeaea;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
 }
 
 input:focus, textarea:focus {
@@ -73,11 +73,11 @@ textarea {
 
 /* Profile Section */
 .profile {
-  background-color: #16213e;
+  background-color: #fff;
   padding: 20px;
   margin: 20px 0;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   text-align: center;
 }
 
@@ -94,7 +94,7 @@ textarea {
 }
 
 .profile p {
-  color: #a6a6a6;
+  color: #757575;
 }
 
 /* Feed Section */
@@ -105,10 +105,11 @@ textarea {
 }
 
 .post {
-  background-color: #16213e;
+  background-color: #fff;
   padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
 }
 
 .post h3 {
@@ -117,7 +118,7 @@ textarea {
 }
 
 .post p {
-  color: #a6a6a6;
+  color: #757575;
   margin-bottom: 10px;
 }
 
@@ -130,11 +131,12 @@ textarea {
 .post .actions {
   display: flex;
   justify-content: space-around;
+  margin-top: 10px;
 }
 
 .post .actions button {
   background-color: #00bcd4;
-  color: #ffffff;
+  color: #fff;
   border: none;
   padding: 8px 16px;
   border-radius: 4px;
@@ -148,18 +150,22 @@ textarea {
 
 /* Navigation Bar */
 .navbar {
-  background-color: #16213e;
+  background-color: #fff;
   padding: 10px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
+  z-index: 1000;
 }
 
 .navbar a {
   font-family: 'Roboto', sans-serif;
   font-weight: bold;
-  color: #eaeaea;
   margin: 0 15px;
 }
 
@@ -177,28 +183,25 @@ textarea {
 }
 
 .modal-content {
-  background-color: #16213e;
+  background-color: #fff;
   padding: 30px;
-  border-radius: 10px;
+  border-radius: 8px;
   width: 300px;
   text-align: center;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .modal-content input {
   width: 100%;
   padding: 12px;
   margin-bottom: 10px;
-  border: 1px solid #0f3460;
-  border-radius: 5px;
-  background: #0f3460;
-  color: #eaeaea;
+  border: 1px solid #ddd;
+  border-radius: 4px;
   font-size: 16px;
 }
 
 .modal-content button {
   background-color: #00bcd4;
-  color: #ffffff;
+  color: #fff;
   border: none;
   padding: 12px 24px;
   border-radius: 4px;
@@ -215,10 +218,10 @@ textarea {
   display: flex;
   overflow-x: scroll;
   padding: 10px;
-  background-color: #16213e;
+  background-color: #fff;
   margin: 20px 0;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .story {
@@ -233,5 +236,4 @@ textarea {
   border-radius: 50%;
   object-fit: cover;
   margin-bottom: 5px;
-  border: 2px solid #00bcd4;
 }

@@ -1,0 +1,54 @@
+.post {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .post h3 {
+    font-family: 'Roboto', sans-serif;
+    margin-bottom: 10px;
+  }
+  
+  .post p {
+    color: #757575;
+    margin-bottom: 10px;
+  }
+  
+  .post video {
+    width: 100%;
+    border-radius: 8px;
+    margin-bottom: 10px;
+  }
+  
+  .post .actions {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 10px;
+  }
+  
+  .post .actions button {
+    background-color: #00bcd4;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .post .actions button:hover {
+    background-color: #0097a7;
+  }
+  
+  .post .comments {
+    margin-top: 10px;
+  }
+  
+  .post .comments .comment {
+    background-color: #f9f9f9;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 5px;
+  }
+  
