@@ -1,23 +1,34 @@
 import React from 'react';
 import './Post.css';
 
-const Post = ({ post, onLike, onComment }) => {
+const Post = ({ post }) => {
+    if (!post) {
+        return <div>Loading...</div>; // or some other fallback UI
+    }
+
+    const { author, content, videoUrl, likes, comments, createdAt } = post;
+    const { username } = author || {}; // Destructure author safely
+
     return (
         <div className="post">
-            <h3>{post.author.username}</h3>
-            <p>{post.content}</p>
-            {post.videoUrl && <video src={post.videoUrl} controls />}
-            <div className="actions">
-                <button onClick={() => onLike(post._id)}>Like ({post.likes.length})</button>
-                <button onClick={() => {
-                    const content = prompt("Enter your comment:");
-                    if (content) onComment(post._id, content);
-                }}>Comment</button>
+            <div className="post-header">
+                <h3>{username}</h3>
+                <p>{new Date(createdAt).toLocaleString()}</p>
             </div>
-            <div className="comments">
-                {post.comments.map(comment => (
-                    <div key={comment._id} className="comment">
-                        <p><strong>{comment.author.username}:</strong> {comment.content}</p>
+            <div className="post-content">
+                <p>{content}</p>
+                {videoUrl && <video src={videoUrl} controls />}
+            </div>
+            <div className="post-actions">
+                <button>Like ({likes.length})</button>
+                <button>Comment</button>
+                <button>Share</button>
+            </div>
+            <div className="post-comments">
+                {comments.map((comment, index) => (
+                    <div key={index}>
+                        <strong>{comment.author.username}</strong>
+                        <p>{comment.content}</p>
                     </div>
                 ))}
             </div>
