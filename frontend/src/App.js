@@ -9,8 +9,6 @@ import Profile from './Profile';
 import Search from './Search';
 import ForgotPassword from './ForgotPassword';
 import ResetPassword from './ResetPassword';
-import Navbar from './Navbar';
-import logo from './logo.png';
 
 const App = () => {
     const [user, setUser] = useState(null);
@@ -46,6 +44,7 @@ const App = () => {
             alert('Login failed. Please check your credentials.');
         }
     };
+    
 
     const handleRegister = async (username, email, password) => {
         try {
@@ -105,7 +104,6 @@ const App = () => {
     return (
         <Router>
             <div className="App">
-                <Navbar user={user} />
                 {!user ? (
                     <Routes>
                         <Route path="/login" element={<Login onLogin={handleLogin} />} />
