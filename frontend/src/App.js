@@ -36,9 +36,9 @@ const App = () => {
         }
     }, []);
 
-    const handleLogin = async (email, password) => {
+    const handleLogin = async (emailOrPhone, password) => {
         try {
-            const response = await axios.post('http://localhost:5000/login', { email, password });
+            const response = await axios.post('http://localhost:5000/login', { emailOrPhone, password });
             localStorage.setItem('token', response.data.token);
             setUser(response.data.user);
         } catch (error) {

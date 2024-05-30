@@ -74,9 +74,15 @@ app.post('/register', async (req, res) => {
 
 // User login
 app.post('/login', async (req, res) => {
-    const { email, password } = req.body;
+    const { emailOrPhone, password } = req.body;
     try {
-        const user = await User.findOne({ email });
+        let user;
+        if (emailOrPhone.includes('@')) {
+            user = await User.findOne({ email: emailOrPhone });
+        } else {
+            user = await User.findOne({ phone: emailOrPhone });
+        }
+
         if (!user) return res.status(404).json({ message: 'User not found!' });
 
         const isMatch = await bcrypt.compare(password, user.password);
