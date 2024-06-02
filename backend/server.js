@@ -57,15 +57,15 @@ const upload = multer({ storage });
 
 // User registration
 app.post('/register', async (req, res) => {
-    const { username, email, password } = req.body;
+    const { username, email, password, phone } = req.body;
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = new User({ username, email, password: hashedPassword });
+        const newUser = new User({ username, email, phone, password: hashedPassword });
         await newUser.save();
         res.status(201).json({ message: 'User registered successfully!' });
     } catch (error) {
         if (error.code === 11000) {
-            res.status(400).json({ message: 'Username or email already exists!' });
+            res.status(400).json({ message: 'Username, email or phone number already exists!' });
         } else {
             res.status(500).json({ message: 'Internal server error' });
         }
@@ -258,10 +258,10 @@ app.post('/post/:id/like', async (req, res) => {
     const { userId } = req.body;
     try {
         const post = await Post.findById(req.params.id);
-        if (!post.likes.includes(userId)) {
-            post.likes.push(userId);
-        } else {
+        if (post.likes.includes(userId)) {
             post.likes.pull(userId);
+        } else {
+            post.likes.push(userId);
         }
         await post.save();
         res.status(200).json(post);
@@ -316,6 +316,18 @@ app.get('/search', async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: 'Internal server error' });
     }
+});
+
+// AR Filters
+app.post('/ar-filters', async (req, res) => {
+    // Logic for AR filters
+    res.status(200).json({ message: 'AR filter applied!' });
+});
+
+// Virtual Events
+app.post('/virtual-events', async (req, res) => {
+    // Logic for virtual events
+    res.status(200).json({ message: 'Virtual event created!' });
 });
 
 app.listen(port, () => {

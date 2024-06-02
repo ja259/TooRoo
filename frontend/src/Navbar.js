@@ -1,24 +1,23 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import './Navbar.css';
 
 const Navbar = ({ user }) => {
     return (
         <div className="navbar">
-            <img src="logo.png" alt="TooRoo Logo" className="logo" />
-            <div className="navbar-links">
-                <Link to="/">Timeline</Link>
-                <Link to="/live">LIVE</Link>
-                <Link to="/following">Following</Link>
-                <Link to="/youall">You All</Link>
-                <Link to="/search">Search</Link>
-            </div>
-            <div className="navbar-user">
-                {user && (
-                    <>
-                        <Link to={`/profile/${user._id}`}>{user.username}</Link>
-                        <button onClick={() => { localStorage.removeItem('token'); window.location.reload(); }}>Logout</button>
-                    </>
+            <img src="/path-to-logo.png" alt="TooRoo Logo" className="navbar-logo" />
+            <nav>
+                <NavLink to="/live" className="nav-item">LIVE</NavLink>
+                <NavLink to="/following" className="nav-item">Following</NavLink>
+                <NavLink to="/you-all" className="nav-item">You All</NavLink>
+                <NavLink to="/timeline" className="nav-item">Timeline</NavLink>
+                <Link to="/search" className="nav-item">Search</Link>
+            </nav>
+            <div className="profile-actions">
+                {user ? (
+                    <Link to="/profile" className="nav-item">{user.username}</Link>
+                ) : (
+                    <Link to="/login" className="nav-item">Login</Link>
                 )}
             </div>
         </div>

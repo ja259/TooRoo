@@ -11,6 +11,8 @@ import ForgotPassword from './ForgotPassword';
 import ResetPassword from './ResetPassword';
 import Navbar from './Navbar';
 import Live from './Live';
+import ARFilters from './ARFilters';
+import VirtualEvents from './VirtualEvents';
 
 const App = () => {
     const [user, setUser] = useState(null);
@@ -104,8 +106,8 @@ const App = () => {
 
     return (
         <Router>
+            <Navbar user={user} />
             <div className="App">
-                <Navbar user={user} />
                 {!user ? (
                     <Routes>
                         <Route path="/login" element={<Login onLogin={handleLogin} />} />
@@ -119,7 +121,9 @@ const App = () => {
                         <Route path="/" element={<Feed user={user} onPost={handlePost} onLike={handleLike} onComment={handleComment} />} />
                         <Route path="/profile/:id" element={<Profile />} />
                         <Route path="/search" element={<Search />} />
-                        <Route path="/live" element={<Live user={user} />} />
+                        <Route path="/live" element={<Live />} />
+                        <Route path="/ar-filters" element={<ARFilters />} />
+                        <Route path="/virtual-events" element={<VirtualEvents />} />
                         <Route path="*" element={<Navigate to="/" />} />
                     </Routes>
                 )}

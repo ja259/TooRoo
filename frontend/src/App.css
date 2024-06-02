@@ -13,6 +13,7 @@ a {
 
 .App {
   text-align: center;
+  padding-top: 70px; /* Adjust padding to accommodate the fixed navbar */
 }
 
 /* Logo */
@@ -78,6 +79,15 @@ textarea {
   width: 100%;
   top: 0;
   z-index: 1000;
+}
+
+.navbar img {
+  height: 40px;
+}
+
+.nav-options {
+  display: flex;
+  align-items: center;
 }
 
 .nav-options span {
@@ -296,4 +306,31 @@ textarea {
   border-radius: 50%;
   object-fit: cover;
   margin-bottom: 5px;
+}
+
+/* Live Page Styles */
+.live-page {
+  padding: 20px;
+}
+
+.live-page h2 {
+  margin-bottom: 20px;
+}
+
+/* AR Filters Styles */
+.ar-filters {
+  padding: 20px;
+}
+
+.ar-filters h2 {
+  margin-bottom: 20px;
+}
+
+/* Virtual Events Styles */
+.virtual-events {
+  padding: 20px;
+}
+
+.virtual-events h2 {
+  margin-bottom: 20px;
 }
