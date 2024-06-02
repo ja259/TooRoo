@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
 
-const interactionSchema = new mongoose.Schema({
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    postId: { type: mongoose.Schema.Types.ObjectId, ref: 'Post' },
-    interactionType: { type: String, enum: ['like', 'comment', 'share', 'view'] },
+const InteractionSchema = new mongoose.Schema({
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    postId: { type: mongoose.Schema.Types.ObjectId, ref: 'Post', required: true },
+    interactionType: { type: String, enum: ['like', 'comment', 'share'], required: true },
     createdAt: { type: Date, default: Date.now }
 });
 
-module.exports = mongoose.model('Interaction', interactionSchema);
+module.exports = mongoose.model('Interaction', InteractionSchema);

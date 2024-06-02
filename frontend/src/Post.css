@@ -1,54 +1,64 @@
 .post {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  .post h3 {
-    font-family: 'Roboto', sans-serif;
-    margin-bottom: 10px;
-  }
-  
-  .post p {
-    color: #757575;
-    margin-bottom: 10px;
-  }
-  
-  .post video {
-    width: 100%;
-    border-radius: 8px;
-    margin-bottom: 10px;
-  }
-  
-  .post .actions {
-    display: flex;
-    justify-content: space-around;
-    margin-top: 10px;
-  }
-  
-  .post .actions button {
-    background-color: #00bcd4;
-    color: #fff;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  .post .actions button:hover {
-    background-color: #0097a7;
-  }
-  
-  .post .comments {
-    margin-top: 10px;
-  }
-  
-  .post .comments .comment {
-    background-color: #f9f9f9;
-    padding: 10px;
-    border-radius: 4px;
-    margin-bottom: 5px;
-  }
-  
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.post-header {
+  display: flex;
+  align-items: center;
+}
+
+.post-header img {
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
+}
+
+.post-header .username {
+  font-weight: bold;
+}
+
+.post-header .timestamp {
+  font-size: 12px;
+  color: #757575;
+  margin-left: 10px;
+}
+
+.post-content p {
+  margin: 10px 0;
+}
+
+.post-content video {
+  width: 100%;
+  border-radius: 8px;
+  margin: 10px 0;
+}
+
+.post-actions button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  margin-right: 10px;
+}
+
+.post-comments .comment {
+  margin: 5px 0;
+}
+
+.post-comments .username {
+  font-weight: bold;
+}
+
+.post-comments input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+  margin-top: 10px;
+}

@@ -1,50 +1,63 @@
 .profile {
-    background-color: #fff;
-    padding: 20px;
-    margin: 80px 20px 20px 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    text-align: center;
-  }
-  
-  .profile-avatar {
-    border-radius: 50%;
-    width: 120px;
-    height: 120px;
-    margin-bottom: 10px;
-  }
-  
-  .profile h2 {
-    font-family: 'Roboto', sans-serif;
-    margin-bottom: 5px;
-  }
-  
-  .profile p {
-    color: #757575;
-  }
-  
-  .profile-stats {
-    display: flex;
-    justify-content: space-around;
-    margin: 10px 0;
-  }
-  
-  .profile-actions {
-    display: flex;
-    justify-content: space-around;
-  }
-  
-  .profile-actions button {
-    padding: 10px 20px;
-    background-color: #00bcd4;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  .profile-actions button:hover {
-    background-color: #007bff;
-  }
-  
+  background-color: #ffffff;
+  padding: 20px;
+  margin: 20px 0;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.profile img {
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  margin-bottom: 10px;
+}
+
+.profile h2 {
+  font-family: 'Roboto', sans-serif;
+  margin-bottom: 5px;
+}
+
+.profile p {
+  color: #757575;
+}
+
+.user-stats span {
+  display: block;
+  margin: 5px 0;
+}
+
+button {
+  padding: 10px 20px;
+  background-color: #00bcd4;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin: 10px 0;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #0097a7;
+}
+
+.tabs {
+  display: flex;
+  justify-content: space-around;
+  margin: 20px 0;
+}
+
+.tab {
+  cursor: pointer;
+  padding: 10px;
+  font-weight: bold;
+  color: #757575;
+}
+
+.tab.active {
+  color: #00bcd4;
+  border-bottom: 2px solid #00bcd4;
+}

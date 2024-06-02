@@ -1,36 +1,47 @@
 import React from 'react';
 import './Post.css';
 
-const Post = ({ post }) => {
-    if (!post) {
-        return <div>Loading...</div>; // or some other fallback UI
-    }
+const Post = ({ post, onLike, onComment }) => {
+    const handleLike = () => {
+        onLike(post._id);
+    };
 
-    const { author, content, videoUrl, likes, comments, createdAt } = post;
-    const { username } = author || {}; // Destructure author safely
+    const handleComment = (e) => {
+        if (e.key === 'Enter') {
+            onComment(post._id, e.target.value);
+            e.target.value = '';
+        }
+    };
 
     return (
         <div className="post">
             <div className="post-header">
-                <h3>{username}</h3>
-                <p>{new Date(createdAt).toLocaleString()}</p>
+                <img src={post.author.profilePicture || 'default-profile.png'} alt="Profile" />
+                <div>
+                    <span className="username">{post.author.username}</span>
+                    <span className="timestamp">{new Date(post.createdAt).toLocaleString()}</span>
+                </div>
             </div>
             <div className="post-content">
-                <p>{content}</p>
-                {videoUrl && <video src={videoUrl} controls />}
+                <p>{post.content}</p>
+                {post.videoUrl && <video src={post.videoUrl} controls />}
             </div>
             <div className="post-actions">
-                <button>Like ({likes.length})</button>
-                <button>Comment</button>
-                <button>Share</button>
+                <button onClick={handleLike}>Like ({post.likes.length})</button>
+                <button onClick={() => alert('Comment button clicked')}>Comment</button>
+                <button onClick={() => alert('Share button clicked')}>Share</button>
             </div>
             <div className="post-comments">
-                {comments.map((comment, index) => (
-                    <div key={index}>
-                        <strong>{comment.author.username}</strong>
-                        <p>{comment.content}</p>
+                {post.comments.map(comment => (
+                    <div key={comment._id} className="comment">
+                        <span className="username">{comment.author.username}:</span> {comment.content}
                     </div>
                 ))}
+                <input
+                    type="text"
+                    placeholder="Add a comment..."
+                    onKeyPress={handleComment}
+                />
             </div>
         </div>
     );

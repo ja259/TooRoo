@@ -1,44 +1,31 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Search = () => {
-    const [query, setQuery] = useState('');
-    const [results, setResults] = useState({ users: [], posts: [] });
+  const [query, setQuery] = useState('');
+  const navigate = useNavigate();
 
-    const handleSearch = async (event) => {
-        event.preventDefault();
-        try {
-            const response = await axios.get(`http://localhost:5000/search?query=${query}`);
-            setResults(response.data);
-        } catch (error) {
-            console.error(error);
-        }
-    };
+  const handleSearch = (event) => {
+    event.preventDefault();
+    // Add logic to perform search
+    alert(`Searching for: ${query}`);
+    navigate('/');
+  };
 
-    return (
-        <div>
-            <form onSubmit={handleSearch}>
-                <input type="text" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search..." />
-                <button type="submit">Search</button>
-            </form>
-            <div>
-                <h3>Users</h3>
-                {results.users.map(user => (
-                    <div key={user._id}>
-                        <p>{user.username}</p>
-                    </div>
-                ))}
-            </div>
-            <div>
-                <h3>Posts</h3>
-                {results.posts.map(post => (
-                    <div key={post._id}>
-                        <p>{post.content}</p>
-                    </div>
-                ))}
-            </div>
-        </div>
-    );
+  return (
+    <div>
+      <form onSubmit={handleSearch}>
+        <input
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Search"
+          required
+        />
+        <button type="submit">Search</button>
+      </form>
+    </div>
+  );
 };
 
 export default Search;

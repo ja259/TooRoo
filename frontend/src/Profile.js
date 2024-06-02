@@ -1,39 +1,27 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React from 'react';
 import './Profile.css';
 
 const Profile = ({ user }) => {
-    const [profile, setProfile] = useState(null);
+    if (!user) {
+        return <div>Loading...</div>;
+    }
 
-    useEffect(() => {
-        if (user) {
-            axios.get(`http://localhost:5000/user/${user._id}`, {
-                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-            }).then(response => {
-                setProfile(response.data);
-            }).catch(error => {
-                console.error(error);
-            });
-        }
-    }, [user]);
-
-    return profile ? (
+    return (
         <div className="profile">
-            <img src={profile.avatar || '/default-avatar.png'} alt="Profile" className="profile-avatar" />
-            <h2>{profile.username}</h2>
-            <p>{profile.bio || "No bio"}</p>
-            <div className="profile-stats">
-                <span>{profile.following.length} Following</span>
-                <span>{profile.followers.length} Followers</span>
-                <span>{profile.posts.length} Posts</span>
+            <img src={user.profilePicture || 'default-profile.png'} alt="Profile" />
+            <h2>{user.username}</h2>
+            <p>{user.bio || 'No bio available'}</p>
+            <div className="user-stats">
+                <span>{user.following.length} Following</span>
+                <span>{user.followers.length} Followers</span>
             </div>
-            <div className="profile-actions">
-                <button>Edit Profile</button>
-                <button>Share Profile</button>
+            <button>Edit Profile</button>
+            <button>Share Profile</button>
+            <div className="tabs">
+                <span className="tab active">Text</span>
+                <span className="tab">Video</span>
             </div>
         </div>
-    ) : (
-        <p>Loading...</p>
     );
 };
 
