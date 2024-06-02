@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import axios from 'axios';
 import './App.css';
 import Login from './Login';
@@ -10,6 +10,7 @@ import Search from './Search';
 import ForgotPassword from './ForgotPassword';
 import ResetPassword from './ResetPassword';
 import Navbar from './Navbar';
+import Live from './Live';
 
 const App = () => {
     const [user, setUser] = useState(null);
@@ -45,7 +46,6 @@ const App = () => {
             alert('Login failed. Please check your credentials.');
         }
     };
-    
 
     const handleRegister = async (username, email, password) => {
         try {
@@ -119,16 +119,10 @@ const App = () => {
                         <Route path="/" element={<Feed user={user} onPost={handlePost} onLike={handleLike} onComment={handleComment} />} />
                         <Route path="/profile/:id" element={<Profile />} />
                         <Route path="/search" element={<Search />} />
+                        <Route path="/live" element={<Live user={user} />} />
                         <Route path="*" element={<Navigate to="/" />} />
                     </Routes>
                 )}
-                <div className="bottom-nav">
-                    <Link to="/" className={window.location.pathname === '/' ? 'active' : ''}>Home</Link>
-                    <Link to="/inbox" className={window.location.pathname === '/inbox' ? 'active' : ''}>Inbox</Link>
-                    <Link to="/create" className={window.location.pathname === '/create' ? 'active' : ''}>Create Video</Link>
-                    <Link to="/notifications" className={window.location.pathname === '/notifications' ? 'active' : ''}>Notifications</Link>
-                    <Link to={`/profile/${user?._id}`} className={window.location.pathname.startsWith('/profile') ? 'active' : ''}>Profile</Link>
-                </div>
             </div>
         </Router>
     );

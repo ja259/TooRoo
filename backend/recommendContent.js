@@ -1,20 +1,21 @@
 const Post = require('./models/Post');
-const User = require('./models/User');
 const analyzePreferences = require('./analyzePreferences');
 
-async function recommendContent(userId) {
+const recommendContent = async (userId) => {
     try {
-        const user = await User.findById(userId).populate('following');
-        const followingIds = user.following.map(f => f._id);
-        const recommendedPosts = await Post.find({ author: { $in: followingIds } });
+        const preferences = await analyzePreferences(userId);
 
-        const sortedPostIds = await analyzePreferences(userId);
-        const sortedPosts = sortedPostIds.map(postId => recommendedPosts.find(post => post._id.toString() === postId));
+        const sortedPreferences = Object.keys(preferences).sort((a, b) => preferences[b] - preferences[a]);
 
-        return sortedPosts;
+        const recommendedPosts = await Post.find({
+            _id: { $in: sortedPreferences }
+        }).populate('author').lean();
+
+        return recommendedPosts;
     } catch (error) {
-        throw new Error('Error recommending content');
+        console.error('Error recommending content:', error);
+        throw error;
     }
-}
+};
 
 module.exports = recommendContent;

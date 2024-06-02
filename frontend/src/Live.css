@@ -1,0 +1,98 @@
+.live {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.live-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.go-live-button {
+    background-color: #ff5722;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.go-live-button:hover {
+    background-color: #e64a19;
+}
+
+.live-content {
+    flex: 3;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.live-video {
+    margin-bottom: 20px;
+}
+
+.live-video video {
+    width: 100%;
+    border-radius: 8px;
+}
+
+.live-video-info {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.live-video-author-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.live-sidebar {
+    flex: 1;
+    margin-left: 20px;
+}
+
+.live-viewers ul, .live-comments ul {
+    list-style: none;
+    padding: 0;
+}
+
+.comment-input {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.comment-input input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.comment-input button {
+    background-color: #00bcd4;
+    color: white;
+    border: none;
+    padding: 10px;
+    margin-left: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.comment-input button:hover {
+    background-color: #0097a7;
+}

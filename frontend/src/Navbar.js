@@ -1,23 +1,29 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import './Navbar.css';
 
 const Navbar = ({ user }) => {
-    const navigate = useNavigate();
-
     return (
         <div className="navbar">
-            <div className="nav-options">
-                <span onClick={() => navigate('/live')}>Live</span>
-                <span onClick={() => navigate('/following')}>Following</span>
-                <span onClick={() => navigate('/you-all')}>You All</span>
-                <span onClick={() => navigate('/')}>Timeline</span>
+            <img src="logo.png" alt="TooRoo Logo" className="logo" />
+            <div className="navbar-links">
+                <Link to="/">Timeline</Link>
+                <Link to="/live">LIVE</Link>
+                <Link to="/following">Following</Link>
+                <Link to="/youall">You All</Link>
+                <Link to="/search">Search</Link>
             </div>
-            <div className="nav-search">
-                <i className="fas fa-search" onClick={() => navigate('/search')}></i>
+            <div className="navbar-user">
+                {user && (
+                    <>
+                        <Link to={`/profile/${user._id}`}>{user.username}</Link>
+                        <button onClick={() => { localStorage.removeItem('token'); window.location.reload(); }}>Logout</button>
+                    </>
+                )}
             </div>
         </div>
     );
 };
 
 export default Navbar;
+

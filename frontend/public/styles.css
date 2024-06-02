@@ -6,30 +6,79 @@ body {
   color: #212121;
 }
 
-a {
-  color: #00bcd4;
-  text-decoration: none;
-}
-
-.App {
-  text-align: center;
-}
-
-/* Logo */
-.logo {
-  width: 120px;
-  margin: 20px auto;
-}
-
-/* Forms */
-form {
-  margin: 20px;
-  padding: 20px;
+/* Navbar Styles */
+.navbar {
   background-color: #ffffff;
-  border-radius: 8px;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.navbar .logo {
+  width: 120px;
+}
+
+.navbar-links a {
+  margin: 0 15px;
+  color: #00bcd4;
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.3s;
+}
+
+.navbar-links a:hover {
+  color: #0097a7;
+}
+
+.navbar-user {
+  display: flex;
+  align-items: center;
+}
+
+.navbar-user a {
+  margin-right: 15px;
+  color: #212121;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.navbar-user button {
+  background-color: #ff5722;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.navbar-user button:hover {
+  background-color: #e64a19;
+}
+
+/* Common Styles */
+.container {
+  padding: 20px;
+}
+
+.button {
+  padding: 12px 24px;
+  background-color: #ff5722;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+.button:hover {
+  background-color: #e64a19;
+}
+
+/* Input Styles */
 input, textarea {
   display: block;
   margin: 10px auto;
@@ -45,31 +94,16 @@ input:focus, textarea:focus {
   border-color: #00bcd4;
 }
 
-button {
-  padding: 12px 24px;
-  background-color: #ff5722;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: background-color 0.3s;
-}
-
-button:hover {
-  background-color: #e64a19;
-}
-
-textarea {
-  height: 120px;
-}
-
-/* Container Styles */
-.container {
+/* Form Styles */
+form {
+  margin: 20px;
   padding: 20px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Profile Section */
+/* Profile Styles */
 .profile {
   background-color: #ffffff;
   padding: 20px;
@@ -95,7 +129,7 @@ textarea {
   color: #757575;
 }
 
-/* Feed Section */
+/* Feed Styles */
 .feed {
   display: flex;
   flex-direction: column;
@@ -142,22 +176,6 @@ textarea {
 
 .post .actions button:hover {
   background-color: #0097a7;
-}
-
-/* Navigation Bar */
-.navbar {
-  background-color: #ffffff;
-  padding: 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.navbar a {
-  font-family: 'Roboto', sans-serif;
-  font-weight: bold;
-  margin: 0 15px;
 }
 
 /* Modal Styles */
@@ -227,4 +245,35 @@ textarea {
   border-radius: 50%;
   object-fit: cover;
   margin-bottom: 5px;
+}
+
+/* Comment Input Styles */
+.comment-input {
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.comment-input input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.comment-input button {
+  background-color: #00bcd4;
+  color: white;
+  border: none;
+  padding: 10px;
+  margin-left: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+.comment-input button:hover {
+  background-color: #0097a7;
 }
