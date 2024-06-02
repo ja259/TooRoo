@@ -76,13 +76,9 @@ app.post('/register', async (req, res) => {
 app.post('/login', async (req, res) => {
     const { emailOrPhone, password } = req.body;
     try {
-        let user;
-        if (emailOrPhone.includes('@')) {
-            user = await User.findOne({ email: emailOrPhone });
-        } else {
-            user = await User.findOne({ phone: emailOrPhone });
-        }
-
+        const user = await User.findOne({
+            $or: [{ email: emailOrPhone }, { phone: emailOrPhone }]
+        });
         if (!user) return res.status(404).json({ message: 'User not found!' });
 
         const isMatch = await bcrypt.compare(password, user.password);
@@ -262,7 +258,11 @@ app.post('/post/:id/like', async (req, res) => {
     const { userId } = req.body;
     try {
         const post = await Post.findById(req.params.id);
-        post.likes.push(userId);
+        if (!post.likes.includes(userId)) {
+            post.likes.push(userId);
+        } else {
+            post.likes.pull(userId);
+        }
         await post.save();
         res.status(200).json(post);
     } catch (error) {

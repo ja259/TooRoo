@@ -1,33 +1,40 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
 
 const ResetPassword = () => {
-    const { token } = useParams();
-    const [password, setPassword] = useState('');
-    const [message, setMessage] = useState('');
+  const { token } = useParams();
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        try {
-            const response = await axios.post(`http://localhost:5000/reset-password/${token}`, { password });
-            setMessage(response.data.message);
-        } catch (error) {
-            console.error(error);
-            setMessage('An error occurred. Please try again.');
-        }
-    };
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    if (password !== confirmPassword) {
+      alert('Passwords do not match!');
+      return;
+    }
+    // Add logic to handle password reset
+    alert('Password has been reset.');
+  };
 
-    return (
-        <div>
-            <h2>Reset Password</h2>
-            <form onSubmit={handleSubmit}>
-                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="New Password" required />
-                <button type="submit">Reset Password</button>
-            </form>
-            {message && <p>{message}</p>}
-        </div>
-    );
+  return (
+    <form onSubmit={handleSubmit}>
+      <input
+        type="password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        placeholder="New Password"
+        required
+      />
+      <input
+        type="password"
+        value={confirmPassword}
+        onChange={(e) => setConfirmPassword(e.target.value)}
+        placeholder="Confirm New Password"
+        required
+      />
+      <button type="submit">Reset Password</button>
+    </form>
+  );
 };
 
 export default ResetPassword;

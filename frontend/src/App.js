@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import './App.css';
 import Login from './Login';
@@ -9,6 +9,7 @@ import Profile from './Profile';
 import Search from './Search';
 import ForgotPassword from './ForgotPassword';
 import ResetPassword from './ResetPassword';
+import Navbar from './Navbar';
 
 const App = () => {
     const [user, setUser] = useState(null);
@@ -104,6 +105,7 @@ const App = () => {
     return (
         <Router>
             <div className="App">
+                <Navbar user={user} />
                 {!user ? (
                     <Routes>
                         <Route path="/login" element={<Login onLogin={handleLogin} />} />
@@ -120,6 +122,13 @@ const App = () => {
                         <Route path="*" element={<Navigate to="/" />} />
                     </Routes>
                 )}
+                <div className="bottom-nav">
+                    <Link to="/" className={window.location.pathname === '/' ? 'active' : ''}>Home</Link>
+                    <Link to="/inbox" className={window.location.pathname === '/inbox' ? 'active' : ''}>Inbox</Link>
+                    <Link to="/create" className={window.location.pathname === '/create' ? 'active' : ''}>Create Video</Link>
+                    <Link to="/notifications" className={window.location.pathname === '/notifications' ? 'active' : ''}>Notifications</Link>
+                    <Link to={`/profile/${user?._id}`} className={window.location.pathname.startsWith('/profile') ? 'active' : ''}>Profile</Link>
+                </div>
             </div>
         </Router>
     );
