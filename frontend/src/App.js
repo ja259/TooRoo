@@ -119,7 +119,7 @@ const App = () => {
                 ) : (
                     <Routes>
                         <Route path="/" element={<Feed user={user} onPost={handlePost} onLike={handleLike} onComment={handleComment} />} />
-                        <Route path="/profile/:id" element={<Profile />} />
+                        <Route path="/profile/:id" element={<Profile user={user} />} />
                         <Route path="/search" element={<Search />} />
                         <Route path="/live" element={<Live />} />
                         <Route path="/ar-filters" element={<ARFilters />} />

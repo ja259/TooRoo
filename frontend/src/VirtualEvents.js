@@ -1,4 +1,5 @@
 import React from 'react';
+import './VirtualEvents.css';
 
 const VirtualEvents = () => {
     return (

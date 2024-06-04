@@ -5,11 +5,17 @@ const Search = () => {
   const [query, setQuery] = useState('');
   const navigate = useNavigate();
 
-  const handleSearch = (event) => {
+  const handleSearch = async (event) => {
     event.preventDefault();
-    // Add logic to perform search
-    alert(`Searching for: ${query}`);
-    navigate('/');
+    try {
+      // Add logic to perform search
+      const response = await axios.get('http://localhost:5000/search', { params: { query } });
+      console.log(response.data); // Display search results
+      navigate('/');
+    } catch (error) {
+      console.error(error);
+      alert('Search failed. Please try again.');
+    }
   };
 
   return (
