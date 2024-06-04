@@ -28,8 +28,8 @@ const Post = ({ post, onLike, onComment }) => {
             </div>
             <div className="post-actions">
                 <button onClick={handleLike}>Like ({post.likes.length})</button>
-                <button onClick={() => alert('Comment button clicked')}>Comment</button>
-                <button onClick={() => alert('Share button clicked')}>Share</button>
+                <button>Comment</button>
+                <button>Share</button>
             </div>
             <div className="post-comments">
                 {post.comments.map(comment => (
