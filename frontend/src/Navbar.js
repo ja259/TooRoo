@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import logo from './path-to-logo.png'; // Adjust the path to your logo
+import logo from './logo.png';  // Adjust the path to your logo
 import './Navbar.css';
 
 const Navbar = ({ user }) => {

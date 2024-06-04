@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import logo from './path-to-logo.png';  // Adjust the path to your logo
+import logo from './logo.png';  // Adjust the path to your logo
 
 const Login = ({ onLogin }) => {
     const [emailOrPhone, setEmailOrPhone] = useState('');
