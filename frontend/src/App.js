@@ -13,6 +13,12 @@ import Navbar from './Navbar';
 import Live from './Live';
 import ARFilters from './ARFilters';
 import VirtualEvents from './VirtualEvents';
+import YouAll from './YouAll';
+import Following from './Following';
+import BottomNav from './BottomNav';
+import Inbox from './Inbox';  // Import Inbox component
+import CreateVideo from './CreateVideo';  // Import CreateVideo component
+import Notifications from './Notifications';  // Import Notifications component
 
 const App = () => {
     const [user, setUser] = useState(null);
@@ -117,15 +123,23 @@ const App = () => {
                         <Route path="*" element={<Navigate to="/login" />} />
                     </Routes>
                 ) : (
-                    <Routes>
-                        <Route path="/" element={<Feed user={user} onPost={handlePost} onLike={handleLike} onComment={handleComment} />} />
-                        <Route path="/profile/:id" element={<Profile user={user} />} />
-                        <Route path="/search" element={<Search />} />
-                        <Route path="/live" element={<Live />} />
-                        <Route path="/ar-filters" element={<ARFilters />} />
-                        <Route path="/virtual-events" element={<VirtualEvents />} />
-                        <Route path="*" element={<Navigate to="/" />} />
-                    </Routes>
+                    <>
+                        <Routes>
+                            <Route path="/" element={<Feed user={user} onPost={handlePost} onLike={handleLike} onComment={handleComment} />} />
+                            <Route path="/profile/:id" element={<Profile />} />
+                            <Route path="/search" element={<Search />} />
+                            <Route path="/live" element={<Live />} />
+                            <Route path="/ar-filters" element={<ARFilters />} />
+                            <Route path="/virtual-events" element={<VirtualEvents />} />
+                            <Route path="/you-all" element={<YouAll />} />
+                            <Route path="/following" element={<Following />} />
+                            <Route path="/inbox" element={<Inbox />} />  {/* Define route for Inbox */}
+                            <Route path="/create-video" element={<CreateVideo />} />  {/* Define route for Create Video */}
+                            <Route path="/notifications" element={<Notifications />} />  {/* Define route for Notifications */}
+                            <Route path="*" element={<Navigate to="/" />} />
+                        </Routes>
+                        <BottomNav />
+                    </>
                 )}
             </div>
         </Router>
@@ -133,3 +147,4 @@ const App = () => {
 };
 
 export default App;
+
