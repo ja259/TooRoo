@@ -22,3 +22,8 @@
   cursor: pointer;
   font-size: 20px;
 }
+
+.navbar-logo {
+  height: 40px; /* or any other size you prefer */
+}
+
