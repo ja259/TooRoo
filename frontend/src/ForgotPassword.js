@@ -3,10 +3,16 @@ import React, { useState } from 'react';
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    // Add logic to handle forgot password
-    alert('Password reset link has been sent to your email.');
+    try {
+      // Add logic to handle forgot password
+      await axios.post('http://localhost:5000/forgot-password', { email });
+      alert('Password reset link has been sent to your email.');
+    } catch (error) {
+      console.error(error);
+      alert('Failed to send password reset link. Please try again.');
+    }
   };
 
   return (

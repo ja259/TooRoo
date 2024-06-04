@@ -1,4 +1,5 @@
 import React from 'react';
+import './ARFilters.css';
 
 const ARFilters = () => {
     return (
