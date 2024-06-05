@@ -16,7 +16,7 @@ const recommendContent = require('./recommendContent');
 const User = require('./models/User');
 const Post = require('./models/Post');
 const Interaction = require('./models/Interaction');
-const Video = require('./models/Video'); // Assuming you have a Video model
+const Video = require('./models/Video'); // Add this line
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -319,6 +319,18 @@ app.get('/search', async (req, res) => {
     }
 });
 
+// AR Filters
+app.post('/ar-filters', async (req, res) => {
+    // Logic for AR filters
+    res.status(200).json({ message: 'AR filter applied!' });
+});
+
+// Virtual Events
+app.post('/virtual-events', async (req, res) => {
+    // Logic for virtual events
+    res.status(200).json({ message: 'Virtual event created!' });
+});
+
 // Get all videos for "You All" page
 app.get('/you-all-videos', async (req, res) => {
     try {
@@ -341,19 +353,6 @@ app.get('/following-videos', async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: 'Error fetching videos' });
     }
-});
-
-
-// AR Filters
-app.post('/ar-filters', async (req, res) => {
-    // Logic for AR filters
-    res.status(200).json({ message: 'AR filter applied!' });
-});
-
-// Virtual Events
-app.post('/virtual-events', async (req, res) => {
-    // Logic for virtual events
-    res.status(200).json({ message: 'Virtual event created!' });
 });
 
 app.listen(port, () => {
