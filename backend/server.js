@@ -332,7 +332,9 @@ app.get('/you-all-videos', async (req, res) => {
 // Get videos from followed users for "Following" page
 app.get('/following-videos', async (req, res) => {
     try {
-        const user = await User.findById(req.userId).populate('following');
+        const token = req.headers.authorization.split(' ')[1];
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await User.findById(decoded.userId).populate('following');
         const followingIds = user.following.map(follow => follow._id);
         const videos = await Video.find({ author: { $in: followingIds } }).populate('author');
         res.status(200).json(videos);
@@ -340,6 +342,7 @@ app.get('/following-videos', async (req, res) => {
         res.status(500).json({ message: 'Error fetching videos' });
     }
 });
+
 
 // AR Filters
 app.post('/ar-filters', async (req, res) => {
