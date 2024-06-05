@@ -16,6 +16,7 @@ const recommendContent = require('./recommendContent');
 const User = require('./models/User');
 const Post = require('./models/Post');
 const Interaction = require('./models/Interaction');
+const Video = require('./models/Video'); // Assuming you have a Video model
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -315,6 +316,28 @@ app.get('/search', async (req, res) => {
         res.status(200).json({ users, posts });
     } catch (error) {
         res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+// Get all videos for "You All" page
+app.get('/you-all-videos', async (req, res) => {
+    try {
+        const videos = await Video.find().populate('author');
+        res.status(200).json(videos);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching videos' });
+    }
+});
+
+// Get videos from followed users for "Following" page
+app.get('/following-videos', async (req, res) => {
+    try {
+        const user = await User.findById(req.userId).populate('following');
+        const followingIds = user.following.map(follow => follow._id);
+        const videos = await Video.find({ author: { $in: followingIds } }).populate('author');
+        res.status(200).json(videos);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching videos' });
     }
 });
 
