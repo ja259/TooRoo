@@ -16,9 +16,9 @@ import VirtualEvents from './VirtualEvents';
 import YouAll from './YouAll';
 import Following from './Following';
 import BottomNav from './BottomNav';
-import Inbox from './Inbox';  // Import Inbox component
-import CreateVideo from './CreateVideo';  // Import CreateVideo component
-import Notifications from './Notifications';  // Import Notifications component
+import Inbox from './Inbox';
+import CreateVideo from './CreateVideo';
+import Notifications from './Notifications';
 
 const App = () => {
     const [user, setUser] = useState(null);
@@ -133,9 +133,9 @@ const App = () => {
                             <Route path="/virtual-events" element={<VirtualEvents />} />
                             <Route path="/you-all" element={<YouAll />} />
                             <Route path="/following" element={<Following />} />
-                            <Route path="/inbox" element={<Inbox />} />  {/* Define route for Inbox */}
-                            <Route path="/create-video" element={<CreateVideo />} />  {/* Define route for Create Video */}
-                            <Route path="/notifications" element={<Notifications />} />  {/* Define route for Notifications */}
+                            <Route path="/inbox" element={<Inbox />} />
+                            <Route path="/create-video" element={<CreateVideo />} />
+                            <Route path="/notifications" element={<Notifications />} />
                             <Route path="*" element={<Navigate to="/" />} />
                         </Routes>
                         <BottomNav />
@@ -147,4 +147,3 @@ const App = () => {
 };
 
 export default App;
-
