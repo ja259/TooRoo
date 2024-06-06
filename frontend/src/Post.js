@@ -1,47 +1,24 @@
 import React from 'react';
 import './Post.css';
 
-const Post = ({ post, onLike, onComment }) => {
-    const handleLike = () => {
-        onLike(post._id);
-    };
-
-    const handleComment = (e) => {
-        if (e.key === 'Enter') {
-            onComment(post._id, e.target.value);
-            e.target.value = '';
-        }
-    };
+const Post = ({ post }) => {
+    if (!post || !post.author || !post.author.profilePicture) {
+        return null; // Handle cases where post or author data is missing
+    }
 
     return (
         <div className="post">
             <div className="post-header">
-                <img src={post.author.profilePicture || 'default-profile.png'} alt="Profile" />
-                <div>
-                    <span className="username">{post.author.username}</span>
-                    <span className="timestamp">{new Date(post.createdAt).toLocaleString()}</span>
-                </div>
+                <img src={post.author.profilePicture} alt={post.author.username} className="post-author-img" />
+                <span className="post-author">{post.author.username}</span>
             </div>
             <div className="post-content">
                 <p>{post.content}</p>
-                {post.videoUrl && <video src={post.videoUrl} controls />}
+                {post.videoUrl && <video src={post.videoUrl} controls className="post-video"></video>}
             </div>
-            <div className="post-actions">
-                <button onClick={handleLike}>Like ({post.likes.length})</button>
-                <button>Comment</button>
-                <button>Share</button>
-            </div>
-            <div className="post-comments">
-                {post.comments.map(comment => (
-                    <div key={comment._id} className="comment">
-                        <span className="username">{comment.author.username}:</span> {comment.content}
-                    </div>
-                ))}
-                <input
-                    type="text"
-                    placeholder="Add a comment..."
-                    onKeyPress={handleComment}
-                />
+            <div className="post-footer">
+                <button className="like-button">Like</button>
+                <button className="comment-button">Comment</button>
             </div>
         </div>
     );

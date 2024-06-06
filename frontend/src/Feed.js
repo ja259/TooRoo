@@ -1,12 +1,16 @@
 import React from 'react';
 import Post from './Post';
-import './Feed.css';
 
 const Feed = ({ user, onPost, onLike, onComment }) => {
     return (
         <div className="feed">
-            {user.posts.map((post) => (
-                <Post key={post._id} post={post} onLike={onLike} onComment={onComment} />
+            {user.posts.map(post => (
+                <Post
+                    key={post._id}
+                    post={post}
+                    onLike={onLike}
+                    onComment={onComment}
+                />
             ))}
         </div>
     );
