@@ -1,0 +1,21 @@
+{
+    "users": [
+        {
+            "_id": "userId",
+            "username": "username",
+            "avatar": "avatarUrl"
+        }
+    ],
+    "posts": [
+        {
+            "_id": "postId",
+            "content": "post content",
+            "videoUrl": "videoUrl",
+            "author": {
+                "_id": "authorId",
+                "username": "authorUsername",
+                "avatar": "authorAvatarUrl"
+            }
+        }
+    ]
+}
