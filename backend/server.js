@@ -355,6 +355,17 @@ app.get('/following-videos', async (req, res) => {
     }
 });
 
+// Fetch posts for the Timeline
+app.get('/timeline-posts', async (req, res) => {
+    try {
+        const posts = await Post.find().populate('author');
+        res.status(200).json(posts);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching posts' });
+    }
+});
+
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
 });
+
