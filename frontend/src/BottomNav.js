@@ -12,11 +12,11 @@ const BottomNav = () => {
             <NavLink to="/inbox" className={({ isActive }) => isActive ? "active" : ""}>
                 <FaInbox /><span>Inbox</span>
             </NavLink>
-            <NavLink to="/notifications" className={({ isActive }) => isActive ? "active" : ""}>
-                <FaBell /><span>Notifications</span>
-            </NavLink>
             <NavLink to="/create-video" className={({ isActive }) => isActive ? "active" : ""}>
                 <FaVideo />
+            </NavLink>
+            <NavLink to="/notifications" className={({ isActive }) => isActive ? "active" : ""}>
+                <FaBell /><span>Notifications</span>
             </NavLink>
             <NavLink to="/profile" className={({ isActive }) => isActive ? "active" : ""}>
                 <FaUser /><span>Profile</span>
