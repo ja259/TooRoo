@@ -1,34 +1,89 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';  // Import Axios
+import axios from 'axios';
+import './Search.css';
 
 const Search = () => {
     const [query, setQuery] = useState('');
-    const navigate = useNavigate();
+    const [results, setResults] = useState({ users: [], posts: [] });
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
 
-    const handleSearch = async (event) => {
-        event.preventDefault();
+    const handleSearch = async () => {
+        if (!query) {
+            return;
+        }
+
+        setLoading(true);
+        setError('');
+
         try {
             const response = await axios.get(`http://localhost:5000/search?query=${query}`);
-            console.log('Search results:', response.data);
-            navigate('/');  // Navigate or handle search results accordingly
-        } catch (error) {
-            console.error('Error during search:', error);
+            setResults(response.data);
+        } catch (err) {
+            setError('Error fetching search results. Please try again.');
+        } finally {
+            setLoading(false);
         }
     };
 
+    const handleChange = (e) => {
+        setQuery(e.target.value);
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        handleSearch();
+    };
+
     return (
-        <div>
-            <form onSubmit={handleSearch}>
+        <div className="search-container">
+            <form onSubmit={handleSubmit} className="search-form">
                 <input
                     type="text"
+                    placeholder="Search for users or posts..."
                     value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    placeholder="Search"
-                    required
+                    onChange={handleChange}
+                    className="search-input"
                 />
-                <button type="submit">Search</button>
+                <button type="submit" className="search-button">Search</button>
             </form>
+            {loading && <p>Loading...</p>}
+            {error && <p className="error">{error}</p>}
+            <div className="search-results">
+                {results.users.length > 0 && (
+                    <div className="search-users">
+                        <h3>Users</h3>
+                        <ul>
+                            {results.users.map((user) => (
+                                <li key={user._id}>
+                                    <img src={user.avatar} alt={user.username} className="avatar" />
+                                    <span>{user.username}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                )}
+                {results.posts.length > 0 && (
+                    <div className="search-posts">
+                        <h3>Posts</h3>
+                        <ul>
+                            {results.posts.map((post) => (
+                                <li key={post._id}>
+                                    <div className="post-author">
+                                        <img src={post.author.avatar} alt={post.author.username} className="avatar" />
+                                        <span>{post.author.username}</span>
+                                    </div>
+                                    <div className="post-content">{post.content}</div>
+                                    {post.videoUrl && <video src={post.videoUrl} controls className="post-video"></video>}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                )}
+                {results.users.length === 0 && results.posts.length === 0 && !loading && !error && (
+                    <p>No results found.</p>
+                )}
+            </div>
         </div>
     );
 };

@@ -4,7 +4,6 @@ import axios from 'axios';
 import './App.css';
 import Login from './Login';
 import Register from './Register';
-import Feed from './Feed';
 import Profile from './Profile';
 import Search from './Search';
 import ForgotPassword from './ForgotPassword';
@@ -19,6 +18,7 @@ import BottomNav from './BottomNav';
 import Inbox from './Inbox';
 import CreateVideo from './CreateVideo';
 import Notifications from './Notifications';
+import Timeline from './Timeline';  // Import Timeline component
 
 const App = () => {
     const [user, setUser] = useState(null);
@@ -65,53 +65,13 @@ const App = () => {
         }
     };
 
-    const handlePost = async (content, videoUrl) => {
-        const token = localStorage.getItem('token');
-        try {
-            const response = await axios.post('http://localhost:5000/post', { content, authorId: user._id, videoUrl }, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            setUser({ ...user, posts: [response.data, ...user.posts] });
-        } catch (error) {
-            console.error(error);
-            alert('Failed to create post. Please try again.');
-        }
-    };
-
-    const handleLike = async (postId) => {
-        const token = localStorage.getItem('token');
-        try {
-            const response = await axios.post(`http://localhost:5000/post/${postId}/like`, { userId: user._id }, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            const updatedPosts = user.posts.map(post => post._id === postId ? response.data : post);
-            setUser({ ...user, posts: updatedPosts });
-        } catch (error) {
-            console.error(error);
-            alert('Failed to like post. Please try again.');
-        }
-    };
-
-    const handleComment = async (postId, content) => {
-        const token = localStorage.getItem('token');
-        try {
-            const response = await axios.post(`http://localhost:5000/post/${postId}/comment`, { userId: user._id, content }, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            const updatedPosts = user.posts.map(post => post._id === postId ? response.data : post);
-            setUser({ ...user, posts: updatedPosts });
-        } catch (error) {
-            console.error(error);
-            alert('Failed to comment. Please try again.');
-        }
-    };
-
     if (loading) {
         return <div>Loading...</div>;
     }
 
     return (
         <Router>
+            {user && <Navbar user={user} />}
             <div className="App">
                 {!user ? (
                     <Routes>
@@ -123,9 +83,8 @@ const App = () => {
                     </Routes>
                 ) : (
                     <>
-                        <Navbar user={user} />
                         <Routes>
-                            <Route path="/" element={<Feed user={user} onPost={handlePost} onLike={handleLike} onComment={handleComment} />} />
+                            <Route path="/" element={<Timeline />} />  {/* Set Timeline as the default home page */}
                             <Route path="/profile/:id" element={<Profile />} />
                             <Route path="/search" element={<Search />} />
                             <Route path="/live" element={<Live />} />
@@ -147,3 +106,4 @@ const App = () => {
 };
 
 export default App;
+
