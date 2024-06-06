@@ -1,64 +1,59 @@
 .post {
-  background-color: #ffffff;
-  padding: 20px;
+  background-color: #fff;
+  border: 1px solid #ddd;
   border-radius: 8px;
+  margin: 16px 0;
+  padding: 16px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
 }
 
 .post-header {
   display: flex;
   align-items: center;
+  margin-bottom: 8px;
 }
 
-.post-header img {
-  border-radius: 50%;
+.post-author-img {
   width: 40px;
   height: 40px;
-  margin-right: 10px;
+  border-radius: 50%;
+  margin-right: 8px;
 }
 
-.post-header .username {
+.post-author {
   font-weight: bold;
+  font-size: 16px;
 }
 
-.post-header .timestamp {
-  font-size: 12px;
-  color: #757575;
-  margin-left: 10px;
+.post-content {
+  margin: 16px 0;
 }
 
-.post-content p {
-  margin: 10px 0;
-}
-
-.post-content video {
+.post-video {
   width: 100%;
+  max-height: 500px;
   border-radius: 8px;
-  margin: 10px 0;
 }
 
-.post-actions button {
-  background-color: transparent;
+.post-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+}
+
+.like-button,
+.comment-button {
+  background-color: #007bff;
+  color: white;
   border: none;
-  cursor: pointer;
-  font-size: 16px;
-  margin-right: 10px;
-}
-
-.post-comments .comment {
-  margin: 5px 0;
-}
-
-.post-comments .username {
-  font-weight: bold;
-}
-
-.post-comments input {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ddd;
   border-radius: 4px;
-  font-size: 16px;
-  margin-top: 10px;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.like-button:hover,
+.comment-button:hover {
+  background-color: #0056b3;
 }

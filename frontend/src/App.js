@@ -114,15 +114,13 @@ const App = () => {
         <Router>
             <div className="App">
                 {!user ? (
-                    <>
-                        <Routes>
-                            <Route path="/login" element={<Login onLogin={handleLogin} />} />
-                            <Route path="/register" element={<Register onRegister={handleRegister} />} />
-                            <Route path="/forgot-password" element={<ForgotPassword />} />
-                            <Route path="/reset-password/:token" element={<ResetPassword />} />
-                            <Route path="*" element={<Navigate to="/login" />} />
-                        </Routes>
-                    </>
+                    <Routes>
+                        <Route path="/login" element={<Login onLogin={handleLogin} />} />
+                        <Route path="/register" element={<Register onRegister={handleRegister} />} />
+                        <Route path="/forgot-password" element={<ForgotPassword />} />
+                        <Route path="/reset-password/:token" element={<ResetPassword />} />
+                        <Route path="*" element={<Navigate to="/login" />} />
+                    </Routes>
                 ) : (
                     <>
                         <Navbar user={user} />
