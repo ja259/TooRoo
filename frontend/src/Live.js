@@ -21,7 +21,7 @@ const Live = ({ user }) => {
     return (
         <div className="live">
             <div className="live-header">
-                <h1>Live Videos</h1>
+                <h1><span role="img" aria-label="Live">🔴</span> Live Videos</h1>
                 <button className="go-live-button">Go Live</button>
             </div>
             <div className="live-content">

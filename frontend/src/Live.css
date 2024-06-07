@@ -62,7 +62,8 @@
     margin-left: 20px;
 }
 
-.live-viewers ul, .live-comments ul {
+.live-viewers ul,
+.live-comments ul {
     list-style: none;
     padding: 0;
 }
