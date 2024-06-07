@@ -1,5 +1,4 @@
 require('dotenv').config();
-const app = require('./server');
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -13,6 +12,7 @@ const crypto = require('crypto');
 const path = require('path');
 const analyzePreferences = require('./analyzePreferences');
 const recommendContent = require('./recommendContent');
+
 const User = require('./models/User');
 const Post = require('./models/Post');
 const Interaction = require('./models/Interaction');
@@ -33,14 +33,39 @@ mongoose.connect(process.env.MONGODB_URI)
     .then(() => console.log('MongoDB connected...'))
     .catch(err => console.log(err));
 
-// Rest of your routes and middleware...
-
-app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
+// Storage for multer
+const storage = new GridFsStorage({
+    url: process.env.MONGODB_URI,
+    options: {},
+    file: (req, file) => {
+        return new Promise((resolve, reject) => {
+            crypto.randomBytes(16, (err, buf) => {
+                if (err) {
+                    return reject(err);
+                }
+                const filename = buf.toString('hex') + path.extname(file.originalname);
+                const fileInfo = {
+                    filename: filename,
+                    bucketName: 'uploads'
+                };
+                resolve(fileInfo);
+            });
+        });
+    }
 });
+
+const upload = multer({ storage });
+
+// Your routes and middleware...
 
 // Exporting modules
 module.exports = {
+    app,
     recommendContent,
     analyzePreferences
 };
+
+// Start server
+app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+});
