@@ -1,5 +1,5 @@
 const express = require('express');
-const { createPost, getPosts, likePost, commentOnPost } = require('./controllers/postController');
+const { createPost, getPosts, likePost, commentOnPost } = require('../controllers/postController');
 const router = express.Router();
 
 // Create a new post

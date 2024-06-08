@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const multer = require('multer');
-const gridFsStorage = require('./config/gridFsStorageConfig'); // Import the GridFS storage configuration correctly
+const gridFsStorage = require('./config/gridFsStorageConfig'); // Corrected path
 
 // Import utility modules
 const { errorHandler } = require('./utils/errorHandler');
