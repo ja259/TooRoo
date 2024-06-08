@@ -1,4 +1,3 @@
-module.exports = recommendContent;
 require('dotenv').config(); // Configuring environment variables
 const express = require('express');
 const mongoose = require('mongoose');
@@ -10,11 +9,11 @@ const multer = require('multer');
 const gridFsStorage = require('./config/gridFsStorageConfig');
 
 // Utility modules
-const { emailService } = require('./utils/emailService');
+const emailService = require('./utils/emailService'); // Corrected: Removed destructuring if not exported as an object
 
 // Middleware
-const { errorHandler } = require('./middlewares/errorHandler');
-const { authenticate } = require('./middlewares/authMiddleware');
+const errorHandler = require('./middlewares/errorHandler');
+const authenticate = require('./middlewares/authMiddleware');
 
 // Route handlers
 const authRoutes = require('./routes/authRoutes');
@@ -53,10 +52,7 @@ mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTop
 const upload = multer({ storage: gridFsStorage });
 
 // Routes
-// Public routes that do not require authentication
 app.use('/api/auth', authRoutes);
-
-// Protected routes that require authentication
 app.use('/api/users', authenticate, userRoutes);
 app.use('/api/posts', authenticate, postRoutes);
 app.use('/api/media', authenticate, mediaRoutes);
