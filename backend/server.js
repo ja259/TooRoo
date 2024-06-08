@@ -15,11 +15,7 @@ const emailService = require('./utils/emailService'); // Corrected: Removed dest
 const errorHandler = require('./middlewares/errorHandler');
 const authenticate = require('./middlewares/authMiddleware');
 
-const { validateData } = require('./middlewares/Validate');
-
-app.post('/api/data', validateData, (req, res) => {
-    res.send('Data is valid!');
-});
+const  Validate = require('./middlewares/Validate');
 
 
 // Route handlers
