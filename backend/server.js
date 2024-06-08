@@ -4,23 +4,29 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const multer = require('multer');
-const gridFsStorage = require('./config/gridFsStorageConfig'); // Corrected path
 
-// Import utility modules
-const { errorHandler } = require('./utils/errorHandler');
+// GridFS Storage configuration
+const gridFsStorage = require('./config/gridFsStorageConfig');
+
+// Utility modules
 const { emailService } = require('./utils/emailService');
 
-// Import route handlers
+// Middleware
+const { errorHandler } = require('./middlewares/errorHandler');
+const { authenticate } = require('./middlewares/authMiddleware');
+const validate = require('./middlewares/validate');
+
+// Route handlers
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const postRoutes = require('./routes/postRoutes');
 const mediaRoutes = require('./routes/mediaRoutes');
 
-// Import custom modules for business logic
+// Business logic modules
 const analyzePreferences = require('./analyzePreferences');
 const recommendContent = require('./recommendContent');
 
-// Import models
+// Models
 const User = require('./models/User');
 const Post = require('./models/Post');
 const Interaction = require('./models/Interaction');
@@ -38,28 +44,32 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
-// Connect to MongoDB
+// MongoDB Connection
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log('MongoDB connected...'))
     .catch(err => console.error('MongoDB connection error:', err));
 
-// Configure multer with GridFS storage
+// Multer setup for file uploads
 const upload = multer({ storage: gridFsStorage });
 
-// Apply routes
+// Routes
+// Public routes that do not require authentication
 app.use('/api/auth', authRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/posts', postRoutes);
-app.use('/api/media', mediaRoutes);
 
-// File upload route
+// Protected routes that require authentication
+app.use('/api/users', authenticate, userRoutes);
+app.use('/api/posts', authenticate, postRoutes);
+app.use('/api/media', authenticate, mediaRoutes);
+
+// Example file upload route, include authentication if necessary
 app.post('/upload', upload.single('file'), (req, res) => {
     res.send('File uploaded successfully');
 });
 
-// Global error handling middleware
+// Error handling middleware
 app.use(errorHandler);
 
+// Start the server
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
 });
