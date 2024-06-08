@@ -3,13 +3,18 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
-const nodemailer = require('nodemailer');
 const multer = require('multer');
-const { GridFsStorage } = require('multer-gridfs-storage');
-const crypto = require('crypto');
-const path = require('path');
+const gridFsStorage = require('./gridFsStorageConfig'); // Import the GridFS storage configuration
+
+// Import utility modules
+const { errorHandler } = require('./utils/errorHandler');
+const { emailService } = require('./utils/emailService');
+
+// Import route handlers
+const authRoutes = require('./routes/authRoutes');
+const userRoutes = require('./routes/userRoutes');
+const postRoutes = require('./routes/postRoutes');
+const mediaRoutes = require('./routes/mediaRoutes');
 
 // Import custom modules for business logic
 const analyzePreferences = require('./analyzePreferences');
@@ -39,37 +44,21 @@ mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTop
     .catch(err => console.error('MongoDB connection error:', err));
 
 // Configure multer with GridFS storage
-const storage = new GridFsStorage({
-    url: process.env.MONGODB_URI,
-    file: (req, file) => {
-        return new Promise((resolve, reject) => {
-            crypto.randomBytes(16, (err, buf) => {
-                if (err) {
-                    return reject(err);
-                }
-                const filename = buf.toString('hex') + path.extname(file.originalname);
-                const fileInfo = {
-                    filename: filename,
-                    bucketName: 'uploads'
-                };
-                resolve(fileInfo);
-            });
-        });
-    }
-});
-const upload = multer({ storage });
+const upload = multer({ storage: gridFsStorage });
 
-// Routes (would be better if moved to a separate file and imported)
-require('./routes/authRoutes')(app, { bcrypt, jwt, User, nodemailer, crypto });
-require('./routes/userRoutes')(app, { User, Post });
-require('./routes/postRoutes')(app, { Post, User, Interaction });
-require('./routes/mediaRoutes')(app, { Video, User });
+// Apply routes
+app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/posts', postRoutes);
+app.use('/api/media', mediaRoutes);
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-    console.error('Internal Server Error:', err);
-    res.status(500).json({ message: 'Internal server error' });
+// File upload route
+app.post('/upload', upload.single('file'), (req, res) => {
+    res.send('File uploaded successfully');
 });
+
+// Global error handling middleware
+app.use(errorHandler);
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
