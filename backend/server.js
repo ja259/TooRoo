@@ -9,12 +9,12 @@ const multer = require('multer');
 const gridFsStorage = require('./config/gridFsStorageConfig');
 
 // Utility modules
-const { emailService } = require('./utils/emailService');
+const { emailService } = require('./utils/emailService'); // Assuming emailService exports a function correctly
 
 // Middleware
 const errorHandler = require('./middlewares/errorHandler');
 const authenticate = require('./middlewares/authMiddleware');
-const validate = require('./middlewares/Validate'); // Make sure the file name is correctly referenced
+const { validateRegister, validateLogin, validateResetPassword } = require('./middlewares/validate');
 
 // Route handlers
 const authRoutes = require('./routes/authRoutes');
@@ -44,11 +44,18 @@ mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTop
 
 const upload = multer({ storage: gridFsStorage });
 
-app.use('/api/auth', authRoutes);
+// Correctly apply validation middleware before authRoutes handlers
+app.use('/api/auth', validateRegister, authRoutes);
+app.use('/api/auth', validateLogin, authRoutes);
+app.use('/api/auth', validateResetPassword, authRoutes);
+
 app.use('/api/users', authenticate, userRoutes);
 app.use('/api/posts', authenticate, postRoutes);
 app.use('/api/media', authenticate, mediaRoutes);
-app.post('/upload', upload.single('file'), (req, res) => res.send('File uploaded successfully'));
+
+app.post('/upload', upload.single('file'), (req, res) => {
+    res.send({ message: 'File uploaded successfully', fileName: req.file.filename });
+});
 
 app.use(errorHandler);
 
