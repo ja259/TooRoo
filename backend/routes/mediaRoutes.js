@@ -1,7 +1,7 @@
 const express = require('express');
 const multer = require('multer');
 const { GridFsStorage } = require('multer-gridfs-storage');
-const { uploadMedia, getMedia } = require('../controllers/mediaController');
+const { uploadMedia, getMedia } = require('./controllers/mediaController');
 const router = express.Router();
 
 const storage = new GridFsStorage({

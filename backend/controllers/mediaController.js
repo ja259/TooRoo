@@ -1,4 +1,4 @@
-const Video = require('../models/Video');
+const Video = require('./models/Video');
 
 exports.uploadVideo = async (req, res) => {
     const { videoUrl, description, authorId } = req.body;
