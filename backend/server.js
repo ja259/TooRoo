@@ -34,8 +34,8 @@ mongoose.connect(process.env.MONGODB_URI)
 
 // Storage for multer
 const storage = new GridFsStorage({
-    url: process.env.MONGODB_URI,
-    options: {},
+    url: process.env.MONGODB_URI,  // Make sure this line correctly references your MongoDB URI
+    options: { useNewUrlParser: true, useUnifiedTopology: true },
     file: (req, file) => {
         return new Promise((resolve, reject) => {
             crypto.randomBytes(16, (err, buf) => {
@@ -45,13 +45,14 @@ const storage = new GridFsStorage({
                 const filename = buf.toString('hex') + path.extname(file.originalname);
                 const fileInfo = {
                     filename: filename,
-                    bucketName: 'uploads'
+                    bucketName: 'uploads'  // Name of the collection to be used to store files
                 };
                 resolve(fileInfo);
             });
         });
     }
 });
+
 
 const upload = multer({ storage });
 
