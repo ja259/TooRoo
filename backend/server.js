@@ -14,7 +14,6 @@ const { emailService } = require('./utils/emailService');
 // Middleware
 const { errorHandler } = require('./middlewares/errorHandler');
 const { authenticate } = require('./middlewares/authMiddleware');
-const validate = require('./middlewares/validate');
 
 // Route handlers
 const authRoutes = require('./routes/authRoutes');
