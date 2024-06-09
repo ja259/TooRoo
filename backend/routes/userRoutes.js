@@ -4,10 +4,9 @@ const { authenticate } = require('../middlewares/authMiddleware');
 
 const router = express.Router();
 
-// Routes that require user authentication
-router.get('/:id', authenticate, getUserProfile);
-router.put('/:id', authenticate, updateUserProfile);
-router.post('/:id/follow', authenticate, followUser);
-router.post('/:id/unfollow', authenticate, unfollowUser);
+router.get('/:id', authenticate, getUserProfile); // Retrieve user profile
+router.put('/:id', authenticate, updateUserProfile); // Update user profile
+router.post('/:id/follow', authenticate, followUser); // Follow a user
+router.post('/:id/unfollow', authenticate, unfollowUser); // Unfollow a user
 
 module.exports = router;
