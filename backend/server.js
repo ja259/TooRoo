@@ -9,7 +9,7 @@ const multer = require('multer');
 const gridFsStorage = require('./config/gridFsStorageConfig');
 
 // Utility modules
-const { emailService } = require('./utils/emailService'); // Assuming emailService exports a function correctly
+const emailService = require('./utils/emailService'); // Ensure this is a function or correctly handled if it's an object
 
 // Middleware
 const errorHandler = require('./middlewares/errorHandler');
@@ -44,19 +44,20 @@ mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTop
 
 const upload = multer({ storage: gridFsStorage });
 
-// Correctly apply validation middleware before authRoutes handlers
-app.use('/api/auth', validateRegister, authRoutes);
-app.use('/api/auth', validateLogin, authRoutes);
-app.use('/api/auth', validateResetPassword, authRoutes);
+// Separately apply validation middleware to specific routes
+app.use('/api/auth/register', validateRegister, authRoutes);
+app.use('/api/auth/login', validateLogin, authRoutes);
+app.use('/api/auth/reset-password', validateResetPassword, authRoutes);
 
 app.use('/api/users', authenticate, userRoutes);
 app.use('/api/posts', authenticate, postRoutes);
 app.use('/api/media', authenticate, mediaRoutes);
 
 app.post('/upload', upload.single('file'), (req, res) => {
-    res.send({ message: 'File uploaded successfully', fileName: req.file.filename });
+    res.status(200).send({ message: 'File uploaded successfully', fileName: req.file.filename });
 });
 
 app.use(errorHandler);
 
 app.listen(port, () => console.log(`Server running on port ${port}`));
+
