@@ -5,11 +5,11 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const multer = require('multer');
 
-// Import configuration for GridFS
+// Configuration for GridFS
 const gridFsStorage = require('./config/gridFsStorageConfig');
 
 // Utility modules
-const emailService = require('./utils/emailService'); // Ensure this is a function or correctly handled if it's an object
+const emailService = require('./utils/emailService'); // Assuming this exports a callable function
 
 // Middleware
 const errorHandler = require('./middlewares/errorHandler');
@@ -44,20 +44,20 @@ mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTop
 
 const upload = multer({ storage: gridFsStorage });
 
-// Separately apply validation middleware to specific routes
-app.use('/api/auth/register', validateRegister, authRoutes);
-app.use('/api/auth/login', validateLogin, authRoutes);
-app.use('/api/auth/reset-password', validateResetPassword, authRoutes);
+// Apply middleware and routes
+app.use('/api/auth', authRoutes); // Attach auth routes
+authRoutes.post('/register', [validateRegister, register]); // Applying validation middleware for registration
+authRoutes.post('/login', [validateLogin, login]); // Applying validation middleware for login
+authRoutes.post('/reset-password', [validateResetPassword, resetPassword]); // Applying validation middleware for password reset
 
-app.use('/api/users', authenticate, userRoutes);
-app.use('/api/posts', authenticate, postRoutes);
-app.use('/api/media', authenticate, mediaRoutes);
+app.use('/api/users', authenticate, userRoutes); // Routes for user actions
+app.use('/api/posts', authenticate, postRoutes); // Routes for posts
+app.use('/api/media', authenticate, mediaRoutes); // Routes for media
 
 app.post('/upload', upload.single('file'), (req, res) => {
     res.status(200).send({ message: 'File uploaded successfully', fileName: req.file.filename });
 });
 
-app.use(errorHandler);
+app.use(errorHandler); // Error handling
 
 app.listen(port, () => console.log(`Server running on port ${port}`));
-
