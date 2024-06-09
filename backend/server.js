@@ -14,7 +14,6 @@ const emailService = require('./utils/emailService'); // Assuming this exports a
 // Middleware
 const errorHandler = require('./middlewares/errorHandler');
 const authenticate = require('./middlewares/authMiddleware');
-const { validateRegister, validateLogin, validateResetPassword } = require('./middlewares/validate');
 
 // Route handlers
 const authRoutes = require('./routes/authRoutes');
@@ -44,20 +43,17 @@ mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTop
 
 const upload = multer({ storage: gridFsStorage });
 
-// Apply middleware and routes
-app.use('/api/auth', authRoutes); // Attach auth routes
-authRoutes.post('/register', [validateRegister, register]); // Applying validation middleware for registration
-authRoutes.post('/login', [validateLogin, login]); // Applying validation middleware for login
-authRoutes.post('/reset-password', [validateResetPassword, resetPassword]); // Applying validation middleware for password reset
-
-app.use('/api/users', authenticate, userRoutes); // Routes for user actions
-app.use('/api/posts', authenticate, postRoutes); // Routes for posts
-app.use('/api/media', authenticate, mediaRoutes); // Routes for media
+// Attach routes
+app.use('/api/auth', authRoutes);
+app.use('/api/users', authenticate, userRoutes);
+app.use('/api/posts', authenticate, postRoutes);
+app.use('/api/media', authenticate, mediaRoutes);
 
 app.post('/upload', upload.single('file'), (req, res) => {
     res.status(200).send({ message: 'File uploaded successfully', fileName: req.file.filename });
 });
 
-app.use(errorHandler); // Error handling
+app.use(errorHandler); // Error handling middleware
 
 app.listen(port, () => console.log(`Server running on port ${port}`));
+
