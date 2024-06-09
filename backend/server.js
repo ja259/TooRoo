@@ -9,7 +9,7 @@ const multer = require('multer');
 const gridFsStorage = require('./config/gridFsStorageConfig');
 
 // Utility modules
-const emailService = require('./utils/emailService'); // Assuming this exports a callable function
+const emailService = require('./utils/emailService'); // Ensure this exports a callable function
 
 // Middleware
 const errorHandler = require('./middlewares/errorHandler');
@@ -43,7 +43,7 @@ mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTop
 
 const upload = multer({ storage: gridFsStorage });
 
-// Attach routes
+// Correctly attach route handlers
 app.use('/api/auth', authRoutes);
 app.use('/api/users', authenticate, userRoutes);
 app.use('/api/posts', authenticate, postRoutes);
