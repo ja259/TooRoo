@@ -7,7 +7,6 @@ const path = require('path');
 
 const router = express.Router();
 
-// Configure GridFS storage for video uploads
 const storage = new GridFsStorage({
     url: process.env.MONGODB_URI,
     options: { useNewUrlParser: true, useUnifiedTopology: true },
@@ -19,7 +18,7 @@ const storage = new GridFsStorage({
             const filename = buf.toString('hex') + path.extname(file.originalname);
             const fileInfo = {
                 filename: filename,
-                bucketName: 'videos' // Specifies the GridFS bucket name
+                bucketName: 'videos'
             };
             resolve(fileInfo);
         });
@@ -28,10 +27,7 @@ const storage = new GridFsStorage({
 
 const upload = multer({ storage });
 
-// Route to handle video uploads
 router.post('/upload', upload.single('video'), uploadVideo);
-
-// Route to retrieve all videos
 router.get('/', getVideos);
 
 module.exports = router;
