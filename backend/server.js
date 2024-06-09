@@ -5,11 +5,11 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const multer = require('multer');
 
-// Import configuration for GridFS
+// Configuration for GridFS
 const gridFsStorage = require('./config/gridFsStorageConfig');
 
-// Utility modules
-const emailService = require('./utils/emailService'); // Ensure this is properly exporting a function
+// Assuming emailService is a function. Ensure this is not causing the issue.
+const emailService = require('./utils/emailService'); 
 
 // Middleware
 const errorHandler = require('./middlewares/errorHandler');
@@ -44,16 +44,19 @@ mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTop
 
 const upload = multer({ storage: gridFsStorage });
 
-// Correctly integrate routes and middleware
-app.use('/api/auth', authRoutes); // Attach auth routes
-app.use('/api/users', authenticate, userRoutes); // Attach user routes with authentication
-app.use('/api/posts', authenticate, postRoutes); // Attach post routes with authentication
-app.use('/api/media', authenticate, mediaRoutes); // Attach media routes with authentication
+// Ensure that the route handlers are correctly used with their middleware
+app.use('/api/auth', validateRegister, authRoutes);
+app.use('/api/auth', validateLogin, authRoutes);
+app.use('/api/auth', validateResetPassword, authRoutes);
+
+app.use('/api/users', authenticate, userRoutes);
+app.use('/api/posts', authenticate, postRoutes);
+app.use('/api/media', authenticate, mediaRoutes);
 
 app.post('/upload', upload.single('file'), (req, res) => {
     res.status(200).send({ message: 'File uploaded successfully', fileName: req.file.filename });
 });
 
-app.use(errorHandler); // Attach error handler
+app.use(errorHandler);
 
 app.listen(port, () => console.log(`Server running on port ${port}`));
