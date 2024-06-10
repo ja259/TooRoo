@@ -8,13 +8,13 @@ const multer = require('multer');
 // Configuration for GridFS
 const gridFsStorage = require('./config/gridFsStorageConfig');
 
-// Assuming emailService is a function. Ensure this is not causing the issue.
-const emailService = require('./utils/emailService');
+// Utility modules
+const emailService = require('./utils/emailService'); // Make sure this is properly exported and used
 
 // Middleware
 const errorHandler = require('./middlewares/errorHandler');
 const authenticate = require('./middlewares/authMiddleware');
-const validate = require('./middlewares/validate'); // Make sure validate.js exports correctly
+const { validateRegister, validateLogin, validateResetPassword } = require('./middlewares/validate');
 
 // Route handlers
 const authRoutes = require('./routes/authRoutes');
@@ -44,11 +44,15 @@ mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTop
 
 const upload = multer({ storage: gridFsStorage });
 
-// Attach middlewares and routes correctly
+// Apply authentication and validation middleware to routes
 app.use('/api/auth', authRoutes);
-app.use('/api/users', authenticate, userRoutes);
-app.use('/api/posts', authenticate, postRoutes);
-app.use('/api/media', authenticate, mediaRoutes);
+authRoutes.post('/register', [validateRegister], require('../controllers/authController').register);
+authRoutes.post('/login', [validateLogin], require('../controllers/authController').login);
+authRoutes.post('/reset-password', [validateResetPassword], require('../controllers/authController').resetPassword);
+
+app.use('/api/users', [authenticate], userRoutes);
+app.use('/api/posts', [authenticate], postRoutes);
+app.use('/api/media', [authenticate], mediaRoutes);
 
 app.post('/upload', upload.single('file'), (req, res) => {
     res.status(200).send({ message: 'File uploaded successfully', fileName: req.file.filename });
