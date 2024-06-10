@@ -8,12 +8,13 @@ const multer = require('multer');
 // Configuration for GridFS
 const gridFsStorage = require('./config/gridFsStorageConfig');
 
-// Assuming emailService is a function
-const emailService = require('./utils/emailService'); 
+// Assuming emailService is a function. Ensure this is not causing the issue.
+const emailService = require('./utils/emailService');
 
 // Middleware
 const errorHandler = require('./middlewares/errorHandler');
 const authenticate = require('./middlewares/authMiddleware');
+const validate = require('./middlewares/validate'); // Make sure validate.js exports correctly
 
 // Route handlers
 const authRoutes = require('./routes/authRoutes');
@@ -43,7 +44,7 @@ mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTop
 
 const upload = multer({ storage: gridFsStorage });
 
-// Correct way to use validation middleware with specific routes in the router
+// Attach middlewares and routes correctly
 app.use('/api/auth', authRoutes);
 app.use('/api/users', authenticate, userRoutes);
 app.use('/api/posts', authenticate, postRoutes);
@@ -56,4 +57,3 @@ app.post('/upload', upload.single('file'), (req, res) => {
 app.use(errorHandler);
 
 app.listen(port, () => console.log(`Server running on port ${port}`));
-
