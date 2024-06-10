@@ -46,9 +46,9 @@ const upload = multer({ storage: gridFsStorage });
 
 // Apply authentication and validation middleware to routes
 app.use('/api/auth', authRoutes);
-authRoutes.post('/register', [validateRegister], require('../controllers/authController').register);
-authRoutes.post('/login', [validateLogin], require('../controllers/authController').login);
-authRoutes.post('/reset-password', [validateResetPassword], require('../controllers/authController').resetPassword);
+authRoutes.post('/register', [validateRegister], require('./controllers/authController').register);
+authRoutes.post('/login', [validateLogin], require('./controllers/authController').login);
+authRoutes.post('/reset-password', [validateResetPassword], require('./controllers/authController').resetPassword);
 
 app.use('/api/users', [authenticate], userRoutes);
 app.use('/api/posts', [authenticate], postRoutes);
