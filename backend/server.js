@@ -22,8 +22,8 @@ const postRoutes = require('./routes/postRoutes');
 const mediaRoutes = require('./routes/mediaRoutes');
 
 // Business logic modules
-const analyzePreferences = require('../analyzePreferences');
-const recommendContent = require('../recommendContent');
+const analyzePreferences = require('./analyzePreferences');
+const recommendContent = require('./recommendContent');
 
 // Models
 const User = require('./models/User');
