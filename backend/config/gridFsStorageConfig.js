@@ -12,23 +12,19 @@ const mongoURI = process.env.MONGODB_URI;
 const storage = new GridFsStorage({
     url: mongoURI,
     options: { useNewUrlParser: true, useUnifiedTopology: true },
-    file: (req, file) => {
-        return new Promise((resolve, reject) => {
-            // Use crypto to generate unique filenames
-            crypto.randomBytes(16, (err, buf) => {
-                if (err) {
-                    return reject(err);
-                }
-                // Construct filename using random bytes and file extension
-                const filename = buf.toString('hex') + path.extname(file.originalname);
-                const fileInfo = {
-                    filename: filename,
-                    bucketName: 'uploads' // Use 'uploads' bucket to store files
-                };
-                resolve(fileInfo);
-            });
+    file: (req, file) => new Promise((resolve, reject) => {
+        crypto.randomBytes(16, (err, buf) => {
+            if (err) {
+                return reject(err);
+            }
+            const filename = buf.toString('hex') + path.extname(file.originalname);
+            const fileInfo = {
+                filename: filename,
+                bucketName: 'uploads'  // Specifies the GridFS bucket name for uploads
+            };
+            resolve(fileInfo);
         });
-    }
+    })
 });
 
 module.exports = storage;
