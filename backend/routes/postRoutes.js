@@ -30,4 +30,3 @@ router.post('/:id/comment', authenticate, commentOnPost);
 router.delete('/:id', authenticate, deletePost);
 
 module.exports = router;
-
