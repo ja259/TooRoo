@@ -1,11 +1,15 @@
 const User = require('../models/User');
 
 exports.getUserProfile = async (req, res) => {
-    const user = await User.findById(req.params.id).populate('posts');
-    if (!user) {
-        return res.status(404).json({ message: 'User not found!' });
+    try {
+        const user = await User.findById(req.params.id).populate('posts');
+        if (!user) {
+            return res.status(404).json({ message: 'User not found!' });
+        }
+        res.json({ message: 'User profile retrieved successfully', user });
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to retrieve user profile.', error: error.message });
     }
-    res.json({ message: 'User profile retrieved successfully', user });
 };
 
 exports.updateUserProfile = async (req, res) => {
@@ -25,8 +29,8 @@ exports.updateUserProfile = async (req, res) => {
 };
 
 exports.followUser = async (req, res) => {
-    const userId = req.params.id;
-    const currentUserId = req.body.userId;
+    const { id: userId } = req.params;
+    const { userId: currentUserId } = req.body;
 
     if (!currentUserId) {
         return res.status(400).json({ message: 'User ID is required for following.' });
@@ -35,7 +39,7 @@ exports.followUser = async (req, res) => {
         const targetUser = await User.findById(userId);
         const currentUser = await User.findById(currentUserId);
         if (!targetUser || !currentUser) {
-            return res.status 404).json({ message: 'User not found.' });
+            return res.status(404).json({ message: 'User not found.' });
         }
         if (currentUser.following.includes(userId)) {
             return res.status(400).json({ message: 'You are already following this user.' });
@@ -51,8 +55,8 @@ exports.followUser = async (req, res) => {
 };
 
 exports.unfollowUser = async (req, res) => {
-    const userId = req.params.id;
-    const currentUserId = req.body.userId;
+    const { id: userId } = req.params;
+    const { userId: currentUserId } = req.body;
 
     if (!currentUserId) {
         return res.status(400).json({ message: 'User ID is required for unfollowing.' });
