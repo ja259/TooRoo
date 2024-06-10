@@ -76,3 +76,4 @@ exports.unfollowUser = async (req, res) => {
         res.status(500).json({ message: 'Failed to unfollow user.', error: error.message });
     }
 };
+
