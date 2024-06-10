@@ -5,12 +5,10 @@ exports.uploadVideo = async (req, res) => {
     if (!req.file) {
         return res.status(400).json({ message: 'No file provided' });
     }
-
     const { description, authorId } = req.body;
     if (!mongoose.Types.ObjectId.isValid(authorId)) {
         return res.status(400).json({ message: 'Invalid author ID' });
     }
-
     const newVideo = new Video({
         videoUrl: req.file.filename, // Filename stored by GridFS
         description,
@@ -37,7 +35,6 @@ exports.deleteVideo = async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(videoId)) {
         return res.status(400).json({ message: 'Invalid video ID' });
     }
-
     try {
         const video = await Video.findByIdAndRemove(videoId);
         if (!video) {
@@ -52,11 +49,9 @@ exports.deleteVideo = async (req, res) => {
 exports.updateVideo = async (req, res) => {
     const { videoId } = req.params;
     const { description } = req.body;
-
     if (!mongoose.Types.ObjectId.isValid(videoId)) {
         return res.status(400).json({ message: 'Invalid video ID' });
     }
-
     try {
         const video = await Video.findByIdAndUpdate(videoId, { description }, { new: true });
         if (!video) {
@@ -67,3 +62,4 @@ exports.updateVideo = async (req, res) => {
         res.status(500).json({ message: 'Error updating video', error: error.message });
     }
 };
+
