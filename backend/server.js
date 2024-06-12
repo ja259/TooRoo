@@ -10,9 +10,7 @@ const emailService = require('./utils/emailService');
 
 const errorHandler = require('./middlewares/errorHandler');
 const authenticate = require('./middlewares/authMiddleware');
-const validateRegister = require('./middlewares/validate').validateRegister;
-const validateLogin = require('./middlewares/validate').validateLogin;
-const validateResetPassword = require('./middlewares/validate').validateResetPassword;
+const { validateRegister, validateLogin, validateResetPassword } = require('./middlewares/validate');
 
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
@@ -32,9 +30,9 @@ mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTop
 const upload = multer({ storage: gridFsStorage });
 
 app.use('/api/auth', authRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/posts', postRoutes);
-app.use('/api/media', mediaRoutes);
+app.use('/api/users', authenticate, userRoutes);
+app.use('/api/posts', authenticate, postRoutes);
+app.use('/api/media', authenticate, mediaRoutes);
 
 app.post('/upload', upload.single('file'), (req, res) => {
     res.status(200).send({ message: 'File uploaded successfully', fileName: req.file.filename });
