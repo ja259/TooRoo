@@ -12,6 +12,7 @@ const errorHandler = require('./middlewares/errorHandler');
 const authenticate = require('./middlewares/authMiddleware');
 const { validateRegister, validateLogin, validateResetPassword } = require('./middlewares/validate');
 
+
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const postRoutes = require('./routes/postRoutes');

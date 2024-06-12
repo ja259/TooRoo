@@ -1,6 +1,6 @@
 const { body, validationResult } = require('express-validator');
 
-exports.validateRegister = [
+const validateRegister = [
     body('username').notEmpty().withMessage('Username is required'),
     body('email').isEmail().withMessage('Provide a valid email'),
     body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters long'),
@@ -13,7 +13,7 @@ exports.validateRegister = [
     },
 ];
 
-exports.validateLogin = [
+const validateLogin = [
     body('email').notEmpty().withMessage('Email is required'),
     body('password').notEmpty().withMessage('Password is required'),
     (req, res, next) => {
@@ -25,7 +25,7 @@ exports.validateLogin = [
     },
 ];
 
-exports.validateResetPassword = [
+const validateResetPassword = [
     body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters long'),
     (req, res, next) => {
         const errors = validationResult(req);
@@ -35,3 +35,9 @@ exports.validateResetPassword = [
         next();
     },
 ];
+
+module.exports = {
+    validateRegister,
+    validateLogin,
+    validateResetPassword
+};
