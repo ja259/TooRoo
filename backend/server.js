@@ -6,11 +6,10 @@ const bodyParser = require('body-parser');
 const multer = require('multer');
 
 const gridFsStorage = require('./config/gridFsStorageConfig');
-const emailService = require('./utils/emailService');
 
 const errorHandler = require('./middlewares/errorHandler');
 const authenticate = require('./middlewares/authMiddleware');
-const { validateRegister, validateLogin, validateResetPassword } = require('./middlewares/validate');
+
 
 
 const authRoutes = require('./routes/authRoutes');
