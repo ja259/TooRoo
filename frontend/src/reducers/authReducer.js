@@ -1,33 +1,32 @@
-// src/reducers/authReducer.js
+import { createSlice } from '@reduxjs/toolkit';
+import { login, logout } from '../actions/authActions';
+
 const initialState = {
-    isAuthenticated: false,
-    user: null,
-    error: null
+  user: JSON.parse(localStorage.getItem('user')) || null,
+  isAuthenticated: !!localStorage.getItem('user'),
+  error: null,
 };
 
-export const authReducer = (state = initialState, action) => {
-    switch (action.type) {
-        case 'LOGIN_SUCCESS':
-            return {
-                ...state,
-                isAuthenticated: true,
-                user: action.payload.user,
-                error: null
-            };
-        case 'LOGIN_FAIL':
-            return {
-                ...state,
-                error: action.payload.error
-            };
-        case 'LOGOUT':
-            return {
-                ...state,
-                isAuthenticated: false,
-                user: null
-            };
-        default:
-            return state;
-    }
-};
+export const authSlice = createSlice({
+  name: 'auth',
+  initialState,
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(login.fulfilled, (state, action) => {
+        state.user = action.payload;
+        state.isAuthenticated = true;
+        state.error = null;
+      })
+      .addCase(login.rejected, (state, action) => {
+        state.error = action.payload;
+      })
+      .addCase(logout.fulfilled, (state) => {
+        state.user = null;
+        state.isAuthenticated = false;
+        state.error = null;
+      });
+  }
+});
 
-export default authReducer;
+export default authSlice.reducer;
