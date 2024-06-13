@@ -1,29 +1,33 @@
-import { LOGIN_SUCCESS, LOGIN_FAIL, LOGOUT } from '../actions/authActions';
-
-const initialState = { isLoggedIn: false, user: null };
+// src/reducers/authReducer.js
+const initialState = {
+    isAuthenticated: false,
+    user: null,
+    error: null
+};
 
 export const authReducer = (state = initialState, action) => {
     switch (action.type) {
-        case LOGIN_SUCCESS:
+        case 'LOGIN_SUCCESS':
             return {
                 ...state,
-                isLoggedIn: true,
+                isAuthenticated: true,
                 user: action.payload.user,
+                error: null
             };
-        case LOGIN_FAIL:
+        case 'LOGIN_FAIL':
             return {
                 ...state,
-                isLoggedIn: false,
-                user: null,
-                error: action.payload.error,
+                error: action.payload.error
             };
-        case LOGOUT:
+        case 'LOGOUT':
             return {
                 ...state,
-                isLoggedIn: false,
-                user: null,
+                isAuthenticated: false,
+                user: null
             };
         default:
             return state;
     }
 };
+
+export default authReducer;

@@ -1,10 +1,9 @@
-// src/App.js
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { login, logout } from './actions/authActions'; // Ensure these are correctly imported
-import './App.css';
+import { checkAuthentication, logoutUser } from './actions/authActions';  // Ensure these actions are correctly defined in your authActions file
 
+// Component Imports
 import Login from './Login';
 import Register from './Register';
 import Profile from './Profile';
@@ -24,16 +23,21 @@ import Notifications from './Notifications';
 import Timeline from './Timeline';
 
 const App = () => {
-    const { isAuthenticated, user } = useSelector(state => state.auth);
+    const user = useSelector(state => state.auth.user);
+    const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
     const dispatch = useDispatch();
 
+    useEffect(() => {
+        dispatch(checkAuthentication());  // Assume this action verifies user auth status
+    }, [dispatch]);
+
     const handleLogout = () => {
-        dispatch(logout());
+        dispatch(logoutUser());
     };
 
     return (
         <Router>
-            <Navbar user={user} onLogout={handleLogout} />
+            {isAuthenticated && <Navbar user={user} onLogout={handleLogout} />}
             <div className="App">
                 <Routes>
                     {!isAuthenticated ? (
