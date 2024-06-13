@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { login, logout } from './actions/authActions'; // Ensuring these are imported
+import { login, logout, register } from './actions/authActions'; // Ensure registration is also imported if needed
 
 import './App.css';
 import Login from './Login';
@@ -27,9 +27,12 @@ const App = () => {
     const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
     const dispatch = useDispatch();
 
-    // Function to handle login directly using Redux
     const handleLogin = (emailOrPhone, password) => {
         dispatch(login(emailOrPhone, password));
+    };
+
+    const handleRegister = (username, email, password) => {
+        dispatch(register(username, email, password));
     };
 
     const handleLogout = () => {
@@ -44,7 +47,7 @@ const App = () => {
                     {!isAuthenticated ? (
                         <>
                             <Route path="/login" element={<Login onLogin={handleLogin} />} />
-                            <Route path="/register" element={<Register />} />
+                            <Route path="/register" element={<Register onRegister={handleRegister} />} />
                             <Route path="/forgot-password" element={<ForgotPassword />} />
                             <Route path="/reset-password/:token" element={<ResetPassword />} />
                             <Route path="*" element={<Navigate to="/login" />} />
