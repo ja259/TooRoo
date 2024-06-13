@@ -1,10 +1,10 @@
+// src/App.js
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { checkAuthentication, logoutUser } from './actions/authActions'; // Import your action creators
+import { login, logout } from './actions/authActions'; // Ensure these are correctly imported
 import './App.css';
 
-// Component Imports
 import Login from './Login';
 import Register from './Register';
 import Profile from './Profile';
@@ -24,16 +24,11 @@ import Notifications from './Notifications';
 import Timeline from './Timeline';
 
 const App = () => {
-    const user = useSelector(state => state.auth.user);
-    const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
+    const { isAuthenticated, user } = useSelector(state => state.auth);
     const dispatch = useDispatch();
 
-    useEffect(() => {
-        dispatch(checkAuthentication());
-    }, [dispatch]);
-
     const handleLogout = () => {
-        dispatch(logoutUser());
+        dispatch(logout());
     };
 
     return (
