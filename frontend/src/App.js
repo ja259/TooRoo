@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { checkAuthentication, logoutUser } from './actions/authActions';
-
+import { logout } from './actions/authActions';
+import './App.css';
 
 // Component Imports
 import Login from './Login';
@@ -24,52 +24,47 @@ import Notifications from './Notifications';
 import Timeline from './Timeline';
 
 const App = () => {
-    const user = useSelector(state => state.auth.user);
-    const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
-    const dispatch = useDispatch();
+  const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
+  const dispatch = useDispatch();
 
-    useEffect(() => {
-        dispatch(checkAuthentication());  // Assume this action verifies user auth status
-    }, [dispatch]);
+  const handleLogout = () => {
+    dispatch(logout());
+  };
 
-    const handleLogout = () => {
-        dispatch(logoutUser());
-    };
-
-    return (
-        <Router>
-            {isAuthenticated && <Navbar user={user} onLogout={handleLogout} />}
-            <div className="App">
-                <Routes>
-                    {!isAuthenticated ? (
-                        <>
-                            <Route path="/login" element={<Login />} />
-                            <Route path="/register" element={<Register />} />
-                            <Route path="/forgot-password" element={<ForgotPassword />} />
-                            <Route path="/reset-password/:token" element={<ResetPassword />} />
-                            <Route path="*" element={<Navigate to="/login" />} />
-                        </>
-                    ) : (
-                        <>
-                            <Route path="/" element={<Timeline />} />
-                            <Route path="/profile/:id" element={<Profile />} />
-                            <Route path="/search" element={<Search />} />
-                            <Route path="/live" element={<Live />} />
-                            <Route path="/ar-filters" element={<ARFilters />} />
-                            <Route path="/virtual-events" element={<VirtualEvents />} />
-                            <Route path="/you-all" element={<YouAll />} />
-                            <Route path="/following" element={<Following />} />
-                            <Route path="/inbox" element={<Inbox />} />
-                            <Route path="/create-video" element={<CreateVideo />} />
-                            <Route path="/notifications" element={<Notifications />} />
-                            <Route path="*" element={<Navigate to="/" />} />
-                        </>
-                    )}
-                </Routes>
-                {isAuthenticated && <BottomNav />}
-            </div>
-        </Router>
-    );
+  return (
+    <Router>
+      <Navbar onLogout={handleLogout} />
+      <div className="App">
+        <Routes>
+          {!isAuthenticated ? (
+            <>
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password/:token" element={<ResetPassword />} />
+              <Route path="*" element={<Navigate to="/login" />} />
+            </>
+          ) : (
+            <>
+              <Route path="/" element={<Timeline />} />
+              <Route path="/profile/:id" element={<Profile />} />
+              <Route path="/search" element={<Search />} />
+              <Route path="/live" element={<Live />} />
+              <Route path="/ar-filters" element={<ARFilters />} />
+              <Route path="/virtual-events" element={<VirtualEvents />} />
+              <Route path="/you-all" element={<YouAll />} />
+              <Route path="/following" element={<Following />} />
+              <Route path="/inbox" element={<Inbox />} />
+              <Route path="/create-video" element={<CreateVideo />} />
+              <Route path="/notifications" element={<Notifications />} />
+              <Route path="*" element={<Navigate to="/" />} />
+            </>
+          )}
+        </Routes>
+        {isAuthenticated && <BottomNav />}
+      </div>
+    </Router>
+  );
 };
 
 export default App;
