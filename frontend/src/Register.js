@@ -8,38 +8,45 @@ const Register = ({ onRegister }) => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    onRegister(username, email, password);
+    if(onRegister) {
+        onRegister(username, email, password);
+    } else {
+        console.error('Registration function not available');
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input
-        type="text"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-        placeholder="Username"
-        required
-      />
-      <input
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="Email"
-        required
-      />
-      <input
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="Password"
-        required
-      />
-      <button type="submit">Register</button>
-      <div>
-        <Link to="/login">Already have an account? Login</Link>
-      </div>
-    </form>
+    <div className="register-container">
+        <form onSubmit={handleSubmit}>
+          <input
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            placeholder="Username"
+            required
+          />
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Email"
+            required
+          />
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Password"
+            required
+          />
+          <button type="submit">Register</button>
+          <div>
+            <Link to="/login">Already have an account? Login</Link>
+          </div>
+        </form>
+    </div>
   );
 };
 
 export default Register;
+
