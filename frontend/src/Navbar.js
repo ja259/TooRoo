@@ -1,9 +1,12 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import './Navbar.css';
 import { FaBroadcastTower, FaSearch } from 'react-icons/fa';
 
-const Navbar = ({ user }) => {
+const Navbar = () => {
+    const user = useSelector(state => state.auth.user);
+
     return (
         <div className="navbar">
             <div className="navbar-left">
@@ -14,7 +17,8 @@ const Navbar = ({ user }) => {
             </div>
             <div className="navbar-right">
                 <NavLink to="/search" activeClassName="active"><FaSearch /></NavLink>
-                <span>{user.username}</span>
+                {/* Safeguard against undefined user */}
+                {user ? <span>{user.username}</span> : <NavLink to="/login" activeClassName="active">Login</NavLink>}
             </div>
         </div>
     );
