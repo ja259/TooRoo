@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import logo from './logo.png';  // Adjust the path to your logo
+import logo from './logo.png'; // Adjust the path to your logo
 
 const Login = ({ onLogin }) => {
     const [emailOrPhone, setEmailOrPhone] = useState('');
@@ -8,7 +8,7 @@ const Login = ({ onLogin }) => {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        onLogin(emailOrPhone, password);
+        onLogin(emailOrPhone, password);  // Make sure onLogin is passed correctly
     };
 
     return (
