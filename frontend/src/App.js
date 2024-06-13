@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { checkAuthentication, logoutUser } from './actions/authActions';  // Ensure these actions are correctly defined in your authActions file
+import { checkAuthentication, login, logout } from './actions/authActions';
+
 
 // Component Imports
 import Login from './Login';
