@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { checkAuthentication, login, logout } from './actions/authActions';
+import { checkAuthentication, logoutUser } from './actions/authActions';
 
 
 // Component Imports
