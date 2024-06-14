@@ -50,6 +50,31 @@ exports.getTimelinePosts = async (req, res) => {
     }
 };
 
+exports.getYouAllVideos = async (req, res) => {
+    try {
+        // Example: Fetch posts that have a videoUrl and maybe some specific tags or are popular
+        const videos = await Post.find({ videoUrl: { $exists: true } }).populate('author', 'username profilePicture');
+        res.json({ message: 'Videos retrieved successfully', videos });
+    } catch (error) {
+        console.error('Failed to retrieve videos:', error);
+        res.status(500).send('Failed to retrieve videos');
+    }
+};
+
+exports.getFollowingVideos = async (req, res) => {
+    const userId = req.user._id;  // Assuming there's user info in req.user from the authentication middleware
+    try {
+        // Example: Fetch posts from users the current user is following
+        const user = await User.findById(userId).populate('following');
+        const followingIds = user.following.map(user => user._id);
+        const videos = await Post.find({ author: { $in: followingIds }, videoUrl: { $exists: true } }).populate('author', 'username profilePicture');
+        res.json({ message: 'Following videos retrieved successfully', videos });
+    } catch (error) {
+        console.error('Failed to retrieve following videos:', error);
+        res.status(500).send('Failed to retrieve following videos');
+    }
+};
+
 exports.likePost = async (req, res) => {
     const { id } = req.params;
     const { userId } = req.body;

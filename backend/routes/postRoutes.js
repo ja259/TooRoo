@@ -1,9 +1,18 @@
 const express = require('express');
-const { createPost, getPosts, likePost, commentOnPost, deletePost, getTimelinePosts } = require('../controllers/postController');
+const { 
+    createPost, 
+    getPosts, 
+    likePost, 
+    commentOnPost, 
+    deletePost, 
+    getTimelinePosts,
+    getYouAllVideos,
+    getFollowingVideos
+} = require('../controllers/postController');
 const { authenticate } = require('../middlewares/authMiddleware');
 const multer = require('multer');
 
-// Set up multer for file storage
+// Configure multer for image file uploads
 const storage = multer.diskStorage({
     destination: (req, file, cb) => cb(null, './uploads/'),
     filename: (req, file, cb) => {
@@ -12,7 +21,6 @@ const storage = multer.diskStorage({
     }
 });
 
-// Define what file types are acceptable
 const fileFilter = (req, file, cb) => {
     if (file.mimetype.startsWith('image/')) {
         cb(null, true);
@@ -25,12 +33,14 @@ const upload = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 }, fileFilt
 
 const router = express.Router();
 
-// Post routes
-router.post('/', authenticate, upload.single('postImage'), createPost); // Create a new post
-router.get('/', authenticate, getPosts); // Get all posts
-router.get('/timeline-posts', authenticate, getTimelinePosts); // Get timeline posts
-router.put('/:id/like', authenticate, likePost); // Like a post
-router.post('/:id/comment', authenticate, commentOnPost); // Comment on a post
-router.delete('/:id', authenticate, deletePost); // Delete a post
+// Routes for posts management
+router.post('/', authenticate, upload.single('postImage'), createPost);
+router.get('/', authenticate, getPosts);
+router.get('/timeline-posts', authenticate, getTimelinePosts);
+router.get('/you-all-videos', authenticate, getYouAllVideos);
+router.get('/following-videos', authenticate, getFollowingVideos);
+router.put('/:id/like', authenticate, likePost);
+router.post('/:id/comment', authenticate, commentOnPost);
+router.delete('/:id', authenticate, deletePost);
 
 module.exports = router;
