@@ -40,6 +40,16 @@ exports.getPosts = async (req, res) => {
     }
 };
 
+exports.getTimelinePosts = async (req, res) => {
+    try {
+        const posts = await Post.find().populate('author', 'username profilePicture'); // Adjust the populated fields as needed for your timeline
+        res.json(posts);
+    } catch (error) {
+        console.error('Failed to retrieve posts:', error);
+        res.status(500).send('Failed to retrieve posts');
+    }
+};
+
 exports.likePost = async (req, res) => {
     const { id } = req.params;
     const { userId } = req.body;
@@ -108,3 +118,4 @@ exports.deletePost = async (req, res) => {
         res.status(500).json({ message: 'Internal server error', error: error.toString() });
     }
 };
+
