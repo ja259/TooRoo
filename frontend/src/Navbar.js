@@ -1,24 +1,23 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import './Navbar.css';
 import { FaBroadcastTower, FaSearch } from 'react-icons/fa';
 
-const Navbar = () => {
-    const user = useSelector(state => state.auth.user);
+const Navbar = ({ user }) => {
+    // Helper function to determine active link
+    const getActiveLinkClass = ({ isActive }) => isActive ? 'active' : '';
 
     return (
         <div className="navbar">
             <div className="navbar-left">
-                <NavLink to="/live" activeClassName="active"><FaBroadcastTower /></NavLink>
-                <NavLink to="/following" activeClassName="active">Following</NavLink>
-                <NavLink to="/you-all" activeClassName="active">You All</NavLink>
-                <NavLink to="/" activeClassName="active">Timeline</NavLink>
+                <NavLink to="/live" className={getActiveLinkClass}><FaBroadcastTower /></NavLink>
+                <NavLink to="/following" className={getActiveLinkClass}>Following</NavLink>
+                <NavLink to="/you-all" className={getActiveLinkClass}>You All</NavLink>
+                <NavLink to="/" className={getActiveLinkClass}>Timeline</NavLink>
             </div>
             <div className="navbar-right">
-                <NavLink to="/search" activeClassName="active"><FaSearch /></NavLink>
-                {/* Safeguard against undefined user */}
-                {user ? <span>{user.username}</span> : <NavLink to="/login" activeClassName="active">Login</NavLink>}
+                <NavLink to="/search" className={getActiveLinkClass}><FaSearch /></NavLink>
+                <span>{user?.username}</span> {/* Safeguarding against undefined user */}
             </div>
         </div>
     );
