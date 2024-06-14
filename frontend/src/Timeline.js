@@ -1,22 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './Timeline.css';
+import { FaHeart, FaComment, FaShare } from 'react-icons/fa';
 
 const Timeline = () => {
     const [posts, setPosts] = useState([]);
+    const [error, setError] = useState('');
 
     useEffect(() => {
+        const fetchPosts = async () => {
+            try {
+                const response = await axios.get('http://localhost:5000/api/timeline-posts');
+                setPosts(response.data);
+            } catch (error) {
+                setError('Error fetching posts');
+                console.error('Error fetching posts:', error);
+            }
+        };
+
         fetchPosts();
     }, []);
 
-    const fetchPosts = async () => {
-        try {
-            const response = await axios.get('http://localhost:5000/timeline-posts');
-            setPosts(response.data);
-        } catch (error) {
-            console.error('Error fetching posts:', error);
-        }
-    };
+    if (error) {
+        return <div className="error">{error}</div>;
+    }
 
     return (
         <div className="timeline">
@@ -31,9 +38,9 @@ const Timeline = () => {
                         {post.videoUrl && <video src={post.videoUrl} controls className="post-video"></video>}
                     </div>
                     <div className="post-footer">
-                        <button className="like-button">Like</button>
-                        <button className="comment-button">Comment</button>
-                        <button className="share-button">Share</button>
+                        <FaHeart className="icon" title="Like" />
+                        <FaComment className="icon" title="Comment" />
+                        <FaShare className="icon" title="Share" />
                     </div>
                 </div>
             ))}
