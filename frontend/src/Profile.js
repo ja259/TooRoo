@@ -1,7 +1,7 @@
 // src/Profile.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FaEdit, FaShare, FaUserPlus, FaHome, FaInbox, FaBell, FaUser, FaVideo } from 'react-icons/fa';
+import { FaEdit, FaShare, FaUserPlus, FaHome, FaInbox, FaBell, FaUser, FaVideo, FaThumbsUp, FaComment } from 'react-icons/fa';
 import './Profile.css';
 import { NavLink } from 'react-router-dom';
 
