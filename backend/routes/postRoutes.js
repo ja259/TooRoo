@@ -1,16 +1,18 @@
 const express = require('express');
-const { 
-    createPost, 
-    getPosts, 
-    likePost, 
-    commentOnPost, 
-    deletePost, 
+const {
+    createPost,
+    getPosts,
+    likePost,
+    commentOnPost,
+    deletePost,
     getTimelinePosts,
     getYouAllVideos,
     getFollowingVideos
 } = require('../controllers/postController');
 const { authenticate } = require('../middlewares/authMiddleware');
 const multer = require('multer');
+
+const router = express.Router();  // Define router right after imports and before using it
 
 // Configure multer for image file uploads
 const storage = multer.diskStorage({
@@ -31,6 +33,17 @@ const fileFilter = (req, file, cb) => {
 
 const upload = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 }, fileFilter });
 
+// Routes for posts management
+router.post('/', authenticate, upload.single('postImage'), createPost);
+router.get('/', authenticate, getPosts);
+router.get('/timeline-posts', authenticate, getTimelinePosts);
+router.get('/you-all-videos', authenticate, getYouAllVideos);
+router.get('/following-videos', authenticate, getFollowingVideos);
+router.put('/:id/like', authenticate, likePost);
+router.post('/:id/comment', authenticate, commentOnPost);
+router.delete('/:id', authenticate, deletePost);
+
+// Endpoint definitions for fetching specific content
 router.get('/timeline-posts', async (req, res) => {
     try {
         const posts = await Post.find().populate('author', 'username profilePicture').sort({ createdAt: -1 });
@@ -74,18 +87,5 @@ router.get('/following-videos', authenticate, async (req, res) => {
         res.status(500).json({ message: 'Failed to retrieve following videos', error: error.message });
     }
 });
-
-
-const router = express.Router();
-
-// Routes for posts management
-router.post('/', authenticate, upload.single('postImage'), createPost);
-router.get('/', authenticate, getPosts);
-router.get('/timeline-posts', authenticate, getTimelinePosts);
-router.get('/you-all-videos', authenticate, getYouAllVideos);
-router.get('/following-videos', authenticate, getFollowingVideos);
-router.put('/:id/like', authenticate, likePost);
-router.post('/:id/comment', authenticate, commentOnPost);
-router.delete('/:id', authenticate, deletePost);
 
 module.exports = router;
