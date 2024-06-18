@@ -65,6 +65,7 @@ module.exports = {
     new webpack.HotModuleReplacementPlugin(),
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, 'public', 'index.html'),
+      favicon: path.resolve(__dirname, 'src', 'logo.png'), // This will handle the favicon
     }),
   ],
 };
