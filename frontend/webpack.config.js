@@ -37,12 +37,30 @@ module.exports = {
         test: /\.css$/,
         use: ['style-loader', 'css-loader'],
       },
+      {
+        test: /\.(png|jpg|jpeg|gif|svg)$/,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: '[name].[ext]',
+              outputPath: 'images/',
+            },
+          },
+        ],
+      },
     ],
   },
   resolve: {
     extensions: ['.js', '.jsx'],
+    alias: {
+      react: path.resolve('./node_modules/react'),
+    },
   },
   plugins: [
+    new webpack.IgnorePlugin({
+      resourceRegExp: /^fs$/,
+    }),
     new webpack.HotModuleReplacementPlugin(),
   ],
 };
