@@ -1,5 +1,4 @@
 const path = require('path');
-const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
@@ -20,12 +19,6 @@ module.exports = {
     rules: [
       {
         test: /\.js$/,
-        enforce: 'pre',
-        exclude: /node_modules\/face-api.js/,
-        use: ['source-map-loader'],
-      },
-      {
-        test: /\.(js|jsx)$/,
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
@@ -52,20 +45,10 @@ module.exports = {
       },
     ],
   },
-  resolve: {
-    extensions: ['.js', '.jsx'],
-    alias: {
-      react: path.resolve('./node_modules/react'),
-    },
-  },
   plugins: [
-    new webpack.IgnorePlugin({
-      resourceRegExp: /^fs$/,
-    }),
-    new webpack.HotModuleReplacementPlugin(),
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, 'public', 'index.html'),
-      favicon: path.resolve(__dirname, 'src', 'logo.png'), // This will handle the favicon
+      favicon: path.resolve(__dirname, 'src', 'logo.png'),
     }),
   ],
 };
