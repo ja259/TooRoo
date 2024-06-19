@@ -28,11 +28,11 @@ const App = () => {
     const dispatch = useDispatch();
 
     const handleLogin = (emailOrPhone, password) => {
-        dispatch(login(emailOrPhone, password));
+        dispatch(login({ emailOrPhone, password }));
     };
 
     const handleRegister = (username, email, password) => {
-        dispatch(register(username, email, password));
+        dispatch(register({ username, email, password }));
     };
 
     const handleLogout = () => {
