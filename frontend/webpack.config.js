@@ -9,11 +9,13 @@ module.exports = {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
     publicPath: '/',
-    clean: true, // Ensures the output directory is cleaned before each build
+    clean: true,
   },
   devtool: 'source-map',
   devServer: {
-    static: path.resolve(__dirname, 'dist'),
+    static: {
+      directory: path.join(__dirname, 'public'),
+    },
     hot: true,
     historyApiFallback: true,
     port: 8080,
@@ -61,6 +63,6 @@ module.exports = {
     }),
   ],
   resolve: {
-    extensions: ['.js', '.jsx'], // Ensures you can import files without specifying these extensions
+    extensions: ['.js', '.jsx'],
   },
 };
