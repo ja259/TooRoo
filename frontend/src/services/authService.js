@@ -2,15 +2,30 @@ import axios from 'axios';
 
 const API_URL = 'http://localhost:5000/api/auth/';
 
+const setAuthToken = (token) => {
+  if (token) {
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+  } else {
+    delete axios.defaults.headers.common['Authorization'];
+  }
+};
+
 const register = async (username, email, password) => {
   try {
-    const response = await axios.post(`${API_URL}register`, { username, email, password });
-    if (response.data.token) {
-      localStorage.setItem('user', JSON.stringify(response.data));
+    const response = await axios.post(`${API_URL}register`, { username, email, password }, {
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      withCredentials: true
+    });
+    const { data } = response;
+    if (data.token) {
+      localStorage.setItem('user', JSON.stringify(data));
+      setAuthToken(data.token);
     }
     return {
       success: true,
-      data: response.data
+      data: data
     };
   } catch (error) {
     return {
@@ -22,13 +37,20 @@ const register = async (username, email, password) => {
 
 const login = async (emailOrPhone, password) => {
   try {
-    const response = await axios.post(`${API_URL}login`, { emailOrPhone, password });
-    if (response.data.token) {
-      localStorage.setItem('user', JSON.stringify(response.data));
+    const response = await axios.post(`${API_URL}login`, { emailOrPhone, password }, {
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      withCredentials: true
+    });
+    const { data } = response;
+    if (data.token) {
+      localStorage.setItem('user', JSON.stringify(data));
+      setAuthToken(data.token);
     }
     return {
       success: true,
-      data: response.data
+      data: data
     };
   } catch (error) {
     return {
@@ -40,12 +62,18 @@ const login = async (emailOrPhone, password) => {
 
 const logout = () => {
   localStorage.removeItem('user');
+  setAuthToken(null);
+};
+
+const getUser = () => {
+  return JSON.parse(localStorage.getItem('user'));
 };
 
 const authService = {
   register,
   login,
-  logout
+  logout,
+  getUser
 };
 
 export default authService;
