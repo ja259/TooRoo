@@ -1,6 +1,5 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const { DefinePlugin, IgnorePlugin } = require('webpack');
 
 module.exports = {
   mode: 'development',
@@ -38,15 +37,10 @@ module.exports = {
       },
       {
         test: /\.(png|jpg|jpeg|gif|svg)$/,
-        use: [
-          {
-            loader: 'file-loader',
-            options: {
-              name: '[name].[ext]',
-              outputPath: 'images/',
-            },
-          },
-        ],
+        type: 'asset/resource',
+        generator: {
+          filename: 'images/[name][ext][query]'
+        }
       },
     ],
   },
@@ -54,12 +48,6 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, 'public', 'index.html'),
       favicon: path.resolve(__dirname, 'src', 'logo.png'),
-    }),
-    new DefinePlugin({
-      'process.env.PUBLIC_URL': JSON.stringify(''),
-    }),
-    new IgnorePlugin({
-      resourceRegExp: /^fs$/,
     }),
   ],
   resolve: {
