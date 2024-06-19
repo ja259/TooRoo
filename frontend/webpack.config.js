@@ -1,5 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const webpack = require('webpack');
 
 module.exports = {
   mode: 'development',
@@ -48,6 +49,9 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, 'public', 'index.html'),
       favicon: path.resolve(__dirname, 'src', 'logo.png'),
+    }),
+    new webpack.IgnorePlugin({
+      resourceRegExp: /^fs$/
     }),
   ],
   resolve: {
