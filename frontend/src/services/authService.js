@@ -37,6 +37,7 @@ const register = async (username, email, password) => {
 
 const login = async (emailOrPhone, password) => {
   try {
+    console.log('Sending login request:', { emailOrPhone, password });
     const response = await axios.post(`${API_URL}login`, { emailOrPhone, password }, {
       headers: {
         'Content-Type': 'application/json'
@@ -53,6 +54,7 @@ const login = async (emailOrPhone, password) => {
       data: data
     };
   } catch (error) {
+    console.error('Login error:', error.response?.data);
     return {
       success: false,
       message: error.response?.data?.message || 'Unable to login. Please check your credentials.'
