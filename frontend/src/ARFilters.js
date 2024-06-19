@@ -19,7 +19,7 @@ const ARFilters = () => {
                 .then((stream) => {
                     video.srcObject = stream;
                 })
-                .catch((err) => console.error(err));
+                .catch((err) => console.error('Error accessing webcam: ', err));
         };
 
         const handleVideoPlay = () => {
@@ -62,3 +62,4 @@ const ARFilters = () => {
 };
 
 export default ARFilters;
+
