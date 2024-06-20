@@ -11,7 +11,12 @@ const Timeline = () => {
     useEffect(() => {
         const fetchPosts = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/api/timeline-posts');
+                const token = JSON.parse(localStorage.getItem('user')).token;
+                const response = await axios.get('http://localhost:5000/api/timeline-posts', {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
                 setPosts(response.data);
             } catch (error) {
                 setError('Error fetching posts');
