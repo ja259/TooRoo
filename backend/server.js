@@ -9,26 +9,27 @@ const path = require('path');
 // Import configurations and middlewares
 const gridFsStorage = require('./config/gridFsStorageConfig');
 const errorHandler = require('./middlewares/errorHandler');
-const authenticate = require('./middlewares/authMiddleware');
+const { authenticate } = require('./middlewares/authMiddleware');
 
 // Import routes
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const postRoutes = require('./routes/postRoutes');
 const mediaRoutes = require('./routes/mediaRoutes');
-const timelineRoutes = require('./routes/timelineRoutes');
+const timelineRoutes = require('./routes/timelineRoutes'); // Add timeline routes
 
 const app = express();
 const port = process.env.PORT || 5000;
 
 // Middleware configurations
 app.use(cors({ 
-    origin: process.env.CORS_ORIGIN.split(','),
+    origin: ['http://localhost:8080', 'https://ja259.github.io'],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
     optionsSuccessStatus: 200
 }));
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -42,13 +43,13 @@ const upload = multer({ storage: gridFsStorage });
 
 // API routes
 app.use('/api/auth', authRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/posts', postRoutes);
-app.use('/api/media', mediaRoutes);
-app.use('/api/timeline-posts', timelineRoutes);
+app.use('/api/users', authenticate, userRoutes);  // Protect user routes
+app.use('/api/posts', authenticate, postRoutes);  // Protect post routes
+app.use('/api/media', authenticate, mediaRoutes); // Protect media routes
+app.use('/api/timeline-posts', authenticate, timelineRoutes); // Protect timeline routes
 
 // File upload endpoint
-app.post('/upload', upload.single('file'), (req, res) => {
+app.post('/upload', authenticate, upload.single('file'), (req, res) => {
     res.status(200).send({ message: 'File uploaded successfully', fileName: req.file.filename });
 });
 

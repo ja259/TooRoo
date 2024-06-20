@@ -10,12 +10,19 @@ const Timeline = () => {
 
     useEffect(() => {
         const fetchPosts = async () => {
+            const user = JSON.parse(localStorage.getItem('user'));
+            const token = user?.token;
+            if (!token) {
+                setError('User not authenticated');
+                setLoading(false);
+                return;
+            }
             try {
-                const token = JSON.parse(localStorage.getItem('user')).token;
                 const response = await axios.get('http://localhost:5000/api/timeline-posts', {
                     headers: {
-                        Authorization: `Bearer ${token}`
-                    }
+                        'Authorization': `Bearer ${token}`
+                    },
+                    withCredentials: true
                 });
                 setPosts(response.data);
             } catch (error) {
