@@ -16,7 +16,6 @@ const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const postRoutes = require('./routes/postRoutes');
 const mediaRoutes = require('./routes/mediaRoutes');
-const timelineRoutes = require('./routes/timelineRoutes'); // Add timeline routes
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -46,7 +45,6 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', authenticate, userRoutes);  // Protect user routes
 app.use('/api/posts', authenticate, postRoutes);  // Protect post routes
 app.use('/api/media', authenticate, mediaRoutes); // Protect media routes
-app.use('/api/timeline-posts', authenticate, timelineRoutes); // Protect timeline routes
 
 // File upload endpoint
 app.post('/upload', authenticate, upload.single('file'), (req, res) => {
