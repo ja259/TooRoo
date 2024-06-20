@@ -6,13 +6,15 @@ import './Login.css'; // Import the CSS for styling
 const Login = ({ onLogin }) => {
     const [emailOrPhone, setEmailOrPhone] = useState('');
     const [password, setPassword] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
 
     const handleSubmit = (event) => {
         event.preventDefault();
         if (emailOrPhone && password) {
+            setErrorMessage('');
             onLogin(emailOrPhone, password);  // Ensure onLogin is passed correctly
         } else {
-            alert('Please fill in all fields');
+            setErrorMessage('Please fill in all fields');
         }
     };
 
@@ -20,6 +22,7 @@ const Login = ({ onLogin }) => {
         <div className="login-container">
             <img src={logo} alt="TooRoo Logo" className="logo" />
             <form onSubmit={handleSubmit}>
+                {errorMessage && <div className="error-message">{errorMessage}</div>}
                 <input
                     type="text"
                     value={emailOrPhone}
