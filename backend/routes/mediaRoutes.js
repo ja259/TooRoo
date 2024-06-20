@@ -1,5 +1,5 @@
 const express = require('express');
-const { uploadVideo, getVideos } = require('../controllers/mediaController');
+const { uploadVideo, getVideos, deleteVideo, updateVideo } = require('../controllers/mediaController'); // Ensure all relevant controllers are imported
 const multer = require('multer');
 const { GridFsStorage } = require('multer-gridfs-storage');
 const crypto = require('crypto');
@@ -29,5 +29,7 @@ const upload = multer({ storage });
 
 router.post('/upload', upload.single('video'), uploadVideo);
 router.get('/', getVideos);
+router.delete('/:id', deleteVideo);
+router.put('/:id', updateVideo);
 
 module.exports = router;
