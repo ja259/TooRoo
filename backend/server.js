@@ -9,21 +9,21 @@ const path = require('path');
 // Import configurations and middlewares
 const gridFsStorage = require('./config/gridFsStorageConfig');
 const errorHandler = require('./middlewares/errorHandler');
-const authenticate = require('./middlewares/authMiddleware');
+const { authenticate } = require('./middlewares/authMiddleware');
 
 // Import routes
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const postRoutes = require('./routes/postRoutes');
 const mediaRoutes = require('./routes/mediaRoutes');
-const timelineRoutes = require('./routes/timelineRoutes'); // Add timeline routes
+const timelineRoutes = require('./routes/timelineRoutes'); // Ensure timeline routes are imported
 
 const app = express();
 const port = process.env.PORT || 5000;
 
 // Middleware configurations
 app.use(cors({ 
-    origin: ['http://localhost:8080', 'https://ja259.github.io'],
+    origin: process.env.CORS_ORIGIN.split(','),
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
@@ -45,7 +45,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/posts', postRoutes);
 app.use('/api/media', mediaRoutes);
-app.use('/api/timeline-posts', timelineRoutes); // Add timeline routes
+app.use('/api/timeline-posts', timelineRoutes); // Ensure timeline routes are used
 
 // File upload endpoint
 app.post('/upload', upload.single('file'), (req, res) => {

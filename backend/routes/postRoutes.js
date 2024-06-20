@@ -12,7 +12,7 @@ const {
 const { authenticate } = require('../middlewares/authMiddleware');
 const multer = require('multer');
 
-const router = express.Router();  // Ensure router is defined before use
+const router = express.Router(); // Ensure router is defined before use
 
 // Configure multer for image file uploads
 const storage = multer.diskStorage({
