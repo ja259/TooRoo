@@ -11,6 +11,10 @@ a {
   text-decoration: none;
 }
 
+a:hover {
+  text-decoration: underline;
+}
+
 .App {
   text-align: center;
   padding-top: 70px; /* Adjust padding to accommodate the fixed navbar */

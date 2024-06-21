@@ -24,7 +24,8 @@
 }
 
 .navbar-left a.active, .navbar-right a.active {
-  color: #4CAF50;
+  color: #ff5722;
+  border-bottom: 2px solid #ff5722;
 }
 
 .navbar-right span {
