@@ -1,24 +1,29 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import authService from './authService';
 import logo from './logo.png';
 import './Login.css';
 
-const Login = ({ onLogin }) => {
+const Login = () => {
     const [emailOrPhone, setEmailOrPhone] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const navigate = useNavigate();
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        setError('');
+
         if (!emailOrPhone || !password) {
             setError('Please fill in all fields');
             return;
         }
 
-        try {
-            await onLogin(emailOrPhone, password);
-        } catch (err) {
-            setError('Login failed. Please check your credentials.');
+        const response = await authService.login(emailOrPhone, password);
+        if (response.success) {
+            navigate('/dashboard'); // Redirect to the dashboard or another protected route
+        } else {
+            setError(response.message);
         }
     };
 
@@ -53,3 +58,4 @@ const Login = ({ onLogin }) => {
 };
 
 export default Login;
+

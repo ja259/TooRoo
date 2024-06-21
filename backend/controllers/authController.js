@@ -63,7 +63,7 @@ exports.forgotPassword = async (req, res) => {
 
         // Send email with reset token
         const resetUrl = `http://localhost:8080/reset-password/${resetToken}`;
-        const message = `You have requested a password reset. Please make a PUT request to: \n\n ${resetUrl}`;
+        const message = `You have requested a password reset. Please click the link below to reset your password: \n\n ${resetUrl}`;
         await emailService.sendEmail(user.email, 'Password Reset Request', message);
 
         res.status(200).json({ message: 'Password reset token sent', token: resetToken });
