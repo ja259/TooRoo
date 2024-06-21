@@ -8,6 +8,7 @@ exports.getUserProfile = async (req, res) => {
         }
         res.json({ message: 'User profile retrieved successfully', user });
     } catch (error) {
+        console.error('Failed to retrieve user profile:', error);
         res.status(500).json({ message: 'Failed to retrieve user profile.', error: error.message });
     }
 };
@@ -18,12 +19,17 @@ exports.updateUserProfile = async (req, res) => {
         return res.status(400).json({ message: 'Update information cannot be empty.' });
     }
     try {
-        const updatedUser = await User.findByIdAndUpdate(req.params.id, { username, bio, avatar }, { new: true, runValidators: true });
+        const updatedUser = await User.findByIdAndUpdate(
+            req.params.id,
+            { username, bio, avatar },
+            { new: true, runValidators: true }
+        );
         if (!updatedUser) {
             return res.status(404).json({ message: 'User not found.' });
         }
         res.json({ message: 'User profile updated successfully.', user: updatedUser });
     } catch (error) {
+        console.error('Failed to update user profile:', error);
         res.status(500).json({ message: 'Failed to update user profile.', error: error.message });
     }
 };
@@ -50,6 +56,7 @@ exports.followUser = async (req, res) => {
         await targetUser.save();
         res.json({ message: 'Followed user successfully.' });
     } catch (error) {
+        console.error('Failed to follow user:', error);
         res.status(500).json({ message: 'Failed to follow user.', error: error.message });
     }
 };
@@ -73,7 +80,7 @@ exports.unfollowUser = async (req, res) => {
         await targetUser.save();
         res.json({ message: 'Unfollowed user successfully.' });
     } catch (error) {
+        console.error('Failed to unfollow user:', error);
         res.status(500).json({ message: 'Failed to unfollow user.', error: error.message });
     }
 };
-

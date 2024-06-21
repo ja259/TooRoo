@@ -13,13 +13,21 @@ const authLimiter = rateLimit({
     legacyHeaders: false,
 });
 
+// Apply the rate limiter to all auth routes
 router.use(authLimiter);
 
 // Route definitions
+// Registration route
 router.post('/register', validateRegister, register);
+
+// Login route
 router.post('/login', validateLogin, login);
+
+// Forgot password route
 router.post('/forgot-password', forgotPassword);
-router.post('/reset-password/:token', validateResetPassword, resetPassword);
+
+// Reset password route
+router.post('/reset-password', validateResetPassword, resetPassword);
 
 module.exports = router;
 
