@@ -3,6 +3,7 @@ const User = require('../models/User');
 
 exports.createPost = async (req, res) => {
     const { content, authorId } = req.body;
+
     if (!content || !authorId) {
         return res.status(400).json({ message: 'Content and author ID are required.' });
     }
@@ -18,36 +19,45 @@ exports.createPost = async (req, res) => {
             author: authorId,
             videoUrl: req.file ? `/uploads/${req.file.filename}` : undefined,
         });
-        await newPost.save();
 
+        await newPost.save();
         author.posts.push(newPost._id);
         await author.save();
 
         res.status(201).json({ message: 'Post created successfully', post: newPost });
     } catch (error) {
+        console.error('Error creating post:', error);
         res.status(500).json({ message: 'Internal server error', details: error.toString() });
     }
 };
 
 exports.getPosts = async (req, res) => {
     try {
-        const posts = await Post.find().populate('author', 'username email').populate('comments.author', 'username');
+        const posts = await Post.find()
+            .populate('author', 'username email')
+            .populate('comments.author', 'username');
+
         if (!posts.length) {
             return res.status(404).json({ message: 'No posts found.' });
         }
+
         res.json({ message: 'Posts retrieved successfully', posts });
     } catch (error) {
+        console.error('Error retrieving posts:', error);
         res.status(500).json({ message: 'Internal server error', details: error.toString() });
     }
 };
 
 exports.getTimelinePosts = async (req, res) => {
     try {
-        const posts = await Post.find().populate('author', 'username profilePicture').sort({ createdAt: -1 });
+        const posts = await Post.find()
+            .populate('author', 'username profilePicture')
+            .sort({ createdAt: -1 });
+
         res.json(posts);
     } catch (error) {
         console.error('Failed to retrieve posts:', error);
-        res.status(500).send('Failed to retrieve posts');
+        res.status(500).json({ message: 'Failed to retrieve posts' });
     }
 };
 
@@ -57,6 +67,7 @@ exports.getYouAllVideos = async (req, res) => {
             .populate('author', 'username avatar')
             .sort({ createdAt: -1 })
             .limit(20);
+
         res.json(videos);
     } catch (error) {
         console.error('Error fetching videos for You All section:', error);
@@ -70,6 +81,7 @@ exports.getFollowingVideos = async (req, res) => {
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
+
         const videos = await Post.find({
             author: { $in: user.following },
             videoUrl: { $exists: true }
@@ -109,6 +121,7 @@ exports.likePost = async (req, res) => {
 
         res.json({ message: 'Like status updated successfully', post });
     } catch (error) {
+        console.error('Error liking post:', error);
         res.status(500).json({ message: 'Internal server error', details: error.toString() });
     }
 };
@@ -136,6 +149,7 @@ exports.commentOnPost = async (req, res) => {
 
         res.json({ message: 'Comment added successfully', post });
     } catch (error) {
+        console.error('Error commenting on post:', error);
         res.status(500).json({ message: 'Internal server error', details: error.toString() });
     }
 };
@@ -150,6 +164,7 @@ exports.deletePost = async (req, res) => {
         }
         res.json({ message: 'Post deleted successfully' });
     } catch (error) {
+        console.error('Error deleting post:', error);
         res.status(500).json({ message: 'Internal server error', error: error.toString() });
     }
 };

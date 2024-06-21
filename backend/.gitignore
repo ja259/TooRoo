@@ -4,6 +4,10 @@ jspm_packages/
 
 # Environment variables
 .env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
 # Logs
 logs
@@ -22,30 +26,24 @@ pids
 lib-cov
 
 # Coverage directory used by tools like istanbul
-coverage
-.nyc_output
+coverage/
+.nyc_output/
 
 # nyc test coverage
 .nyc_output/
 
 # Grunt intermediate storage (http://gruntjs.com/creating-plugins#storing-task-files)
-.grunt
+.grunt/
 
 # Bower dependency directory (https://bower.io/)
-bower_components
+bower_components/
 
 # Jekyll metadata file used on GitHub Pages
-_site
-
-# dotenv environment variable files
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+_site/
 
 # Editor directories and files
-.idea
-.vscode
+.idea/
+.vscode/
 *.suo
 *.ntvs*
 *.njsproj
@@ -53,7 +51,7 @@ _site
 *.swp
 *~
 
-# OS generated files #
+# OS generated files
 .DS_Store
 .DS_Store?
 ._*
@@ -63,13 +61,13 @@ ehthumbs.db
 Thumbs.db
 
 # Compiled binary addons (https://nodejs.org/api/addons.html)
-build/Release
+build/Release/
 
-# TypeScript v1 declaration files
+# TypeScript declaration files
 typings/
 
 # Optional npm cache directory
-.npm
+.npm/
 
 # Optional eslint cache
 .eslintcache
@@ -81,23 +79,23 @@ typings/
 .yarn-integrity
 
 # parcel-bundler cache (https://parceljs.org/)
-.cache
-.parcel-cache
+.cache/
+.parcel-cache/
 
 # Next.js build output
-.next
-.out
+.next/
+.out/
 
 # Nuxt.js build / generate output
-.nuxt
-dist
+.nuxt/
+dist/
 
 # Gatsby files
 .cache/
-public
+public/
 
 # VuePress build output
-.vuepress/dist
+.vuepress/dist/
 
 # Serverless directories
 .serverless/

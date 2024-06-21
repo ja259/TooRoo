@@ -1,20 +1,24 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import logo from './logo.png'; // Adjust the path to your logo
-import './Login.css'; // Import the CSS for styling
+import logo from './logo.png';
+import './Login.css';
 
 const Login = ({ onLogin }) => {
     const [emailOrPhone, setEmailOrPhone] = useState('');
     const [password, setPassword] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
+    const [error, setError] = useState('');
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        if (emailOrPhone && password) {
-            setErrorMessage('');
-            onLogin(emailOrPhone, password);  // Ensure onLogin is passed correctly
-        } else {
-            setErrorMessage('Please fill in all fields');
+        if (!emailOrPhone || !password) {
+            setError('Please fill in all fields');
+            return;
+        }
+
+        try {
+            await onLogin(emailOrPhone, password);
+        } catch (err) {
+            setError('Login failed. Please check your credentials.');
         }
     };
 
@@ -22,7 +26,6 @@ const Login = ({ onLogin }) => {
         <div className="login-container">
             <img src={logo} alt="TooRoo Logo" className="logo" />
             <form onSubmit={handleSubmit}>
-                {errorMessage && <div className="error-message">{errorMessage}</div>}
                 <input
                     type="text"
                     value={emailOrPhone}
@@ -38,6 +41,7 @@ const Login = ({ onLogin }) => {
                     required
                 />
                 <button type="submit">Login</button>
+                {error && <div className="error-message">{error}</div>}
                 <div>
                     <Link to="/forgot-password">Forgot your password?</Link>
                     <br />
