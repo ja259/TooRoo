@@ -1,19 +1,19 @@
 .register-container {
     text-align: center;
     padding-top: 50px;
-}
-
-h2 {
+  }
+  
+  h2 {
     margin-bottom: 20px;
     color: #333;
-}
-
-.error-message {
+  }
+  
+  .error-message {
     color: red;
     margin-bottom: 20px;
-}
-
-form {
+  }
+  
+  form {
     margin: 20px auto;
     padding: 20px;
     background-color: #333;
@@ -21,9 +21,9 @@ form {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
     display: inline-block;
     width: 300px;
-}
-
-input, textarea {
+  }
+  
+  input, textarea {
     display: block;
     margin: 10px auto;
     padding: 12px;
@@ -33,14 +33,14 @@ input, textarea {
     font-size: 16px;
     background-color: #222;
     color: #ffffff;
-}
-
-input:focus, textarea:focus {
+  }
+  
+  input:focus, textarea:focus {
     outline: none;
     border-color: #00bcd4;
-}
-
-button {
+  }
+  
+  button {
     padding: 12px 24px;
     background-color: #ff5722;
     color: white;
@@ -49,12 +49,13 @@ button {
     cursor: pointer;
     font-size: 16px;
     transition: background-color 0.3s;
-}
-
-button:hover {
+  }
+  
+  button:hover {
     background-color: #e64a19;
-}
-
-div {
+  }
+  
+  div {
     margin: 20px;
-}
+  }
+  
