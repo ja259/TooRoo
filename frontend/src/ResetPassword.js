@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
-import './ResetPassword.css'; // Ensure you create a CSS file for styling
+import './ResetPassword.css';
 
 const ResetPassword = () => {
     const { token } = useParams();
