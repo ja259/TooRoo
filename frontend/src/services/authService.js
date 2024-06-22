@@ -4,7 +4,7 @@ const API_URL = 'http://localhost:5000/api/auth/';
 
 const register = async (username, email, password) => {
   try {
-    const response = await axios.post(`${API_URL}register`, { username, email, password });
+    const response = await axios.post(`${API_URL}register`, { username, email, password }, { withCredentials: true });
     if (response.data.token) {
       localStorage.setItem('user', JSON.stringify(response.data));
     }
@@ -22,7 +22,7 @@ const register = async (username, email, password) => {
 
 const login = async (emailOrPhone, password) => {
   try {
-    const response = await axios.post(`${API_URL}login`, { emailOrPhone, password });
+    const response = await axios.post(`${API_URL}login`, { emailOrPhone, password }, { withCredentials: true });
     if (response.data.token) {
       localStorage.setItem('user', JSON.stringify(response.data));
     }
