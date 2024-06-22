@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { login, logout, register } from './actions/authActions'; // Ensure registration is also imported if needed
+import { login, logout, register } from './actions/authActions';
 
 import './App.css';
 import Login from './Login';
@@ -21,6 +21,7 @@ import Inbox from './Inbox';
 import CreateVideo from './CreateVideo';
 import Notifications from './Notifications';
 import Timeline from './Timeline';
+import Dashboard from './Dashboard'; // Import Dashboard component
 
 const App = () => {
     const user = useSelector(state => state.auth.user);
@@ -54,7 +55,7 @@ const App = () => {
                         </>
                     ) : (
                         <>
-                            <Route path="/" element={<Timeline />} />
+                            <Route path="/" element={<Dashboard />} />
                             <Route path="/profile/:id" element={<Profile />} />
                             <Route path="/search" element={<Search />} />
                             <Route path="/live" element={<Live />} />
@@ -65,6 +66,7 @@ const App = () => {
                             <Route path="/inbox" element={<Inbox />} />
                             <Route path="/create-video" element={<CreateVideo />} />
                             <Route path="/notifications" element={<Notifications />} />
+                            <Route path="/timeline" element={<Timeline />} />
                             <Route path="*" element={<Navigate to="/" />} />
                         </>
                     )}
