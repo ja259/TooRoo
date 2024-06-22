@@ -14,9 +14,9 @@ const Navbar = ({ user }) => {
                 <NavLink to="/following" className={getActiveLinkClass}>Following</NavLink>
                 <NavLink to="/you-all" className={getActiveLinkClass}>You All</NavLink>
                 <NavLink to="/" className={getActiveLinkClass}>Timeline</NavLink>
+                <NavLink to="/search" className={getActiveLinkClass}><FaSearch className="fa-search" /></NavLink>
             </div>
             <div className="navbar-right">
-                <NavLink to="/search" className={getActiveLinkClass}><FaSearch /></NavLink>
                 <span>{user?.username}</span> {/* Safeguarding against undefined user */}
             </div>
         </div>
@@ -24,3 +24,4 @@ const Navbar = ({ user }) => {
 };
 
 export default Navbar;
+
