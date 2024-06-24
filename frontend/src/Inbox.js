@@ -3,23 +3,39 @@ import axios from 'axios';
 
 const Inbox = () => {
     const [messages, setMessages] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
 
     useEffect(() => {
         const fetchMessages = async () => {
-            const token = localStorage.getItem('token');
-            const response = await axios.get('http://localhost:5000/messages', {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            setMessages(response.data);
+            try {
+                const token = localStorage.getItem('token');
+                const response = await axios.get('http://localhost:5000/api/messages', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                setMessages(response.data);
+            } catch (err) {
+                setError('Failed to fetch messages');
+            } finally {
+                setLoading(false);
+            }
         };
         fetchMessages();
     }, []);
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+
+    if (error) {
+        return <div>{error}</div>;
+    }
 
     return (
         <div>
             <h2>Inbox</h2>
             {messages.map(message => (
-                <div key={message.id}>
+                <div key={message._id}>
                     <h3>{message.senderName}</h3>
                     <p>{message.content}</p>
                 </div>

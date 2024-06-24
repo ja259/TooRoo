@@ -1,7 +1,6 @@
 const Video = require('../models/Video');
 const mongoose = require('mongoose');
 
-// Controller to handle video uploads
 exports.uploadVideo = async (req, res) => {
     try {
         if (!req.file) {
@@ -15,7 +14,7 @@ exports.uploadVideo = async (req, res) => {
         }
         
         const newVideo = new Video({
-            videoUrl: req.file.filename, // Filename stored by GridFS
+            videoUrl: req.file.filename,
             description,
             author: authorId
         });
@@ -29,7 +28,6 @@ exports.uploadVideo = async (req, res) => {
     }
 };
 
-// Controller to retrieve all videos
 exports.getVideos = async (req, res) => {
     try {
         const videos = await Video.find().populate('author', 'username email');
@@ -45,7 +43,6 @@ exports.getVideos = async (req, res) => {
     }
 };
 
-// Controller to delete a video
 exports.deleteVideo = async (req, res) => {
     const { videoId } = req.params;
     
@@ -67,7 +64,6 @@ exports.deleteVideo = async (req, res) => {
     }
 };
 
-// Controller to update a video's description
 exports.updateVideo = async (req, res) => {
     const { videoId } = req.params;
     const { description } = req.body;

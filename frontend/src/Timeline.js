@@ -36,6 +36,38 @@ const Timeline = () => {
         fetchPosts();
     }, []);
 
+    const handleLike = async (postId) => {
+        try {
+            const user = JSON.parse(localStorage.getItem('user'));
+            const token = user?.token;
+            if (!token) {
+                setError('User not authenticated');
+                return;
+            }
+            await axios.put(`http://localhost:5000/api/posts/${postId}/like`, {}, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                withCredentials: true
+            });
+            setPosts((prevPosts) =>
+                prevPosts.map((post) =>
+                    post._id === postId ? { ...post, likes: post.likes + 1 } : post
+                )
+            );
+        } catch (error) {
+            console.error('Error liking post:', error);
+        }
+    };
+
+    const handleComment = (postId) => {
+        // Add functionality to handle commenting
+    };
+
+    const handleShare = (postId) => {
+        // Add functionality to handle sharing
+    };
+
     if (loading) {
         return <div className="loading">Loading...</div>;
     }
@@ -58,9 +90,15 @@ const Timeline = () => {
                         {post.videoUrl && <video src={post.videoUrl} controls className="post-video"></video>}
                     </div>
                     <div className="post-footer">
-                        <button className="icon-button"><FaHeart className="icon" title="Like" /></button>
-                        <button className="icon-button"><FaComment className="icon" title="Comment" /></button>
-                        <button className="icon-button"><FaShare className="icon" title="Share" /></button>
+                        <button className="icon-button" onClick={() => handleLike(post._id)}>
+                            <FaHeart className="icon" title="Like" /> {post.likes}
+                        </button>
+                        <button className="icon-button" onClick={() => handleComment(post._id)}>
+                            <FaComment className="icon" title="Comment" />
+                        </button>
+                        <button className="icon-button" onClick={() => handleShare(post._id)}>
+                            <FaShare className="icon" title="Share" />
+                        </button>
                     </div>
                 </div>
             ))}

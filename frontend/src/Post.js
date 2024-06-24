@@ -3,7 +3,7 @@ import './Post.css';
 
 const Post = ({ post }) => {
     if (!post || !post.author || !post.author.profilePicture) {
-        return null; // Handle cases where post or author data is missing
+        return null;
     }
 
     return (

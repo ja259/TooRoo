@@ -7,14 +7,18 @@ import { NavLink } from 'react-router-dom';
 const Profile = ({ userId, isCurrentUser }) => {
     const [user, setUser] = useState(null);
     const [activeTab, setActiveTab] = useState('text');
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
 
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const response = await axios.get(`http://localhost:5000/user/${userId}`);
+                const response = await axios.get(`http://localhost:5000/api/users/${userId}`);
                 setUser(response.data);
-            } catch (error) {
-                console.error('Error fetching user', error);
+            } catch (err) {
+                setError('Failed to fetch user');
+            } finally {
+                setLoading(false);
             }
         };
         fetchUser();
@@ -64,7 +68,15 @@ const Profile = ({ userId, isCurrentUser }) => {
         }
     };
 
-    if (!user) return <div>Loading...</div>;
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+
+    if (error) {
+        return <div>{error}</div>;
+    }
+
+    if (!user) return <div>No user found</div>;
 
     return (
         <div className="profile-page">
@@ -99,11 +111,11 @@ const Profile = ({ userId, isCurrentUser }) => {
                 {renderContent()}
             </div>
             <div className="bottom-nav">
-                <NavLink to="/" activeClassName="active"><FaHome /><span>Home</span></NavLink>
-                <NavLink to="/inbox" activeClassName="active"><FaInbox /><span>Inbox</span></NavLink>
-                <NavLink to="/create-video" activeClassName="active"><FaVideo /></NavLink>
-                <NavLink to="/notifications" activeClassName="active"><FaBell /><span>Notifications</span></NavLink>
-                <NavLink to="/profile" activeClassName="active"><FaUser /><span>Profile</span></NavLink>
+                <NavLink to="/" className={({ isActive }) => isActive ? 'active' : ''}><FaHome /><span>Home</span></NavLink>
+                <NavLink to="/inbox" className={({ isActive }) => isActive ? 'active' : ''}><FaInbox /><span>Inbox</span></NavLink>
+                <NavLink to="/create-video" className={({ isActive }) => isActive ? 'active' : ''}><FaVideo /></NavLink>
+                <NavLink to="/notifications" className={({ isActive }) => isActive ? 'active' : ''}><FaBell /><span>Notifications</span></NavLink>
+                <NavLink to="/profile" className={({ isActive }) => isActive ? 'active' : ''}><FaUser /><span>Profile</span></NavLink>
             </div>
         </div>
     );

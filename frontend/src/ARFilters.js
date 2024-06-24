@@ -62,4 +62,3 @@ const ARFilters = () => {
 };
 
 export default ARFilters;
-

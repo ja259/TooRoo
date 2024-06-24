@@ -2,7 +2,6 @@ import React from 'react';
 
 const CreateVideo = () => {
     const handleOpenCamera = () => {
-        // Logic to open camera or upload video
         alert('Open camera to record video or take picture.');
     };
 

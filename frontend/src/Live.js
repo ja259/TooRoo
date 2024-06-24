@@ -4,19 +4,30 @@ import './Live.css';
 
 const Live = ({ user }) => {
     const [liveVideos, setLiveVideos] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
 
     useEffect(() => {
         const fetchLiveVideos = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/live');
+                const response = await axios.get('http://localhost:5000/api/live');
                 setLiveVideos(response.data);
-            } catch (error) {
-                console.error('Error fetching live videos:', error);
+            } catch (err) {
+                setError('Failed to fetch live videos');
+            } finally {
+                setLoading(false);
             }
         };
-
         fetchLiveVideos();
     }, []);
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+
+    if (error) {
+        return <div>{error}</div>;
+    }
 
     return (
         <div className="live">
