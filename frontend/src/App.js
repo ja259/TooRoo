@@ -2,7 +2,6 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { login, logout, register } from './actions/authActions';
-
 import './App.css';
 import Login from './Login';
 import Register from './Register';
@@ -21,7 +20,7 @@ import Inbox from './Inbox';
 import CreateVideo from './CreateVideo';
 import Notifications from './Notifications';
 import Timeline from './Timeline';
-import Dashboard from './Dashboard'; // Import Dashboard component
+import Dashboard from './Dashboard';
 
 const App = () => {
     const user = useSelector(state => state.auth.user);

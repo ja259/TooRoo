@@ -17,7 +17,7 @@ const Search = () => {
         setError('');
 
         try {
-            const response = await axios.get(`http://localhost:5000/search?query=${query}`);
+            const response = await axios.get(`http://localhost:5000/api/search?query=${query}`);
             setResults(response.data);
         } catch (err) {
             setError('Error fetching search results. Please try again.');

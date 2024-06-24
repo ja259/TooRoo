@@ -1,6 +1,5 @@
 const { body, validationResult } = require('express-validator');
 
-// Utility function to handle validation errors
 const handleValidationErrors = (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -53,8 +52,19 @@ const validateResetPassword = [
     handleValidationErrors
 ];
 
+const validateForgotPassword = [
+    body('email')
+        .notEmpty()
+        .withMessage('Email is required')
+        .isEmail()
+        .withMessage('Provide a valid email')
+        .normalizeEmail(),
+    handleValidationErrors
+];
+
 module.exports = {
     validateRegister,
     validateLogin,
-    validateResetPassword
+    validateResetPassword,
+    validateForgotPassword
 };

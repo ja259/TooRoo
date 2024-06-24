@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 
-// Define the schema for comments
 const commentSchema = new mongoose.Schema({
     author: { 
         type: mongoose.Schema.Types.ObjectId, 
@@ -20,7 +19,6 @@ const commentSchema = new mongoose.Schema({
     timestamps: true 
 });
 
-// Define the schema for posts
 const postSchema = new mongoose.Schema({
     content: { 
         type: String, 
@@ -46,6 +44,5 @@ const postSchema = new mongoose.Schema({
     timestamps: true 
 });
 
-// Export the Post model
 module.exports = mongoose.model('Post', postSchema);
 

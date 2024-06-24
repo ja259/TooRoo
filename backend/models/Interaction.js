@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 
-// Define the schema for interactions (likes, comments, shares)
 const interactionSchema = new mongoose.Schema({
     userId: { 
         type: mongoose.Schema.Types.ObjectId, 
@@ -25,5 +24,5 @@ const interactionSchema = new mongoose.Schema({
     timestamps: true 
 });
 
-// Export the Interaction model
 module.exports = mongoose.model('Interaction', interactionSchema);
+

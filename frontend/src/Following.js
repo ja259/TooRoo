@@ -1,4 +1,3 @@
-// src/Following.js
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './Following.css';
@@ -9,7 +8,7 @@ const Following = () => {
     useEffect(() => {
         const fetchVideos = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/following-videos');
+                const response = await axios.get('http://localhost:5000/api/posts/following-videos');
                 setVideos(response.data);
             } catch (error) {
                 console.error('Error fetching videos:', error);
@@ -31,8 +30,8 @@ const Following = () => {
                             <p>{video.description}</p>
                         </div>
                         <div className="video-stats">
-                            <span>{video.likes} ❤️</span>
-                            <span>{video.comments} 💬</span>
+                            <span>{video.likes.length} ❤️</span>
+                            <span>{video.comments.length} 💬</span>
                             <span>{video.shares} ↪️</span>
                         </div>
                     </div>

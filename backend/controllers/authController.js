@@ -62,11 +62,10 @@ exports.forgotPassword = async (req, res) => {
 
         const resetToken = crypto.randomBytes(20).toString('hex');
         user.resetPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex');
-        user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+        user.resetPasswordExpires = Date.now() + 3600000;
 
         await user.save();
 
-        // Send email with reset token
         const resetUrl = `http://localhost:8080/reset-password/${resetToken}`;
         const message = `You have requested a password reset. Please make a PUT request to: \n\n ${resetUrl}`;
         await emailService.sendEmail(user.email, 'Password Reset Request', message);

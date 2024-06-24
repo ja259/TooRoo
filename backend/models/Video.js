@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-// Define the schema for video comments
 const commentSchema = new Schema({
     author: { 
         type: Schema.Types.ObjectId, 
@@ -16,9 +15,8 @@ const commentSchema = new Schema({
         type: Date, 
         default: Date.now 
     }
-}, { _id: false });  // Disabling _id creation for subdocuments
+}, { _id: false });
 
-// Define the schema for videos
 const videoSchema = new Schema({
     author: { 
         type: Schema.Types.ObjectId, 
@@ -36,11 +34,10 @@ const videoSchema = new Schema({
         type: Schema.Types.ObjectId, 
         ref: 'User' 
     }],
-    comments: [commentSchema],  // Embed comments schema
+    comments: [commentSchema],
 }, { 
     timestamps: true 
 });
 
-// Export the Video model
 module.exports = mongoose.model('Video', videoSchema);
 
