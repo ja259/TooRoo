@@ -1,0 +1,36 @@
+.video-call {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #333;
+}
+
+.video {
+    width: 80%;
+    max-width: 800px;
+    background-color: #000;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.start-call, .end-call {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    background-color: #ff5722;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.start-call:hover, .end-call:hover {
+    background-color: #e64a19;
+}
+
+.start-call svg, .end-call svg {
+    margin-right: 8px;
+}

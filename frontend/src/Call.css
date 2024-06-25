@@ -1,0 +1,38 @@
+.call {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    padding: 20px;
+    background-color: #333;
+    color: #ffffff;
+}
+
+.call-video {
+    width: 100%;
+    max-width: 600px;
+    background-color: #000;
+}
+
+.call-buttons {
+    display: flex;
+    gap: 20px;
+}
+
+.call-buttons button,
+.end-call {
+    padding: 10px 20px;
+    background-color: #ff5722;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 20px;
+    transition: background-color 0.3s;
+}
+
+.call-buttons button:hover,
+.end-call:hover {
+    background-color: #e64a19;
+}
