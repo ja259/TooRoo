@@ -5,6 +5,7 @@
   "homepage": "https://ja259.github.io/TooRoo",
   "dependencies": {
     "axios": "^1.7.2",
+    "css-minimizer-webpack-plugin": "^7.0.0",
     "face-api.js": "^0.22.2",
     "mini-css-extract-plugin": "^2.9.0",
     "react": "^18.3.1",
