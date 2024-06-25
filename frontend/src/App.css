@@ -20,6 +20,12 @@ a:hover {
   padding-top: 70px; /* Adjust padding to accommodate the fixed navbar */
 }
 
+/* Dark Mode */
+body.dark-mode {
+  background-color: #1a1a1a;
+  color: #ffffff;
+}
+
 /* Logo */
 .logo {
   width: 120px;
