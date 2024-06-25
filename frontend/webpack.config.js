@@ -2,6 +2,9 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
   mode: 'development', // Can be set to 'production' for production builds
@@ -38,7 +41,7 @@ module.exports = {
       },
       {
         test: /\.css$/, // Process CSS files
-        use: ['style-loader', 'css-loader'],
+        use: [MiniCssExtractPlugin.loader, 'css-loader'],
       },
       {
         test: /\.(png|jpg|jpeg|gif|svg)$/, // Process image files
@@ -62,6 +65,9 @@ module.exports = {
       template: path.resolve(__dirname, 'public', 'index.html'), // Template for the HTML file
       favicon: path.resolve(__dirname, 'src', 'logo.png'), // Favicon
     }),
+    new MiniCssExtractPlugin({
+      filename: 'styles/[name].[contenthash].css',
+    }),
     new webpack.IgnorePlugin({
       resourceRegExp: /^fs$/, // Ignore 'fs' module in client-side code
     }),
@@ -78,5 +84,12 @@ module.exports = {
       chunks: 'all', // Split vendor and app code
     },
     runtimeChunk: 'single', // Create a single runtime bundle for all chunks
+    minimize: true,
+    minimizer: [
+      new TerserPlugin({
+        parallel: true,
+      }),
+      new CssMinimizerPlugin(),
+    ],
   },
 };
