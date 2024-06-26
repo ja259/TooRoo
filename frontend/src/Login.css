@@ -1,4 +1,3 @@
-/* General container styling for the login form */
 .login-container {
   text-align: center;
   padding-top: 50px;
@@ -9,13 +8,11 @@
   background-color: #f0f0f0;
 }
 
-/* Logo styling */
 .logo {
   width: 150px;
   margin-bottom: 20px;
 }
 
-/* Form styling */
 form {
   margin: 20px;
   padding: 20px;
@@ -28,7 +25,6 @@ form {
   width: 300px;
 }
 
-/* Input and textarea styling */
 input, textarea {
   display: block;
   margin: 10px auto;
@@ -47,7 +43,6 @@ input:focus, textarea:focus {
   border-color: #00bcd4;
 }
 
-/* Button styling */
 button {
   padding: 12px 24px;
   background-color: #ff5722;
@@ -65,12 +60,10 @@ button:hover {
   background-color: #e64a19;
 }
 
-/* Div styling for form links */
 form div {
   margin: 10px 0;
 }
 
-/* Link styling within the form */
 form a {
   color: #00bcd4;
   text-decoration: none;
@@ -81,7 +74,6 @@ form a:hover {
   color: #008c9e;
 }
 
-/* Error message styling */
 .error-message {
   color: red;
   margin-bottom: 15px;
@@ -95,7 +87,6 @@ form a:hover {
   margin: 0 auto 15px;
 }
 
-/* Media queries for responsiveness */
 @media (max-width: 400px) {
   .login-container {
       padding-top: 30px;

@@ -6,10 +6,10 @@ const emailService = require('../utils/emailService');
 
 exports.register = async (req, res) => {
     try {
-        const { username, email, password, fullName, birthdate, gender, phone, securityQuestion1, securityAnswer1, securityQuestion2, securityAnswer2, securityQuestion3, securityAnswer3 } = req.body;
-
-        if (!username || !email || !password || !fullName || !birthdate || !gender || !phone || !securityQuestion1 || !securityAnswer1 || !securityQuestion2 || !securityAnswer2 || !securityQuestion3 || !securityAnswer3) {
-            return res.status(400).json({ message: 'All fields are required' });
+        const { username, email, password, securityQuestions } = req.body;
+        
+        if (!username || !email || !password || !securityQuestions || securityQuestions.length < 3) {
+            return res.status(400).json({ message: 'All fields and at least 3 security questions are required' });
         }
 
         const existingUser = await User.findOne({ email });
@@ -18,7 +18,7 @@ exports.register = async (req, res) => {
         }
 
         const hashedPassword = await bcrypt.hash(password, 12);
-        const newUser = new User({ username, email, password: hashedPassword, fullName, birthdate, gender, phone, securityQuestion1, securityAnswer1, securityQuestion2, securityAnswer2, securityQuestion3, securityAnswer3 });
+        const newUser = new User({ username, email, password: hashedPassword, securityQuestions });
         await newUser.save();
 
         const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
