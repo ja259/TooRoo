@@ -2,9 +2,9 @@ import axios from 'axios';
 
 const API_URL = 'http://localhost:5000/api/auth/';
 
-const register = async (username, email, password) => {
+const register = async (formData) => {
   try {
-    const response = await axios.post(`${API_URL}register`, { username, email, password }, { withCredentials: true });
+    const response = await axios.post(`${API_URL}register`, formData, { withCredentials: true });
     if (response.data.token) {
       localStorage.setItem('user', JSON.stringify(response.data));
     }
