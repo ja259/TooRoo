@@ -11,7 +11,7 @@ const YouAll = () => {
         const fetchVideos = async () => {
             try {
                 const response = await axios.get('http://localhost:5000/api/you-all-videos');
-                setVideos(response.data);
+                setVideos(response.data.videos);
             } catch (error) {
                 setError('Error fetching videos');
                 console.error('Error fetching videos:', error);
@@ -35,7 +35,7 @@ const YouAll = () => {
         <div className="you-all">
             {videos.map(video => (
                 <div key={video._id} className="video-container">
-                    <video controls src={video.videoUrl} className="video-content"></video>
+                    <video controls src={`http://localhost:5000/videos/${video.videoUrl}`} className="video-content"></video>
                     <div className="video-details">
                         <img src={video.author.avatar} alt="avatar" className="avatar" />
                         <div className="video-info">
@@ -43,8 +43,8 @@ const YouAll = () => {
                             <p>{video.description}</p>
                         </div>
                         <div className="video-stats">
-                            <span>{video.likes} ❤️</span>
-                            <span>{video.comments} 💬</span>
+                            <span>{video.likes.length} ❤️</span>
+                            <span>{video.comments.length} 💬</span>
                             <span>{video.shares} ↪️</span>
                         </div>
                     </div>

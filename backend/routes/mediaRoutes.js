@@ -29,7 +29,7 @@ const storage = new GridFsStorage({
 const upload = multer({ storage });
 
 router.post('/upload', authenticate, upload.single('video'), uploadVideo);
-router.get('/', authenticate, getVideos);
+router.get('/you-all-videos', authenticate, getVideos);
 router.delete('/:id', authenticate, deleteVideo);
 router.put('/:id', authenticate, updateVideo);
 
