@@ -4,39 +4,29 @@ import authService from './services/authService';
 import './Register.css';
 
 const Register = () => {
-  const [formData, setFormData] = useState({
-    username: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    fullName: '',
-    birthdate: '',
-    gender: '',
-    phone: '',
-    securityQuestion1: '',
-    securityAnswer1: '',
-    securityQuestion2: '',
-    securityAnswer2: '',
-    securityQuestion3: '',
-    securityAnswer3: ''
-  });
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [securityQuestions, setSecurityQuestions] = useState([
+    { question: '', answer: '' },
+    { question: '', answer: '' },
+    { question: '', answer: '' }
+  ]);
   const [error, setError] = useState('');
   const navigate = useNavigate();
-
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError('');
 
-    if (formData.password !== formData.confirmPassword) {
+    if (password !== confirmPassword) {
       setError('Passwords do not match');
       return;
     }
 
-    const response = await authService.register(formData);
+    const response = await authService.register(username, email, phone, password, securityQuestions);
     if (response.success) {
       navigate('/login'); // Redirect to the login page
     } else {
@@ -44,30 +34,70 @@ const Register = () => {
     }
   };
 
+  const handleSecurityQuestionChange = (index, field, value) => {
+    const newQuestions = [...securityQuestions];
+    newQuestions[index][field] = value;
+    setSecurityQuestions(newQuestions);
+  };
+
   return (
     <div className="register-container">
       <h2>Create an Account</h2>
       {error && <p className="error-message">{error}</p>}
       <form onSubmit={handleSubmit}>
-        <input type="text" name="username" value={formData.username} onChange={handleChange} placeholder="Username" required />
-        <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="Email" required />
-        <input type="password" name="password" value={formData.password} onChange={handleChange} placeholder="Password" required />
-        <input type="password" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} placeholder="Confirm Password" required />
-        <input type="text" name="fullName" value={formData.fullName} onChange={handleChange} placeholder="Full Name" required />
-        <input type="date" name="birthdate" value={formData.birthdate} onChange={handleChange} placeholder="Birthdate" required />
-        <select name="gender" value={formData.gender} onChange={handleChange} required>
-          <option value="">Select Gender</option>
-          <option value="male">Male</option>
-          <option value="female">Female</option>
-          <option value="other">Other</option>
-        </select>
-        <input type="text" name="phone" value={formData.phone} onChange={handleChange} placeholder="Phone Number" required />
-        <input type="text" name="securityQuestion1" value={formData.securityQuestion1} onChange={handleChange} placeholder="Security Question 1" required />
-        <input type="text" name="securityAnswer1" value={formData.securityAnswer1} onChange={handleChange} placeholder="Answer 1" required />
-        <input type="text" name="securityQuestion2" value={formData.securityQuestion2} onChange={handleChange} placeholder="Security Question 2" required />
-        <input type="text" name="securityAnswer2" value={formData.securityAnswer2} onChange={handleChange} placeholder="Answer 2" required />
-        <input type="text" name="securityQuestion3" value={formData.securityQuestion3} onChange={handleChange} placeholder="Security Question 3" required />
-        <input type="text" name="securityAnswer3" value={formData.securityAnswer3} onChange={handleChange} placeholder="Answer 3" required />
+        <input
+          type="text"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          placeholder="Username"
+          required
+        />
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Email"
+          required
+        />
+        <input
+          type="text"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          placeholder="Phone Number"
+          required
+        />
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Password"
+          required
+        />
+        <input
+          type="password"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          placeholder="Confirm Password"
+          required
+        />
+        {securityQuestions.map((question, index) => (
+          <div key={index} className="security-question">
+            <input
+              type="text"
+              value={question.question}
+              onChange={(e) => handleSecurityQuestionChange(index, 'question', e.target.value)}
+              placeholder={`Security Question ${index + 1}`}
+              required
+            />
+            <input
+              type="text"
+              value={question.answer}
+              onChange={(e) => handleSecurityQuestionChange(index, 'answer', e.target.value)}
+              placeholder="Answer"
+              required
+            />
+          </div>
+        ))}
         <button type="submit">Register</button>
         <div>
           <Link to="/login">Already have an account? Login</Link>

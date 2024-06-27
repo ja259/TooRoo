@@ -6,19 +6,19 @@ const emailService = require('../utils/emailService');
 
 exports.register = async (req, res) => {
     try {
-        const { username, email, password, securityQuestions } = req.body;
-        
-        if (!username || !email || !password || !securityQuestions || securityQuestions.length < 3) {
-            return res.status(400).json({ message: 'All fields and at least 3 security questions are required' });
+        const { username, email, phone, password, securityQuestions } = req.body;
+
+        if (!username || !email || !phone || !password || !securityQuestions || securityQuestions.length < 3) {
+            return res.status(400).json({ message: 'All fields are required' });
         }
 
-        const existingUser = await User.findOne({ email });
+        const existingUser = await User.findOne({ $or: [{ email }, { phone }] });
         if (existingUser) {
-            return res.status(409).json({ message: 'Email already registered' });
+            return res.status(409).json({ message: 'Email or phone already registered' });
         }
 
         const hashedPassword = await bcrypt.hash(password, 12);
-        const newUser = new User({ username, email, password: hashedPassword, securityQuestions });
+        const newUser = new User({ username, email, phone, password: hashedPassword, securityQuestions });
         await newUser.save();
 
         const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
@@ -79,7 +79,7 @@ exports.forgotPassword = async (req, res) => {
 
 exports.resetPassword = async (req, res) => {
     try {
-        const { token, newPassword } = req.body;
+        const { token, password, securityAnswers } = req.body;
         const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
         const user = await User.findOne({
             resetPasswordToken: hashedToken,
@@ -90,7 +90,14 @@ exports.resetPassword = async (req, res) => {
             return res.status(400).json({ message: 'Token is invalid or has expired' });
         }
 
-        user.password = await bcrypt.hash(newPassword, 12);
+        // Verify security answers
+        for (let i = 0; i < securityAnswers.length; i++) {
+            if (user.securityQuestions[i].answer !== securityAnswers[i]) {
+                return res.status(400).json({ message: 'Invalid security answer' });
+            }
+        }
+
+        user.password = await bcrypt.hash(password, 12);
         user.resetPasswordToken = undefined;
         user.resetPasswordExpires = undefined;
         await user.save();

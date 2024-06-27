@@ -10,9 +10,14 @@ const ForgotPassword = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            await axios.post('http://localhost:5000/api/auth/forgot-password', { email });
-            setMessage('Password reset link has been sent to your email.');
-            setError('');
+            const response = await authService.forgotPassword(email);
+            if (response.success) {
+                setMessage(response.message);
+                setError('');
+            } else {
+                setError(response.message);
+                setMessage('');
+            }
         } catch (error) {
             console.error(error);
             setError('Failed to send password reset link. Please try again.');

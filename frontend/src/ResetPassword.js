@@ -7,6 +7,7 @@ const ResetPassword = () => {
     const { token } = useParams();
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [securityAnswers, setSecurityAnswers] = useState(['', '', '']);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
 
@@ -17,12 +18,18 @@ const ResetPassword = () => {
             return;
         }
         try {
-            await axios.post(`http://localhost:5000/api/auth/reset-password/${token}`, { password });
+            await axios.put(`http://localhost:5000/api/auth/reset-password/${token}`, { password, securityAnswers });
             setSuccess('Password has been reset. You can now ');
         } catch (error) {
             console.error(error);
             setError('Failed to reset password. Please try again.');
         }
+    };
+
+    const handleSecurityAnswerChange = (index, value) => {
+        const updatedAnswers = [...securityAnswers];
+        updatedAnswers[index] = value;
+        setSecurityAnswers(updatedAnswers);
     };
 
     return (
@@ -47,6 +54,16 @@ const ResetPassword = () => {
                         placeholder="Confirm New Password"
                         required
                     />
+                    {securityAnswers.map((answer, index) => (
+                        <input
+                            key={index}
+                            type="text"
+                            value={answer}
+                            onChange={(e) => handleSecurityAnswerChange(index, e.target.value)}
+                            placeholder={`Security Answer ${index + 1}`}
+                            required
+                        />
+                    ))}
                     <button type="submit">Reset Password</button>
                 </form>
             )}
@@ -55,5 +72,6 @@ const ResetPassword = () => {
 };
 
 export default ResetPassword;
+
 
 
