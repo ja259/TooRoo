@@ -17,6 +17,7 @@ router.use(authLimiter);
 router.post('/register', validateRegister, register);
 router.post('/login', validateLogin, login);
 router.post('/forgot-password', validateForgotPassword, forgotPassword);
-router.post('/reset-password/:token', validateResetPassword, resetPassword);
+router.put('/reset-password/:token', validateResetPassword, resetPassword);
 
 module.exports = router;
+
