@@ -10,7 +10,7 @@ const YouAll = () => {
     useEffect(() => {
         const fetchVideos = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/api/you-all-videos');
+                const response = await axios.get('http://localhost:5000/api/media/you-all-videos');
                 setVideos(response.data.videos);
             } catch (error) {
                 setError('Error fetching videos');

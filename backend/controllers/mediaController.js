@@ -28,7 +28,7 @@ exports.uploadVideo = async (req, res) => {
     }
 };
 
-exports.getVideos = async (req, res) => {
+exports.getAllVideos = async (req, res) => {
     try {
         const videos = await Video.find().populate('author', 'username email avatar');
 
