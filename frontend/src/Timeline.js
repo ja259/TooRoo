@@ -12,17 +12,16 @@ const Timeline = () => {
         const fetchPosts = async () => {
             const user = JSON.parse(localStorage.getItem('user'));
             const token = user?.token;
+
             if (!token) {
                 setError('User not authenticated');
                 setLoading(false);
                 return;
             }
+
             try {
                 const response = await axios.get('http://localhost:5000/api/timeline-posts', {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    },
-                    withCredentials: true
+                    headers: { 'Authorization': `Bearer ${token}` },
                 });
                 setPosts(response.data);
             } catch (error) {
@@ -37,18 +36,17 @@ const Timeline = () => {
     }, []);
 
     const handleLike = async (postId) => {
+        const user = JSON.parse(localStorage.getItem('user'));
+        const token = user?.token;
+
+        if (!token) {
+            setError('User not authenticated');
+            return;
+        }
+
         try {
-            const user = JSON.parse(localStorage.getItem('user'));
-            const token = user?.token;
-            if (!token) {
-                setError('User not authenticated');
-                return;
-            }
             await axios.put(`http://localhost:5000/api/posts/${postId}/like`, {}, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                },
-                withCredentials: true
+                headers: { 'Authorization': `Bearer ${token}` },
             });
             setPosts((prevPosts) =>
                 prevPosts.map((post) =>

@@ -4,23 +4,47 @@ import './Following.css';
 
 const Following = () => {
     const [videos, setVideos] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
 
     useEffect(() => {
         const fetchVideos = async () => {
+            const user = JSON.parse(localStorage.getItem('user'));
+            const token = user?.token;
+
+            if (!token) {
+                setError('User not authenticated');
+                setLoading(false);
+                return;
+            }
+
             try {
-                const response = await axios.get('http://localhost:5000/api/posts/following-videos');
+                const response = await axios.get('http://localhost:5000/api/posts/following-videos', {
+                    headers: { 'Authorization': `Bearer ${token}` },
+                });
                 setVideos(response.data);
             } catch (error) {
+                setError('Error fetching videos');
                 console.error('Error fetching videos:', error);
+            } finally {
+                setLoading(false);
             }
         };
 
         fetchVideos();
     }, []);
 
+    if (loading) {
+        return <div className="loading">Loading...</div>;
+    }
+
+    if (error) {
+        return <div className="error">{error}</div>;
+    }
+
     return (
         <div className="following">
-            {videos.map(video => (
+            {videos.map((video) => (
                 <div key={video._id} className="video-container">
                     <video controls src={video.videoUrl} className="video-content"></video>
                     <div className="video-details">
