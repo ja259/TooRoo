@@ -33,7 +33,7 @@ const YouAll = () => {
 
     return (
         <div className="you-all">
-            {videos.map(video => (
+            {videos.map((video) => (
                 <div key={video._id} className="video-container">
                     <video controls src={`http://localhost:5000/videos/${video.videoUrl}`} className="video-content"></video>
                     <div className="video-details">
