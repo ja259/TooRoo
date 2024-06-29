@@ -26,9 +26,14 @@ import Call from './Call';
 import Stories from './Stories';
 import DarkModeToggle from './DarkModeToggle';
 import VideoCall from './VideoCall';
-import Settings from './Settings';
+import TwoFactorAuth from './TwoFactorAuth';
 import Privacy from './Privacy';
 import Language from './Language';
+import Settings from './Settings';
+import Marketplace from './Marketplace';
+import Explore from './Explore';
+import UserAnalytics from './UserAnalytics';
+import Menu from './Menu';
 
 const App = () => {
     const user = useSelector(state => state.auth.user);
@@ -51,44 +56,50 @@ const App = () => {
     return (
         <div className={darkMode ? 'App dark-mode' : 'App'}>
             <Router>
-                {isAuthenticated && <Navbar user={user} onLogout={handleLogout} />}
-                {isAuthenticated && <DarkModeToggle darkMode={darkMode} setDarkMode={setDarkMode} />}
-                <div className="content">
-                    <Routes>
-                        {!isAuthenticated ? (
-                            <>
-                                <Route path="/login" element={<Login onLogin={handleLogin} />} />
-                                <Route path="/register" element={<Register onRegister={handleRegister} />} />
-                                <Route path="/forgot-password" element={<ForgotPassword />} />
-                                <Route path="/reset-password/:token" element={<ResetPassword />} />
-                                <Route path="*" element={<Navigate to="/login" />} />
-                            </>
-                        ) : (
-                            <>
-                                <Route path="/" element={<Dashboard />} />
-                                <Route path="/profile/:id" element={<Profile />} />
-                                <Route path="/search" element={<Search />} />
-                                <Route path="/live" element={<Live />} />
-                                <Route path="/ar-filters" element={<ARFilters />} />
-                                <Route path="/virtual-events" element={<VirtualEvents />} />
-                                <Route path="/you-all" element={<YouAll />} />
-                                <Route path="/following" element={<Following />} />
-                                <Route path="/inbox" element={<Inbox />} />
-                                <Route path="/create-video" element={<CreateVideo />} />
-                                <Route path="/notifications" element={<Notifications />} />
-                                <Route path="/timeline" element={<Timeline />} />
-                                <Route path="/chat" element={<Chat />} />
-                                <Route path="/call" element={<Call />} />
-                                <Route path="/video-call" element={<VideoCall />} />
-                                <Route path="/stories" element={<Stories />} />
-                                <Route path="/settings" element={<Settings />} />
-                                <Route path="/privacy" element={<Privacy />} />
-                                <Route path="/language" element={<Language />} />
-                                <Route path="*" element={<Navigate to="/" />} />
-                            </>
-                        )}
-                    </Routes>
-                    {isAuthenticated && <BottomNav />}
+                <Menu user={user} onLogout={handleLogout} />
+                <div className="main-content">
+                    <Navbar user={user} onLogout={handleLogout} />
+                    {isAuthenticated && <DarkModeToggle darkMode={darkMode} setDarkMode={setDarkMode} />}
+                    <div className="content">
+                        <Routes>
+                            {!isAuthenticated ? (
+                                <>
+                                    <Route path="/login" element={<Login onLogin={handleLogin} />} />
+                                    <Route path="/register" element={<Register onRegister={handleRegister} />} />
+                                    <Route path="/forgot-password" element={<ForgotPassword />} />
+                                    <Route path="/reset-password/:token" element={<ResetPassword />} />
+                                    <Route path="*" element={<Navigate to="/login" />} />
+                                </>
+                            ) : (
+                                <>
+                                    <Route path="/" element={<Dashboard />} />
+                                    <Route path="/profile/:id" element={<Profile />} />
+                                    <Route path="/search" element={<Search />} />
+                                    <Route path="/live" element={<Live />} />
+                                    <Route path="/ar-filters" element={<ARFilters />} />
+                                    <Route path="/virtual-events" element={<VirtualEvents />} />
+                                    <Route path="/you-all" element={<YouAll />} />
+                                    <Route path="/following" element={<Following />} />
+                                    <Route path="/inbox" element={<Inbox />} />
+                                    <Route path="/create-video" element={<CreateVideo />} />
+                                    <Route path="/notifications" element={<Notifications />} />
+                                    <Route path="/timeline" element={<Timeline />} />
+                                    <Route path="/chat" element={<Chat />} />
+                                    <Route path="/call" element={<Call />} />
+                                    <Route path="/video-call" element={<VideoCall />} />
+                                    <Route path="/stories" element={<Stories />} />
+                                    <Route path="/settings" element={<Settings />} />
+                                    <Route path="/privacy" element={<Privacy />} />
+                                    <Route path="/language" element={<Language />} />
+                                    <Route path="/marketplace" element={<Marketplace />} />
+                                    <Route path="/explore" element={<Explore />} />
+                                    <Route path="/analytics" element={<UserAnalytics />} />
+                                    <Route path="*" element={<Navigate to="/" />} />
+                                </>
+                            )}
+                        </Routes>
+                        {isAuthenticated && <BottomNav />}
+                    </div>
                 </div>
             </Router>
         </div>
