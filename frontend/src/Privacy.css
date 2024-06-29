@@ -1,0 +1,37 @@
+.privacy-container {
+    padding: 20px;
+    background-color: #1a1a1a;
+    color: #fff;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 400px;
+    margin: 20px auto;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.privacy-item {
+    margin-bottom: 20px;
+}
+
+.privacy-item label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+.privacy-item select, .privacy-item input[type="checkbox"] {
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    background-color: #444;
+    color: #fff;
+}
+
+.privacy-item button {
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    background-color: #444;
+    color: #fff;
+    cursor: pointer;
+}

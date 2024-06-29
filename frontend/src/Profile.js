@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FaEdit, FaShare, FaThumbsUp, FaComment, FaHome, FaInbox, FaBell, FaUser, FaVideo } from 'react-icons/fa';
+import { NavLink, useNavigate } from 'react-router-dom';
 import './Profile.css';
-import { NavLink } from 'react-router-dom';
 
 const Profile = ({ userId, isCurrentUser }) => {
     const [user, setUser] = useState(null);
     const [activeTab, setActiveTab] = useState('text');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -28,7 +29,23 @@ const Profile = ({ userId, isCurrentUser }) => {
     }, [userId]);
 
     const handleFollow = async () => {
-        // Logic for following/unfollowing a user
+        try {
+            const token = JSON.parse(localStorage.getItem('user'))?.token;
+            const response = await axios.post(`http://localhost:5000/api/users/${userId}/follow`, {}, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            setUser((prevUser) => ({
+                ...prevUser,
+                isFollowing: !prevUser.isFollowing,
+                followers: prevUser.isFollowing ? prevUser.followers - 1 : prevUser.followers + 1
+            }));
+        } catch (err) {
+            setError('Failed to follow/unfollow user');
+        }
+    };
+
+    const handleMessage = () => {
+        navigate(`/inbox?user=${user.username}`);
     };
 
     const renderContent = () => {
@@ -91,8 +108,10 @@ const Profile = ({ userId, isCurrentUser }) => {
                         <button className="edit-profile"><FaEdit /> Edit Profile</button>
                     ) : (
                         <>
-                            <button className="follow" onClick={handleFollow}>{user.isFollowing ? 'Following' : 'Follow'}</button>
-                            <button className="message"><FaInbox /> Message</button>
+                            <button className="follow" onClick={handleFollow}>
+                                {user.isFollowing ? 'Following' : 'Follow'}
+                            </button>
+                            <button className="message" onClick={handleMessage}><FaInbox /> Message</button>
                         </>
                     )}
                     <p>{user.bio}</p>

@@ -25,8 +25,10 @@ import Chat from './Chat';
 import Call from './Call';
 import Stories from './Stories';
 import DarkModeToggle from './DarkModeToggle';
-import VideoCall from './VideoCall'; // Import VideoCall component
-import Menu from './Menu'; // Import Menu component
+import VideoCall from './VideoCall';
+import Settings from './Settings';
+import Privacy from './Privacy';
+import Language from './Language';
 
 const App = () => {
     const user = useSelector(state => state.auth.user);
@@ -49,8 +51,8 @@ const App = () => {
     return (
         <div className={darkMode ? 'App dark-mode' : 'App'}>
             <Router>
-                {!isAuthenticated && <DarkModeToggle darkMode={darkMode} setDarkMode={setDarkMode} />}
                 {isAuthenticated && <Navbar user={user} onLogout={handleLogout} />}
+                {isAuthenticated && <DarkModeToggle darkMode={darkMode} setDarkMode={setDarkMode} />}
                 <div className="content">
                     <Routes>
                         {!isAuthenticated ? (
@@ -79,7 +81,9 @@ const App = () => {
                                 <Route path="/call" element={<Call />} />
                                 <Route path="/video-call" element={<VideoCall />} />
                                 <Route path="/stories" element={<Stories />} />
-                                <Route path="/menu" element={<Menu />} />
+                                <Route path="/settings" element={<Settings />} />
+                                <Route path="/privacy" element={<Privacy />} />
+                                <Route path="/language" element={<Language />} />
                                 <Route path="*" element={<Navigate to="/" />} />
                             </>
                         )}
