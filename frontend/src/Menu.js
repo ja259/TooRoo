@@ -27,3 +27,4 @@ const Menu = ({ user, onLogout }) => {
 };
 
 export default Menu;
+

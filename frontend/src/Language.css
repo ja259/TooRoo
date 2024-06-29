@@ -1,0 +1,23 @@
+.language-container {
+    padding: 20px;
+    background-color: #333;
+    color: #fff;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 400px;
+    margin: 20px auto;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.language-container h1 {
+    margin-bottom: 20px;
+}
+
+.language-container select {
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    background-color: #444;
+    color: #fff;
+    width: 100%;
+}
