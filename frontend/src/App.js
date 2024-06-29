@@ -49,8 +49,8 @@ const App = () => {
     return (
         <div className={darkMode ? 'App dark-mode' : 'App'}>
             <Router>
+                {!isAuthenticated && <DarkModeToggle darkMode={darkMode} setDarkMode={setDarkMode} />}
                 {isAuthenticated && <Navbar user={user} onLogout={handleLogout} />}
-                <DarkModeToggle darkMode={darkMode} setDarkMode={setDarkMode} />
                 <div className="content">
                     <Routes>
                         {!isAuthenticated ? (
