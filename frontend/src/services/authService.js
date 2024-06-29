@@ -4,7 +4,7 @@ const API_URL = 'http://localhost:5000/api/auth/';
 
 const register = async (username, email, phone, password, securityQuestions) => {
   try {
-    const response = await axios.post(`${API_URL}register`, { username, email, phone, password, securityQuestions });
+    const response = await axios.post(`${API_URL}register`, { username, email, phone, password, securityQuestions }, { withCredentials: true });
     if (response.data.token) {
       localStorage.setItem('user', JSON.stringify(response.data));
     }
@@ -16,7 +16,7 @@ const register = async (username, email, phone, password, securityQuestions) => 
 
 const login = async (emailOrPhone, password) => {
   try {
-    const response = await axios.post(`${API_URL}login`, { emailOrPhone, password });
+    const response = await axios.post(`${API_URL}login`, { emailOrPhone, password }, { withCredentials: true });
     if (response.data.token) {
       localStorage.setItem('user', JSON.stringify(response.data));
     }
@@ -43,7 +43,7 @@ const authService = {
   register,
   login,
   forgotPassword,
-  logout,
+  logout
 };
 
 export default authService;
