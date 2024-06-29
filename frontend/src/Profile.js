@@ -13,7 +13,10 @@ const Profile = ({ userId, isCurrentUser }) => {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const response = await axios.get(`http://localhost:5000/api/users/${userId}`);
+                const token = JSON.parse(localStorage.getItem('user'))?.token;
+                const response = await axios.get(`http://localhost:5000/api/users/${userId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
                 setUser(response.data);
             } catch (err) {
                 setError('Failed to fetch user');

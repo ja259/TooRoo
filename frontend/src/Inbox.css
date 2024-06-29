@@ -1,0 +1,38 @@
+.inbox {
+    padding: 20px;
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.message {
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 10px;
+}
+
+.message h3 {
+    margin: 0;
+    margin-bottom: 10px;
+}
+
+.message-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.message-actions button {
+    padding: 10px;
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+.message-actions button:hover {
+    color: #e63946;
+}
