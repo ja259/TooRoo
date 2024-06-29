@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { FaPhoneAlt, FaVideo } from 'react-icons/fa';
+import './Inbox.css';
 
 const Inbox = () => {
     const [messages, setMessages] = useState([]);
@@ -38,6 +40,10 @@ const Inbox = () => {
                 <div key={message._id}>
                     <h3>{message.senderName}</h3>
                     <p>{message.content}</p>
+                    <div className="message-actions">
+                        <button><FaPhoneAlt /></button>
+                        <button><FaVideo /></button>
+                    </div>
                 </div>
             ))}
         </div>

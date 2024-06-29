@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { FaBroadcastTower, FaSearch, FaMoon, FaSun, FaPhoneAlt, FaVideo, FaComments, FaHistory } from 'react-icons/fa';
+import { FaBroadcastTower, FaSearch, FaBars } from 'react-icons/fa';
 import './Navbar.css';
 
 const Navbar = ({ user, onLogout }) => {
@@ -14,15 +14,7 @@ const Navbar = ({ user, onLogout }) => {
                 <NavLink to="/you-all" className={getActiveLinkClass}>You All</NavLink>
                 <NavLink to="/" className={getActiveLinkClass}>Timeline</NavLink>
                 <NavLink to="/search" className={getActiveLinkClass}><FaSearch className="fa-search" /></NavLink>
-                <NavLink to="/dashboard" className={getActiveLinkClass}>Dashboard</NavLink>
-                <NavLink to="/chat" className={getActiveLinkClass}><FaComments /></NavLink>
-                <NavLink to="/call" className={getActiveLinkClass}><FaPhoneAlt /></NavLink>
-                <NavLink to="/video-call" className={getActiveLinkClass}><FaVideo /></NavLink>
-                <NavLink to="/stories" className={getActiveLinkClass}><FaHistory /></NavLink>
-            </div>
-            <div className="navbar-right">
-                <span>{user?.username}</span>
-                <button onClick={onLogout}>Logout</button>
+                <NavLink to="/menu" className={getActiveLinkClass}><FaBars /></NavLink>
             </div>
         </div>
     );
