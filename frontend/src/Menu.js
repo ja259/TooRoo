@@ -1,14 +1,13 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { 
-    FaUser, FaComments, FaBell, FaMoon, FaCog, FaSearch, FaSignOutAlt, 
-    FaShieldAlt, FaBook, FaLanguage, FaBookOpen, FaHome, FaStore, FaChartLine 
-} from 'react-icons/fa';
+import { FaUser, FaComments, FaBell, FaCog, FaSearch, FaSignOutAlt, FaShieldAlt, FaBook, FaLanguage, FaBookOpen, FaHome, FaStore, FaChartLine } from 'react-icons/fa';
 import './Menu.css';
 
-const Menu = ({ user, onLogout }) => {
+const Menu = ({ user, onLogout, menuOpen }) => {
+    if (!user) return null;
+
     return (
-        <div className="menu">
+        <div className={`menu ${menuOpen ? 'open' : ''}`}>
             <div className="menu-profile">
                 <img src={user.profilePicture} alt="Profile" className="profile-picture" />
                 <span>{user.username}</span>

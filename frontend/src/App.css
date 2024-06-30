@@ -21,12 +21,13 @@ a:hover {
 
 .main-content {
   display: flex;
+  position: relative;
 }
 
 .content {
-  margin-left: 250px; /* Adjust for the width of the fixed menu */
   flex-grow: 1;
   padding: 20px;
+  transition: margin-right 0.3s;
 }
 
 body.dark-mode {
@@ -496,4 +497,75 @@ textarea {
 
 .collaboration h2 {
   margin-bottom: 20px;
+}
+
+/* Menu */
+.menu {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 250px;
+  height: 100%;
+  background-color: #333;
+  color: #fff;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
+  transform: translateX(100%);
+  transition: transform 0.3s ease-in-out;
+  z-index: 1100;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.menu.open {
+  transform: translateX(0);
+}
+
+.menu-profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.menu-profile .profile-picture {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin-bottom: 10px;
+}
+
+.menu-item {
+  width: 100%;
+  padding: 10px;
+  text-align: left;
+  color: #fff;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  transition: background 0.3s;
+  margin-bottom: 5px;
+}
+
+.menu-item:hover {
+  background-color: #444;
+}
+
+.menu-item svg {
+  margin-right: 10px;
+}
+
+.menu-item button {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  width: 100%;
+  text-align: left;
+  padding: 0;
+}
+
+.menu-item button:hover {
+  background-color: #444;
 }
