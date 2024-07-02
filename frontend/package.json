@@ -27,6 +27,8 @@
     "clean-webpack-plugin": "^4.0.0",
     "css-loader": "^7.1.2",
     "css-minimizer-webpack-plugin": "^7.0.0",
+    "cypress": "^4.12.1",
+    "cypress-image-snapshot": "^4.0.1",
     "file-loader": "^6.2.0",
     "gh-pages": "^6.1.1",
     "html-webpack-plugin": "^5.5.0",
