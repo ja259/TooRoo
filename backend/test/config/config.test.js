@@ -1,12 +1,7 @@
 import { expect } from 'chai';
+import config from '../../config/config.js';
 
 describe('Config Tests', () => {
-  let config;
-
-  before(async () => {
-    config = (await import('../../config/config.js')).default;
-  });
-
   it('should have a valid configuration object', () => {
     expect(config).to.be.an('object');
   });
@@ -32,3 +27,4 @@ describe('Config Tests', () => {
     }
   });
 });
+
