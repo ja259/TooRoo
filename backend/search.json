@@ -3,7 +3,11 @@
         {
             "_id": "userId",
             "username": "username",
-            "avatar": "avatarUrl"
+            "avatar": "avatarUrl",
+            "bio": "User bio",
+            "followers": ["followerId1", "followerId2"],
+            "following": ["followingId1", "followingId2"],
+            "posts": ["postId1", "postId2"]
         }
     ],
     "posts": [
@@ -11,11 +15,24 @@
             "_id": "postId",
             "content": "post content",
             "videoUrl": "videoUrl",
+            "imageUrl": "imageUrl",
             "author": {
                 "_id": "authorId",
                 "username": "authorUsername",
                 "avatar": "authorAvatarUrl"
-            }
+            },
+            "likes": ["likeId1", "likeId2"],
+            "comments": [
+                {
+                    "author": {
+                        "_id": "commentAuthorId",
+                        "username": "commentAuthorUsername",
+                        "avatar": "commentAuthorAvatarUrl"
+                    },
+                    "content": "comment content"
+                }
+            ]
         }
     ]
 }
+
