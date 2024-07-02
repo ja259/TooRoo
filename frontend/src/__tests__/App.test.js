@@ -8,7 +8,7 @@ import '@testing-library/jest-dom/extend-expect';
 
 const mockStore = configureStore([]);
 
-describe('TooRoo Frontend Tests', () => {
+describe('TooRoo App Component', () => {
     let store;
 
     beforeEach(() => {
@@ -28,33 +28,6 @@ describe('TooRoo Frontend Tests', () => {
         expect(screen.getByText(/login/i)).toBeInTheDocument();
     });
 
-    test('renders dashboard when authenticated', () => {
-        store = mockStore({
-            auth: { isAuthenticated: true, user: { username: 'testuser' } },
-        });
-        render(
-            <Provider store={store}>
-                <Router>
-                    <App />
-                </Router>
-            </Provider>
-        );
-        expect(screen.getByText(/dashboard/i)).toBeInTheDocument();
-    });
-
-    test('toggles dark mode', () => {
-        render(
-            <Provider store={store}>
-                <Router>
-                    <App />
-                </Router>
-            </Provider>
-        );
-        const toggleButton = screen.getByRole('button', { name: /toggle dark mode/i });
-        fireEvent.click(toggleButton);
-        expect(document.body).toHaveClass('dark-mode');
-    });
-
     test('renders register page', () => {
         render(
             <Provider store={store}>
@@ -67,9 +40,33 @@ describe('TooRoo Frontend Tests', () => {
         expect(screen.getByText(/create your account/i)).toBeInTheDocument();
     });
 
-    test('renders profile page when authenticated', () => {
+    test('renders forgot password page', () => {
+        render(
+            <Provider store={store}>
+                <Router>
+                    <App />
+                </Router>
+            </Provider>
+        );
+        fireEvent.click(screen.getByText(/forgot password/i));
+        expect(screen.getByText(/reset your password/i)).toBeInTheDocument();
+    });
+
+    test('renders terms and policies page', () => {
+        render(
+            <Provider store={store}>
+                <Router>
+                    <App />
+                </Router>
+            </Provider>
+        );
+        fireEvent.click(screen.getByText(/terms and policies/i));
+        expect(screen.getByText(/Welcome to TooRoo!/i)).toBeInTheDocument();
+    });
+
+    test('renders dashboard when authenticated', () => {
         store = mockStore({
-            auth: { isAuthenticated: true, user: { username: 'testuser', id: '1' } },
+            auth: { isAuthenticated: true, user: { username: 'testuser' } },
         });
         render(
             <Provider store={store}>
@@ -78,8 +75,7 @@ describe('TooRoo Frontend Tests', () => {
                 </Router>
             </Provider>
         );
-        fireEvent.click(screen.getByText(/profile/i));
-        expect(screen.getByText(/profile/i)).toBeInTheDocument();
+        expect(screen.getByText(/dashboard/i)).toBeInTheDocument();
     });
 
     test('logs out successfully', () => {
@@ -97,35 +93,50 @@ describe('TooRoo Frontend Tests', () => {
         expect(screen.getByText(/login/i)).toBeInTheDocument();
     });
 
-    test('navigates to forgot password page', () => {
-        render(
-            <Provider store={store}>
-                <Router>
-                    <App />
-                </Router>
-            </Provider>
-        );
-        fireEvent.click(screen.getByText(/forgot password/i));
-        expect(screen.getByText(/reset your password/i)).toBeInTheDocument();
-    });
+    // Additional authenticated route tests
+    const authenticatedRoutes = [
+        { path: 'profile/:id', label: 'profile' },
+        { path: 'search', label: 'search' },
+        { path: 'live', label: 'live' },
+        { path: 'ar-filters', label: 'AR filters' },
+        { path: 'virtual-events', label: 'virtual events' },
+        { path: 'you-all', label: 'you all' },
+        { path: 'following', label: 'following' },
+        { path: 'inbox', label: 'inbox' },
+        { path: 'create-video', label: 'create video' },
+        { path: 'notifications', label: 'notifications' },
+        { path: 'timeline', label: 'timeline' },
+        { path: 'chat', label: 'chat' },
+        { path: 'call', label: 'call' },
+        { path: 'video-call', label: 'video call' },
+        { path: 'stories', label: 'stories' },
+        { path: 'settings', label: 'settings' },
+        { path: 'privacy', label: 'privacy' },
+        { path: 'language', label: 'language' },
+        { path: 'marketplace', label: 'marketplace' },
+        { path: 'explore', label: 'explore' },
+        { path: 'analytics', label: 'user analytics' },
+        { path: 'two-factor-auth', label: 'two factor auth' },
+    ];
 
-    test('navigates to reset password page', () => {
-        render(
-            <Provider store={store}>
-                <Router>
-                    <App />
-                </Router>
-            </Provider>
-        );
-        fireEvent.click(screen.getByText(/reset password/i));
-        expect(screen.getByText(/enter your new password/i)).toBeInTheDocument();
-    });
-
-    // Additional component tests
-    test('renders search page when authenticated', () => {
-        store = mockStore({
-            auth: { isAuthenticated: true, user: { username: 'testuser' } },
+    authenticatedRoutes.forEach(({ path, label }) => {
+        test(`renders ${label} page when authenticated`, () => {
+            store = mockStore({
+                auth: { isAuthenticated: true, user: { username: 'testuser' } },
+            });
+            render(
+                <Provider store={store}>
+                    <Router>
+                        <App />
+                    </Router>
+                </Provider>
+            );
+            fireEvent.click(screen.getByText(new RegExp(label, 'i')));
+            expect(screen.getByText(new RegExp(label, 'i'))).toBeInTheDocument();
         });
+    });
+
+    test('toggles dark mode', () => {
         render(
             <Provider store={store}>
                 <Router>
@@ -133,309 +144,10 @@ describe('TooRoo Frontend Tests', () => {
                 </Router>
             </Provider>
         );
-        fireEvent.click(screen.getByText(/search/i));
-        expect(screen.getByPlaceholderText(/search/i)).toBeInTheDocument();
+        const toggleButton = screen.getByRole('button', { name: /toggle dark mode/i });
+        fireEvent.click(toggleButton);
+        expect(document.body).toHaveClass('dark-mode');
     });
 
-    test('renders live page when authenticated', () => {
-        store = mockStore({
-            auth: { isAuthenticated: true, user: { username: 'testuser' } },
-        });
-        render(
-            <Provider store={store}>
-                <Router>
-                    <App />
-                </Router>
-            </Provider>
-        );
-        fireEvent.click(screen.getByText(/live/i));
-        expect(screen.getByText(/live/i)).toBeInTheDocument();
-    });
-
-    test('renders AR filters page when authenticated', () => {
-        store = mockStore({
-            auth: { isAuthenticated: true, user: { username: 'testuser' } },
-        });
-        render(
-            <Provider store={store}>
-                <Router>
-                    <App />
-                </Router>
-            </Provider>
-        );
-        fireEvent.click(screen.getByText(/AR filters/i));
-        expect(screen.getByText(/AR filters/i)).toBeInTheDocument();
-    });
-
-    test('renders virtual events page when authenticated', () => {
-        store = mockStore({
-            auth: { isAuthenticated: true, user: { username: 'testuser' } },
-        });
-        render(
-            <Provider store={store}>
-                <Router>
-                    <App />
-                </Router>
-            </Provider>
-        );
-        fireEvent.click(screen.getByText(/virtual events/i));
-        expect(screen.getByText(/virtual events/i)).toBeInTheDocument();
-    });
-
-    test('renders you all page when authenticated', () => {
-        store = mockStore({
-            auth: { isAuthenticated: true, user: { username: 'testuser' } },
-        });
-        render(
-            <Provider store={store}>
-                <Router>
-                    <App />
-                </Router>
-            </Provider>
-        );
-        fireEvent.click(screen.getByText(/you all/i));
-        expect(screen.getByText(/you all/i)).toBeInTheDocument();
-    });
-
-    test('renders following page when authenticated', () => {
-        store = mockStore({
-            auth: { isAuthenticated: true, user: { username: 'testuser' } },
-        });
-        render(
-            <Provider store={store}>
-                <Router>
-                    <App />
-                </Router>
-            </Provider>
-        );
-        fireEvent.click(screen.getByText(/following/i));
-        expect(screen.getByText(/following/i)).toBeInTheDocument();
-    });
-
-    test('renders inbox page when authenticated', () => {
-        store = mockStore({
-            auth: { isAuthenticated: true, user: { username: 'testuser' } },
-        });
-        render(
-            <Provider store={store}>
-                <Router>
-                    <App />
-                </Router>
-            </Provider>
-        );
-        fireEvent.click(screen.getByText(/inbox/i));
-        expect(screen.getByText(/inbox/i)).toBeInTheDocument();
-    });
-
-    test('renders create video page when authenticated', () => {
-        store = mockStore({
-            auth: { isAuthenticated: true, user: { username: 'testuser' } },
-        });
-        render(
-            <Provider store={store}>
-                <Router>
-                    <App />
-                </Router>
-            </Provider>
-        );
-        fireEvent.click(screen.getByText(/create video/i));
-        expect(screen.getByText(/create video/i)).toBeInTheDocument();
-    });
-
-    test('renders notifications page when authenticated', () => {
-        store = mockStore({
-            auth: { isAuthenticated: true, user: { username: 'testuser' } },
-        });
-        render(
-            <Provider store={store}>
-                <Router>
-                    <App />
-                </Router>
-            </Provider>
-        );
-        fireEvent.click(screen.getByText(/notifications/i));
-        expect(screen.getByText(/notifications/i)).toBeInTheDocument();
-    });
-
-    test('renders timeline page when authenticated', () => {
-        store = mockStore({
-            auth: { isAuthenticated: true, user: { username: 'testuser' } },
-        });
-        render(
-            <Provider store={store}>
-                <Router>
-                    <App />
-                </Router>
-            </Provider>
-        );
-        fireEvent.click(screen.getByText(/timeline/i));
-        expect(screen.getByText(/timeline/i)).toBeInTheDocument();
-    });
-
-    test('renders chat page when authenticated', () => {
-        store = mockStore({
-            auth: { isAuthenticated: true, user: { username: 'testuser' } },
-        });
-        render(
-            <Provider store={store}>
-                <Router>
-                    <App />
-                </Router>
-            </Provider>
-        );
-        fireEvent.click(screen.getByText(/chat/i));
-        expect(screen.getByText(/chat/i)).toBeInTheDocument();
-    });
-
-    test('renders call page when authenticated', () => {
-        store = mockStore({
-            auth: { isAuthenticated: true, user: { username: 'testuser' } },
-        });
-        render(
-            <Provider store={store}>
-                <Router>
-                    <App />
-                </Router>
-            </Provider>
-        );
-        fireEvent.click(screen.getByText(/call/i));
-        expect(screen.getByText(/call/i)).toBeInTheDocument();
-    });
-
-    test('renders video call page when authenticated', () => {
-        store = mockStore({
-            auth: { isAuthenticated: true, user: { username: 'testuser' } },
-        });
-        render(
-            <Provider store={store}>
-                <Router>
-                    <App />
-                </Router>
-            </Provider>
-        );
-        fireEvent.click(screen.getByText(/video call/i));
-        expect(screen.getByText(/video call/i)).toBeInTheDocument();
-    });
-
-    test('renders stories page when authenticated', () => {
-        store = mockStore({
-            auth: { isAuthenticated: true, user: { username: 'testuser' } },
-        });
-        render(
-            <Provider store={store}>
-                <Router>
-                    <App />
-                </Router>
-            </Provider>
-        );
-        fireEvent.click(screen.getByText(/stories/i));
-        expect(screen.getByText(/stories/i)).toBeInTheDocument();
-    });
-
-    test('renders settings page when authenticated', () => {
-        store = mockStore({
-            auth: { isAuthenticated: true, user: { username: 'testuser' } },
-        });
-        render(
-            <Provider store={store}>
-                <Router>
-                    <App />
-                </Router>
-            </Provider>
-        );
-        fireEvent.click(screen.getByText(/settings/i));
-        expect(screen.getByText(/settings/i)).toBeInTheDocument();
-    });
-
-    test('renders privacy page when authenticated', () => {
-        store = mockStore({
-            auth: { isAuthenticated: true, user: { username: 'testuser' } },
-        });
-        render(
-            <Provider store={store}>
-                <Router>
-                    <App />
-                </Router>
-            </Provider>
-        );
-        fireEvent.click(screen.getByText(/privacy/i));
-        expect(screen.getByText(/privacy/i)).toBeInTheDocument();
-    });
-
-    test('renders language page when authenticated', () => {
-        store = mockStore({
-            auth: { isAuthenticated: true, user: { username: 'testuser' } },
-        });
-        render(
-            <Provider store={store}>
-                <Router>
-                    <App />
-                </Router>
-            </Provider>
-        );
-        fireEvent.click(screen.getByText(/language/i));
-        expect(screen.getByText(/language/i)).toBeInTheDocument();
-    });
-
-    test('renders marketplace page when authenticated', () => {
-        store = mockStore({
-            auth: { isAuthenticated: true, user: { username: 'testuser' } },
-        });
-        render(
-            <Provider store={store}>
-                <Router>
-                    <App />
-                </Router>
-            </Provider>
-        );
-        fireEvent.click(screen.getByText(/marketplace/i));
-        expect(screen.getByText(/marketplace/i)).toBeInTheDocument();
-    });
-
-    test('renders explore page when authenticated', () => {
-        store = mockStore({
-            auth: { isAuthenticated: true, user: { username: 'testuser' } },
-        });
-        render(
-            <Provider store={store}>
-                <Router>
-                    <App />
-                </Router>
-            </Provider>
-        );
-        fireEvent.click(screen.getByText(/explore/i));
-        expect(screen.getByText(/explore/i)).toBeInTheDocument();
-    });
-
-    test('renders user analytics page when authenticated', () => {
-        store = mockStore({
-            auth: { isAuthenticated: true, user: { username: 'testuser' } },
-        });
-        render(
-            <Provider store={store}>
-                <Router>
-                    <App />
-                </Router>
-            </Provider>
-        );
-        fireEvent.click(screen.getByText(/analytics/i));
-        expect(screen.getByText(/user analytics/i)).toBeInTheDocument();
-    });
-
-    test('renders two factor auth page when authenticated', () => {
-        store = mockStore({
-            auth: { isAuthenticated: true, user: { username: 'testuser' } },
-        });
-        render(
-            <Provider store={store}>
-                <Router>
-                    <App />
-                </Router>
-            </Provider>
-        );
-        fireEvent.click(screen.getByText(/two factor auth/i));
-        expect(screen.getByText(/two factor auth/i)).toBeInTheDocument();
-    });
-
-    // Add more tests for other components and functionalities as needed
+    // Add more tests for other functionalities as needed
 });

@@ -33,6 +33,7 @@ import Marketplace from './Marketplace';
 import Explore from './Explore';
 import UserAnalytics from './UserAnalytics';
 import Menu from './Menu'; // Import Menu component
+import TermsAndPolicies from './TermsAndPolicies';
 
 const App = () => {
     const user = useSelector(state => state.auth.user);
@@ -66,6 +67,7 @@ const App = () => {
                                 <Route path="/register" element={<Register onRegister={handleRegister} />} />
                                 <Route path="/forgot-password" element={<ForgotPassword />} />
                                 <Route path="/reset-password/:token" element={<ResetPassword />} />
+                                <Route path="/terms-and-policies" element={<TermsAndPolicies />} />
                                 <Route path="*" element={<Navigate to="/login" />} />
                             </>
                         ) : (
@@ -92,6 +94,7 @@ const App = () => {
                                 <Route path="/marketplace" element={<Marketplace />} />
                                 <Route path="/explore" element={<Explore />} />
                                 <Route path="/analytics" element={<UserAnalytics />} />
+                                <Route path="/two-factor-auth" element={<TwoFactorAuth />} />
                                 <Route path="*" element={<Navigate to="/" />} />
                             </>
                         )}
