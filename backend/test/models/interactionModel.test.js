@@ -1,8 +1,9 @@
-const chai = require('chai');
-const mongoose = require('mongoose');
-const Interaction = require('../../models/Interaction');
-const User = require('../../models/User');
-const Post = require('../../models/Post');
+import chai from 'chai';
+import mongoose from 'mongoose';
+import Interaction from '../../models/Interaction.js';
+import User from '../../models/User.js';
+import Post from '../../models/Post.js';
+
 const should = chai.should();
 
 describe('Interaction Model', () => {

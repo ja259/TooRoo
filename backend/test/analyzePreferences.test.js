@@ -1,9 +1,10 @@
-const chai = require('chai');
-const sinon = require('sinon');
-const mongoose = require('mongoose');
-const Interaction = require('../models/Interaction');
-const Post = require('../models/Post');
-const analyzePreferences = require('../services/analyzePreferences');
+import chai from 'chai';
+import sinon from 'sinon';
+import mongoose from 'mongoose';
+import Interaction from '../models/Interaction.js';
+import Post from '../models/Post.js';
+import analyzePreferences from '../services/analyzePreferences.js';
+
 const should = chai.should();
 
 describe('Analyze Preferences Service Tests', () => {

@@ -1,8 +1,9 @@
-const chai = require('chai');
-const sinon = require('sinon');
-const jwt = require('jsonwebtoken');
-const User = require('../../models/User');
-const { authenticate } = require('../../middlewares/authMiddleware');
+import chai from 'chai';
+import sinon from 'sinon';
+import jwt from 'jsonwebtoken';
+import User from '../../models/User.js';
+import { authenticate } from '../../middlewares/authMiddleware.js';
+
 const should = chai.should();
 
 describe('Auth Middleware Tests', () => {
@@ -42,3 +43,4 @@ describe('Auth Middleware Tests', () => {
         jwt.verify.restore();
     });
 });
+

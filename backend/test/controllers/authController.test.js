@@ -1,7 +1,9 @@
-const chai = require('chai');
-const chaiHttp = require('chai-http');
-const server = require('../../server'); // Adjust the path as needed
-const User = require('../../models/User');
+import chai from 'chai';
+import chaiHttp from 'chai-http';
+import bcrypt from 'bcryptjs';
+import server from '../../server.js'; // Adjust the path as needed
+import User from '../../models/User.js';
+
 const should = chai.should();
 
 chai.use(chaiHttp);

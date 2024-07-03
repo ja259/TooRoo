@@ -1,10 +1,10 @@
-require('dotenv').config();
-const chai = require('chai');
-const chaiHttp = require('chai-http');
-const mongoose = require('mongoose');
-const server = require('../server'); // Adjust the path as needed
-const should = chai.should();
+import dotenv from 'dotenv';
+import chai from 'chai';
+import chaiHttp from 'chai-http';
+import mongoose from 'mongoose';
+import server from '../server.js';
 
+const should = chai.should();
 chai.use(chaiHttp);
 
 describe('TooRoo Backend Tests', () => {
@@ -87,7 +87,7 @@ describe('TooRoo Backend Tests', () => {
 
         it('should get user details on /api/users/:id GET', (done) => {
             chai.request(server)
-                .get('/api/users/testuser')
+                .get(`/api/users/testuser`)
                 .set('Authorization', `Bearer ${token}`)
                 .end((err, res) => {
                     res.should.have.status(200);

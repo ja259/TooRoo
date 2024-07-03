@@ -1,5 +1,6 @@
-const chai = require('chai');
-const User = require('../../models/User');
+import chai from 'chai';
+import User from '../../models/User.js';
+
 const should = chai.should();
 
 describe('User Model', () => {

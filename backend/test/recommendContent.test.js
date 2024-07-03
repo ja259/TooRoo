@@ -1,9 +1,10 @@
-const chai = require('chai');
-const sinon = require('sinon');
-const mongoose = require('mongoose');
-const Post = require('../models/Post');
-const analyzePreferences = require('../services/analyzePreferences');
-const recommendContent = require('../services/recommendContent');
+import chai from 'chai';
+import sinon from 'sinon';
+import mongoose from 'mongoose';
+import Post from '../models/Post.js';
+import analyzePreferences from '../services/analyzePreferences.js';
+import recommendContent from '../services/recommendContent.js';
+
 const should = chai.should();
 
 describe('Recommend Content Service Tests', () => {
