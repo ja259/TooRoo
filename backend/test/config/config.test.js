@@ -1,30 +1,39 @@
-import { expect } from 'chai';
-import config from '../../config/config.js';
+import chai from 'chai';
+import { execSync } from 'child_process';
+
+const { expect } = chai;
 
 describe('Config Tests', () => {
-  it('should have a valid configuration object', () => {
-    expect(config).to.be.an('object');
-  });
+    let config;
 
-  it('should contain required environment variables', () => {
-    expect(config).to.have.property('dbUri');
-    expect(config).to.have.property('jwtSecret');
-    expect(config).to.have.property('email');
-    expect(config).to.have.property('emailPassword');
-  });
+    before(async () => {
+        const { default: conf } = await import('../../config/config.js');
+        config = conf;
+    });
 
-  it('should throw an error if a required environment variable is missing', async () => {
-    const originalJwtSecret = process.env.DEV_JWT_SECRET;
-    process.env.DEV_JWT_SECRET = '';
+    it('should have a valid configuration object', () => {
+        expect(config).to.be.an('object');
+    });
 
-    try {
-      await import('../../config/config.js');
-    } catch (error) {
-      expect(error).to.be.an('error');
-      expect(error.message).to.include('Missing required environment variable');
-    } finally {
-      process.env.DEV_JWT_SECRET = originalJwtSecret;
-    }
-  });
+    it('should contain required environment variables', () => {
+        expect(config).to.have.property('dbUri');
+        expect(config).to.have.property('jwtSecret');
+        expect(config).to.have.property('email');
+        expect(config).to.have.property('emailPassword');
+    });
+
+    it('should throw an error if a required environment variable is missing', async () => {
+        const originalJwtSecret = process.env.DEV_JWT_SECRET;
+        process.env.DEV_JWT_SECRET = '';
+
+        try {
+            await import('../../config/config.js');
+        } catch (error) {
+            expect(error).to.be.an('error');
+            expect(error.message).to.include('Missing required environment variable');
+        } finally {
+            process.env.DEV_JWT_SECRET = originalJwtSecret;
+        }
+    });
 });
 
