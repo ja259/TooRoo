@@ -1,11 +1,10 @@
-import chai from 'chai';
+import chai, { should } from 'chai';
 import chaiHttp from 'chai-http';
 import server from '../../server.js';
 import Video from '../../models/Video.js';
 import User from '../../models/User.js';
 
-const should = chai.should();
-
+should();
 chai.use(chaiHttp);
 
 describe('Media Controller', () => {
@@ -38,5 +37,4 @@ describe('Media Controller', () => {
     });
 
     // Add tests for getAllVideos, deleteVideo, updateVideo
-
 });
