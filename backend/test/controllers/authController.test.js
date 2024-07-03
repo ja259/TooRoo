@@ -1,11 +1,9 @@
-import chai from 'chai';
+import chai, { should } from 'chai';
 import chaiHttp from 'chai-http';
-import bcrypt from 'bcryptjs';
-import server from '../../server.js'; // Adjust the path as needed
+import server from '../../server.js';
 import User from '../../models/User.js';
 
-const should = chai.should();
-
+should();
 chai.use(chaiHttp);
 
 describe('Auth Controller', () => {
@@ -66,5 +64,4 @@ describe('Auth Controller', () => {
     });
 
     // Add tests for forgotPassword and resetPassword
-
 });
