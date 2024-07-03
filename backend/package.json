@@ -32,10 +32,9 @@
   "devDependencies": {
     "chai": "^5.1.1",
     "chai-http": "^5.0.0",
+    "esm": "^3.2.25",
     "mocha": "^10.5.2",
     "nodemon": "^2.0.22",
-    "sinon": "^18.0.0",
-    "esm": "^3.2.25"
+    "sinon": "^18.0.0"
   }
 }
-
