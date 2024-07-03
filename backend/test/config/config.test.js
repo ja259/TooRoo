@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import config from '../../config/config.js'; // Adjust the path as necessary
+import config from '../../config/config.js';
 
 describe('Config Tests', () => {
   it('should have a valid configuration object', () => {
