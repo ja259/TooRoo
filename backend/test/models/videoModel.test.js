@@ -1,6 +1,7 @@
-const chai = require('chai');
-const Video = require('../../models/Video');
-const User = require('../../models/User');
+import chai from 'chai';
+import Video from '../../models/Video.js';
+import User from '../../models/User.js';
+
 const should = chai.should();
 
 describe('Video Model', () => {

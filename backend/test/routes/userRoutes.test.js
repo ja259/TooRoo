@@ -1,9 +1,9 @@
-const chai = require('chai');
-const chaiHttp = require('chai-http');
-const server = require('../../server');
-const User = require('../../models/User');
-const should = chai.should();
+import chai from 'chai';
+import chaiHttp from 'chai-http';
+import server from '../../server.js';
+import User from '../../models/User.js';
 
+const should = chai.should();
 chai.use(chaiHttp);
 
 describe('User Routes', () => {

@@ -1,10 +1,10 @@
-const chai = require('chai');
-const chaiHttp = require('chai-http');
-const server = require('../../server');
-const Video = require('../../models/Video');
-const User = require('../../models/User');
-const should = chai.should();
+import chai from 'chai';
+import chaiHttp from 'chai-http';
+import server from '../../server.js';
+import Video from '../../models/Video.js';
+import User from '../../models/User.js';
 
+const should = chai.should();
 chai.use(chaiHttp);
 
 describe('Media Routes', () => {

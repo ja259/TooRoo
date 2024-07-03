@@ -1,5 +1,7 @@
-import { expect } from 'chai';
+import chai from 'chai';
 import { execSync } from 'child_process';
+
+const { expect } = chai;
 
 describe('Config Tests', () => {
     let config;

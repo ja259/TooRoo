@@ -1,9 +1,9 @@
-const chai = require('chai');
-const sinon = require('sinon');
-const mongoose = require('mongoose');
-const User = require('../models/User');
-const Post = require('../models/Post');
-const searchService = require('../services/searchService');
+import chai from 'chai';
+import mongoose from 'mongoose';
+import User from '../models/User.js';
+import Post from '../models/Post.js';
+import searchService from '../services/searchService.js';
+
 const should = chai.should();
 
 describe('Search Service Tests', () => {
@@ -29,7 +29,15 @@ describe('Search Service Tests', () => {
 
     it('should search users by username', async () => {
         const query = 'username';
-        const users = [{ _id: 'userId', username: 'username', avatar: 'avatarUrl' }];
+        const users = [{
+            _id: 'userId',
+            username: 'username',
+            avatar: 'avatarUrl',
+            bio: 'User bio',
+            followers: ['followerId1', 'followerId2'],
+            following: ['followingId1', 'followingId2'],
+            posts: ['postId1', 'postId2']
+        }];
 
         userStub.withArgs({ username: new RegExp(query, 'i') }).resolves(users);
 
@@ -37,6 +45,10 @@ describe('Search Service Tests', () => {
         result.should.be.an('array').with.lengthOf(1);
         result[0].should.have.property('username').eql('username');
         result[0].should.have.property('avatar').eql('avatarUrl');
+        result[0].should.have.property('bio').eql('User bio');
+        result[0].should.have.property('followers').with.lengthOf(2);
+        result[0].should.have.property('following').with.lengthOf(2);
+        result[0].should.have.property('posts').with.lengthOf(2);
     });
 
     it('should search posts by content', async () => {
@@ -45,7 +57,21 @@ describe('Search Service Tests', () => {
             _id: 'postId',
             content: 'post content',
             videoUrl: 'videoUrl',
-            author: { _id: 'authorId', username: 'authorUsername', avatar: 'authorAvatarUrl' }
+            imageUrl: 'imageUrl',
+            author: {
+                _id: 'authorId',
+                username: 'authorUsername',
+                avatar: 'authorAvatarUrl'
+            },
+            likes: ['likeId1', 'likeId2'],
+            comments: [{
+                author: {
+                    _id: 'commentAuthorId',
+                    username: 'commentAuthorUsername',
+                    avatar: 'commentAuthorAvatarUrl'
+                },
+                content: 'comment content'
+            }]
         }];
 
         postStub.withArgs({ content: new RegExp(query, 'i') }).resolves(posts);
@@ -54,9 +80,15 @@ describe('Search Service Tests', () => {
         result.should.be.an('array').with.lengthOf(1);
         result[0].should.have.property('content').eql('post content');
         result[0].should.have.property('videoUrl').eql('videoUrl');
+        result[0].should.have.property('imageUrl').eql('imageUrl');
         result[0].should.have.property('author').which.is.an('object');
         result[0].author.should.have.property('username').eql('authorUsername');
         result[0].author.should.have.property('avatar').eql('authorAvatarUrl');
+        result[0].should.have.property('likes').with.lengthOf(2);
+        result[0].should.have.property('comments').with.lengthOf(1);
+        result[0].comments[0].should.have.property('content').eql('comment content');
+        result[0].comments[0].author.should.have.property('username').eql('commentAuthorUsername');
+        result[0].comments[0].author.should.have.property('avatar').eql('commentAuthorAvatarUrl');
     });
 
     it('should handle no results found for users', async () => {

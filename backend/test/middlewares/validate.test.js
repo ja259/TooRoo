@@ -1,7 +1,8 @@
-const chai = require('chai');
-const sinon = require('sinon');
-const { validationResult } = require('express-validator');
-const { validateRegister, validateLogin, validateResetPassword, validateForgotPassword } = require('../../middlewares/validate');
+import chai from 'chai';
+import sinon from 'sinon';
+import { validationResult } from 'express-validator';
+import { validateRegister, validateLogin, validateResetPassword, validateForgotPassword } from '../../middlewares/validate.js';
+
 const should = chai.should();
 
 describe('Validation Middleware Tests', () => {

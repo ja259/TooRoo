@@ -1,7 +1,8 @@
-const chai = require('chai');
-const sinon = require('sinon');
-const nodemailer = require('nodemailer');
-const emailService = require('../../utils/emailService');
+import chai from 'chai';
+import sinon from 'sinon';
+import nodemailer from 'nodemailer';
+import emailService from '../../utils/emailService.js';
+
 const should = chai.should();
 
 describe('Email Service Tests', () => {
