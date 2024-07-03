@@ -1,14 +1,12 @@
-import chai from 'chai';
+import { expect } from 'chai';
 import { execSync } from 'child_process';
-
-const { expect } = chai;
 
 describe('Config Tests', () => {
     let config;
 
     before(async () => {
-        const { default: conf } = await import('../../config/config.js');
-        config = conf;
+        const conf = await import('../../config/config.js');
+        config = conf.default;
     });
 
     it('should have a valid configuration object', () => {
