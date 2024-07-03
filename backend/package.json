@@ -30,13 +30,13 @@
     "xss-clean": "^0.1.4"
   },
   "devDependencies": {
+    "@esbuild-kit/esm-loader": "^2.4.0",
     "chai": "^5.1.1",
     "chai-http": "^5.0.0",
     "mocha": "^10.5.2",
     "nodemon": "^2.0.22",
     "sinon": "^18.0.0",
-    "@esbuild-kit/esm-loader": "^2.4.0",
-    "ts-node": "^10.9.1",
+    "ts-node": "^10.9.2",
     "typescript": "^5.0.4"
   }
 }
