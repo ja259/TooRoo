@@ -4,8 +4,8 @@ import server from '../../server.js';
 import Post from '../../models/Post.js';
 import User from '../../models/User.js';
 
-const should = chai.should();
-
+const { should } = chai;
+should();
 chai.use(chaiHttp);
 
 describe('Post Controller', () => {
@@ -38,5 +38,4 @@ describe('Post Controller', () => {
     });
 
     // Add tests for getPosts, likePost, commentOnPost, deletePost, getTimelinePosts, getYouAllVideos, getFollowingVideos
-
 });

@@ -1,7 +1,9 @@
-const { GridFsStorage } = require('multer-gridfs-storage');
-const crypto = require('crypto');
-const path = require('path');
-require('dotenv').config();
+import { GridFsStorage } from 'multer-gridfs-storage';
+import crypto from 'crypto';
+import path from 'path';
+import { config } from 'dotenv';
+
+config();
 
 const mongoURI = process.env.MONGODB_URI;
 const bucketName = process.env.GRIDFS_BUCKET || 'uploads';
@@ -28,5 +30,5 @@ const storage = new GridFsStorage({
     })
 });
 
-module.exports = storage;
+export default storage;
 
