@@ -3,7 +3,7 @@ import sinon from 'sinon';
 import mongoose from 'mongoose';
 import Interaction from '../models/Interaction.js';
 import Post from '../models/Post.js';
-import analyzePreferences from '../services/analyzePreferences.js';
+import { analyzePreferences } from '../services/analyzePreferences.js';
 
 const should = chai.should();
 
