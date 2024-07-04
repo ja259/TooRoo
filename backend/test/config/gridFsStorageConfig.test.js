@@ -1,8 +1,7 @@
-import chai from 'chai';
-const { should } = chai;
-import storage from '../../config/gridFsStorageConfig.js';
+const chai = require('chai');
+const storage = require('../../config/gridFsStorageConfig.js');
 
-should();
+const should = chai.should();
 
 describe('GridFS Storage Config Tests', () => {
     it('should have a valid GridFS storage configuration', () => {
@@ -13,7 +12,7 @@ describe('GridFS Storage Config Tests', () => {
         const originalMongodbUri = process.env.MONGODB_URI;
         process.env.MONGODB_URI = '';
         try {
-            import('../../config/gridFsStorageConfig.js');
+            require('../../config/gridFsStorageConfig.js');
         } catch (error) {
             error.should.be.an('error');
             error.message.should.include('MONGODB_URI environment variable is not defined');
@@ -22,3 +21,4 @@ describe('GridFS Storage Config Tests', () => {
         }
     });
 });
+

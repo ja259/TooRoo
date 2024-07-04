@@ -38,5 +38,5 @@ const config = ENV === 'production' ? productionConfig : developmentConfig;
 
 validateConfig(config);
 
-export default config;
+module.exports = config;
 

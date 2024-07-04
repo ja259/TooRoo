@@ -1,37 +1,37 @@
-import { expect } from 'chai';
-import { execSync } from 'child_process';
+const chai = require('chai');
+const { execSync } = require('child_process');
+
+const should = chai.should();
 
 describe('Config Tests', () => {
     let config;
 
-    before(async () => {
-        const conf = await import('../../config/config.js');
-        config = conf.default;
+    before(() => {
+        config = require('../../config/config.js');
     });
 
     it('should have a valid configuration object', () => {
-        expect(config).to.be.an('object');
+        config.should.be.an('object');
     });
 
     it('should contain required environment variables', () => {
-        expect(config).to.have.property('dbUri');
-        expect(config).to.have.property('jwtSecret');
-        expect(config).to.have.property('email');
-        expect(config).to.have.property('emailPassword');
+        config.should.have.property('dbUri');
+        config.should.have.property('jwtSecret');
+        config.should.have.property('email');
+        config.should.have.property('emailPassword');
     });
 
-    it('should throw an error if a required environment variable is missing', async () => {
+    it('should throw an error if a required environment variable is missing', () => {
         const originalJwtSecret = process.env.DEV_JWT_SECRET;
         process.env.DEV_JWT_SECRET = '';
 
         try {
-            await import('../../config/config.js');
+            require('../../config/config.js');
         } catch (error) {
-            expect(error).to.be.an('error');
-            expect(error.message).to.include('Missing required environment variable');
+            error.should.be.an('error');
+            error.message.should.include('Missing required environment variable');
         } finally {
             process.env.DEV_JWT_SECRET = originalJwtSecret;
         }
     });
 });
-
