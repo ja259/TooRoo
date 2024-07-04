@@ -1,28 +1,30 @@
-require('dotenv').config();
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const bodyParser = require('body-parser');
-const multer = require('multer');
-const path = require('path');
-const http = require('http');
-const socketIo = require('socket.io');
-const webPush = require('web-push');
-const gridFsStorage = require('./config/gridFsStorageConfig');
-const errorHandler = require('./middlewares/errorHandler');
-const { authenticate } = require('./middlewares/authMiddleware');
-const rateLimit = require('express-rate-limit');
-const helmet = require('helmet');
-const xss = require('xss-clean');
-const hpp = require('hpp');
-const authRoutes = require('./routes/authRoutes');
-const userRoutes = require('./routes/userRoutes');
-const postRoutes = require('./routes/postRoutes');
-const mediaRoutes = require('./routes/mediaRoutes');
+import dotenv from 'dotenv';
+import express from 'express';
+import mongoose from 'mongoose';
+import cors from 'cors';
+import bodyParser from 'body-parser';
+import multer from 'multer';
+import path from 'path';
+import http from 'http';
+import { Server } from 'socket.io';
+import webPush from 'web-push';
+import gridFsStorage from './config/gridFsStorageConfig.js';
+import errorHandler from './middlewares/errorHandler.js';
+import { authenticate } from './middlewares/authMiddleware.js';
+import rateLimit from 'express-rate-limit';
+import helmet from 'helmet';
+import xss from 'xss-clean';
+import hpp from 'hpp';
+import authRoutes from './routes/authRoutes.js';
+import userRoutes from './routes/userRoutes.js';
+import postRoutes from './routes/postRoutes.js';
+import mediaRoutes from './routes/mediaRoutes.js';
+
+dotenv.config();
 
 const app = express();
 const server = http.createServer(app);
-const io = socketIo(server, {
+const io = new Server(server, {
     cors: {
         origin: '*',
         methods: ['GET', 'POST']

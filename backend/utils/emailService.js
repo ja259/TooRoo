@@ -1,5 +1,7 @@
-const nodemailer = require('nodemailer');
-require('dotenv').config();
+import nodemailer from 'nodemailer';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const { EMAIL, EMAIL_PASSWORD, EMAIL_SERVICE } = process.env;
 
@@ -38,6 +40,6 @@ const emailService = {
     },
 };
 
-module.exports = emailService;
+export default emailService;
 
 

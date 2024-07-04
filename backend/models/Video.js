@@ -1,5 +1,6 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+import mongoose from 'mongoose';
+
+const { Schema } = mongoose;
 
 const commentSchema = new Schema({
     author: { 
@@ -34,10 +35,18 @@ const videoSchema = new Schema({
         type: Schema.Types.ObjectId, 
         ref: 'User' 
     }],
-    comments: [commentSchema],
+    comments: [commentSchema]
 }, { 
     timestamps: true 
 });
 
-module.exports = mongoose.model('Video', videoSchema);
+videoSchema.pre('save', function(next) {
+    if (!this.videoUrl) {
+        next(new Error('Video URL is required'));
+    } else {
+        next();
+    }
+});
+
+export default mongoose.model('Video', videoSchema);
 

@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const commentSchema = new mongoose.Schema({
     author: { 
@@ -44,5 +44,5 @@ const postSchema = new mongoose.Schema({
     timestamps: true 
 });
 
-module.exports = mongoose.model('Post', postSchema);
+export default mongoose.model('Post', postSchema);
 

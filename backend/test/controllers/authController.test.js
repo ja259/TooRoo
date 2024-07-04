@@ -3,6 +3,8 @@ import chaiHttp from 'chai-http';
 import server from '../../server.js';
 import User from '../../models/User.js';
 import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
+import emailService from '../../utils/emailService.js';
 
 const { should } = chai;
 should();
@@ -65,5 +67,65 @@ describe('Auth Controller', () => {
         });
     });
 
-    // Add tests for forgotPassword and resetPassword
+    describe('/POST forgotPassword', () => {
+        it('it should send a password reset token', (done) => {
+            let user = new User({
+                username: 'testuser',
+                email: 'testuser@example.com',
+                phone: '1234567890',
+                password: 'password123',
+                securityQuestions: [
+                    { question: 'Question1', answer: 'Answer1' },
+                    { question: 'Question2', answer: 'Answer2' },
+                    { question: 'Question3', answer: 'Answer3' }
+                ]
+            });
+            user.save((err, user) => {
+                chai.request(server)
+                    .post('/api/auth/forgot-password')
+                    .send({ email: 'testuser@example.com' })
+                    .end((err, res) => {
+                        res.should.have.status(200);
+                        res.body.should.have.property('message').eql('Password reset token sent');
+                        done();
+                    });
+            });
+        });
+    });
+
+    describe('/POST resetPassword', () => {
+        it('it should reset the user password', (done) => {
+            let user = new User({
+                username: 'testuser',
+                email: 'testuser@example.com',
+                phone: '1234567890',
+                password: 'password123',
+                securityQuestions: [
+                    { question: 'Question1', answer: 'Answer1' },
+                    { question: 'Question2', answer: 'Answer2' },
+                    { question: 'Question3', answer: 'Answer3' }
+                ]
+            });
+
+            const resetToken = crypto.randomBytes(20).toString('hex');
+            user.resetPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+            user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+
+            user.save((err, user) => {
+                const newPassword = 'newpassword123';
+                chai.request(server)
+                    .post('/api/auth/reset-password')
+                    .send({
+                        token: resetToken,
+                        password: newPassword,
+                        securityAnswers: ['Answer1', 'Answer2', 'Answer3']
+                    })
+                    .end((err, res) => {
+                        res.should.have.status(200);
+                        res.body.should.have.property('message').eql('Password has been reset successfully');
+                        done();
+                    });
+            });
+        });
+    });
 });

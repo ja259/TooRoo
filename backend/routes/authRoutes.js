@@ -1,7 +1,7 @@
-const express = require('express');
-const { register, login, forgotPassword, resetPassword } = require('../controllers/authController');
-const { validateRegister, validateLogin, validateForgotPassword, validateResetPassword } = require('../middlewares/validate');
-const rateLimit = require('express-rate-limit');
+import express from 'express';
+import rateLimit from 'express-rate-limit';
+import { register, login, forgotPassword, resetPassword } from '../controllers/authController.js';
+import { validateRegister, validateLogin, validateForgotPassword, validateResetPassword } from '../middlewares/validate.js';
 
 const router = express.Router();
 
@@ -19,5 +19,6 @@ router.post('/login', validateLogin, login);
 router.post('/forgot-password', validateForgotPassword, forgotPassword);
 router.put('/reset-password/:token', validateResetPassword, resetPassword);
 
-module.exports = router;
+export default router;
+
 
