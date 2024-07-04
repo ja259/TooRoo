@@ -1,5 +1,5 @@
-import chai from 'chai';
-import dotenv from 'dotenv';
+const chai = require('chai');
+const dotenv = require('dotenv');
 
 const should = chai.should();
 dotenv.config({ path: './.env' });
