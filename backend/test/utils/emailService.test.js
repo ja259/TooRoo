@@ -25,7 +25,8 @@ describe('Email Service Tests', () => {
         transporter.sendMail.calledWithMatch({
             to: 'test@example.com',
             subject: 'Test Subject',
-            text: 'Test Message'
+            text: 'Test Message',
+            html: '<p>Test Message</p>'
         }).should.be.true;
     });
 
@@ -37,5 +38,41 @@ describe('Email Service Tests', () => {
             error.should.be.an('error');
             error.message.should.equal('Failed to send email');
         }
+    });
+
+    it('should use the correct email service and credentials', async () => {
+        await emailService.sendEmail('test@example.com', 'Test Subject', 'Test Message');
+        nodemailer.createTransport.calledOnce.should.be.true;
+        nodemailer.createTransport.calledWithMatch({
+            service: process.env.EMAIL_SERVICE || 'Gmail',
+            auth: {
+                user: process.env.EMAIL,
+                pass: process.env.EMAIL_PASSWORD
+            },
+            tls: {
+                rejectUnauthorized: false
+            }
+        }).should.be.true;
+    });
+
+    it('should log the email sending process', async () => {
+        const consoleSpy = sinon.spy(console, 'log');
+        await emailService.sendEmail('test@example.com', 'Test Subject', 'Test Message');
+        consoleSpy.calledWith(`Email sent to test@example.com with subject "Test Subject"`).should.be.true;
+        consoleSpy.restore();
+    });
+
+    it('should handle missing environment variables', () => {
+        const originalEmail = process.env.EMAIL;
+        const originalEmailPassword = process.env.EMAIL_PASSWORD;
+        delete process.env.EMAIL;
+        delete process.env.EMAIL_PASSWORD;
+
+        (() => {
+            require('../../utils/emailService.js');
+        }).should.throw('Email configuration environment variables (EMAIL, EMAIL_PASSWORD) are not defined');
+
+        process.env.EMAIL = originalEmail;
+        process.env.EMAIL_PASSWORD = originalEmailPassword;
     });
 });

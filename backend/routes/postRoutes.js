@@ -1,5 +1,5 @@
-const express = require('express');
-const {
+import express from 'express';
+import {
     createPost,
     getPosts,
     likePost,
@@ -8,9 +8,9 @@ const {
     getTimelinePosts,
     getYouAllVideos,
     getFollowingVideos
-} = require('../controllers/postController');
-const { authenticate } = require('../middlewares/authMiddleware');
-const multer = require('multer');
+} from '../controllers/postController.js';
+import { authenticate } from '../middlewares/authMiddleware.js';
+import multer from 'multer';
 
 const router = express.Router();
 
@@ -41,5 +41,5 @@ router.put('/:id/like', authenticate, likePost);
 router.post('/:id/comment', authenticate, commentOnPost);
 router.delete('/:id', authenticate, deletePost);
 
-module.exports = router;
+export default router;
 

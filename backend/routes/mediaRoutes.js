@@ -1,10 +1,10 @@
-const express = require('express');
-const { uploadVideo, getAllVideos, deleteVideo, updateVideo } = require('../controllers/mediaController');
-const multer = require('multer');
-const { GridFsStorage } = require('multer-gridfs-storage');
-const crypto = require('crypto');
-const path = require('path');
-const { authenticate } = require('../middlewares/authMiddleware');
+import express from 'express';
+import { uploadVideo, getAllVideos, deleteVideo, updateVideo } from '../controllers/mediaController.js';
+import multer from 'multer';
+import { GridFsStorage } from 'multer-gridfs-storage';
+import crypto from 'crypto';
+import path from 'path';
+import { authenticate } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
@@ -33,4 +33,4 @@ router.get('/you-all-videos', authenticate, getAllVideos);
 router.delete('/:id', authenticate, deleteVideo);
 router.put('/:id', authenticate, updateVideo);
 
-module.exports = router;
+export default router;

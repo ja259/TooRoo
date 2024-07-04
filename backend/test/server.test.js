@@ -3,6 +3,11 @@ import chai from 'chai';
 import chaiHttp from 'chai-http';
 import mongoose from 'mongoose';
 import server from '../server.js';
+import User from '../models/User.js';
+import Post from '../models/Post.js';
+import Video from '../models/Video.js';
+
+dotenv.config();
 
 const should = chai.should();
 chai.use(chaiHttp);
@@ -66,6 +71,48 @@ describe('TooRoo Backend Tests', () => {
                     done();
                 });
         });
+
+        // Add tests for forgotPassword and resetPassword
+        it('should send forgot password email on /api/auth/forgot-password POST', (done) => {
+            let user = new User({
+                username: 'testuser',
+                email: 'testuser@example.com',
+                password: 'password123'
+            });
+            user.save((err, user) => {
+                chai.request(server)
+                    .post('/api/auth/forgot-password')
+                    .send({ email: user.email })
+                    .end((err, res) => {
+                        res.should.have.status(200);
+                        res.body.should.have.property('message').eql('Password reset token sent');
+                        done();
+                    });
+            });
+        });
+
+        it('should reset password on /api/auth/reset-password/:token PUT', (done) => {
+            let user = new User({
+                username: 'testuser',
+                email: 'testuser@example.com',
+                password: 'password123'
+            });
+            user.save((err, user) => {
+                chai.request(server)
+                    .post('/api/auth/forgot-password')
+                    .send({ email: user.email })
+                    .end((err, res) => {
+                        chai.request(server)
+                            .put(`/api/auth/reset-password/${res.body.token}`)
+                            .send({ password: 'newpassword123' })
+                            .end((err, res) => {
+                                res.should.have.status(200);
+                                res.body.should.have.property('message').eql('Password has been reset successfully');
+                                done();
+                            });
+                    });
+            });
+        });
     });
 
     describe('User Routes', () => {
@@ -95,6 +142,60 @@ describe('TooRoo Backend Tests', () => {
                     res.body.should.have.property('username').eql('testuser');
                     done();
                 });
+        });
+
+        it('should update user profile on /api/users/:id PUT', (done) => {
+            let updateUser = {
+                username: 'updateduser',
+                bio: 'Updated bio'
+            };
+            chai.request(server)
+                .put(`/api/users/testuser`)
+                .set('Authorization', `Bearer ${token}`)
+                .send(updateUser)
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.have.property('message').eql('User profile updated successfully.');
+                    done();
+                });
+        });
+
+        it('should follow a user on /api/users/:id/follow POST', (done) => {
+            let followUser = new User({
+                username: 'followuser',
+                email: 'followuser@example.com',
+                password: 'password123'
+            });
+            followUser.save((err, followUser) => {
+                chai.request(server)
+                    .post(`/api/users/${followUser._id}/follow`)
+                    .set('Authorization', `Bearer ${token}`)
+                    .send({ userId: followUser._id })
+                    .end((err, res) => {
+                        res.should.have.status(200);
+                        res.body.should.have.property('message').eql('Followed user successfully.');
+                        done();
+                    });
+            });
+        });
+
+        it('should unfollow a user on /api/users/:id/unfollow POST', (done) => {
+            let unfollowUser = new User({
+                username: 'unfollowuser',
+                email: 'unfollowuser@example.com',
+                password: 'password123'
+            });
+            unfollowUser.save((err, unfollowUser) => {
+                chai.request(server)
+                    .post(`/api/users/${unfollowUser._id}/unfollow`)
+                    .set('Authorization', `Bearer ${token}`)
+                    .send({ userId: unfollowUser._id })
+                    .end((err, res) => {
+                        res.should.have.status(200);
+                        res.body.should.have.property('message').eql('Unfollowed user successfully.');
+                        done();
+                    });
+            });
         });
     });
 
@@ -141,6 +242,92 @@ describe('TooRoo Backend Tests', () => {
                     done();
                 });
         });
+
+        it('should like a post on /api/posts/:id/like PUT', (done) => {
+            let post = new Post({
+                content: 'This is a test post',
+                author: 'testuser'
+            });
+            post.save((err, post) => {
+                chai.request(server)
+                    .put(`/api/posts/${post._id}/like`)
+                    .set('Authorization', `Bearer ${token}`)
+                    .send({ userId: 'testuser' })
+                    .end((err, res) => {
+                        res.should.have.status(200);
+                        res.body.should.have.property('message').eql('Like status updated successfully');
+                        done();
+                    });
+            });
+        });
+
+        it('should comment on a post on /api/posts/:id/comment POST', (done) => {
+            let post = new Post({
+                content: 'This is a test post',
+                author: 'testuser'
+            });
+            post.save((err, post) => {
+                chai.request(server)
+                    .post(`/api/posts/${post._id}/comment`)
+                    .set('Authorization', `Bearer ${token}`)
+                    .send({ userId: 'testuser', content: 'This is a test comment' })
+                    .end((err, res) => {
+                        res.should.have.status(200);
+                        res.body.should.have.property('message').eql('Comment added successfully');
+                        done();
+                    });
+            });
+        });
+
+        it('should delete a post on /api/posts/:id DELETE', (done) => {
+            let post = new Post({
+                content: 'This is a test post',
+                author: 'testuser'
+            });
+            post.save((err, post) => {
+                chai.request(server)
+                    .delete(`/api/posts/${post._id}`)
+                    .set('Authorization', `Bearer ${token}`)
+                    .end((err, res) => {
+                        res.should.have.status(200);
+                        res.body.should.have.property('message').eql('Post deleted successfully');
+                        done();
+                    });
+            });
+        });
+
+        it('should get timeline posts on /api/posts/timeline-posts GET', (done) => {
+            chai.request(server)
+                .get('/api/posts/timeline-posts')
+                .set('Authorization', `Bearer ${token}`)
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.be.a('array');
+                    done();
+                });
+        });
+
+        it('should get YouAll videos on /api/posts/you-all-videos GET', (done) => {
+            chai.request(server)
+                .get('/api/posts/you-all-videos')
+                .set('Authorization', `Bearer ${token}`)
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.be.a('array');
+                    done();
+                });
+        });
+
+        it('should get following videos on /api/posts/following-videos GET', (done) => {
+            chai.request(server)
+                .get('/api/posts/following-videos')
+                .set('Authorization', `Bearer ${token}`)
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.be.a('array');
+                    done();
+                });
+        });
     });
 
     describe('Media Routes', () => {
@@ -171,6 +358,52 @@ describe('TooRoo Backend Tests', () => {
                     res.body.should.have.property('message').eql('File uploaded successfully');
                     done();
                 });
+        });
+
+        it('should get all videos on /api/media/you-all-videos GET', (done) => {
+            chai.request(server)
+                .get('/api/media/you-all-videos')
+                .set('Authorization', `Bearer ${token}`)
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.be.a('array');
+                    done();
+                });
+        });
+
+        it('should delete a video on /api/media/:id DELETE', (done) => {
+            let video = new Video({
+                videoUrl: 'testfile.mp4',
+                author: 'testuser'
+            });
+            video.save((err, video) => {
+                chai.request(server)
+                    .delete(`/api/media/${video._id}`)
+                    .set('Authorization', `Bearer ${token}`)
+                    .end((err, res) => {
+                        res.should.have.status(200);
+                        res.body.should.have.property('message').eql('Video deleted successfully');
+                        done();
+                    });
+            });
+        });
+
+        it('should update a video on /api/media/:id PUT', (done) => {
+            let video = new Video({
+                videoUrl: 'testfile.mp4',
+                author: 'testuser'
+            });
+            video.save((err, video) => {
+                chai.request(server)
+                    .put(`/api/media/${video._id}`)
+                    .set('Authorization', `Bearer ${token}`)
+                    .send({ description: 'Updated description' })
+                    .end((err, res) => {
+                        res.should.have.status(200);
+                        res.body.should.have.property('message').eql('Video updated successfully');
+                        done();
+                    });
+            });
         });
     });
 
