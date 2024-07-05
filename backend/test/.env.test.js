@@ -1,9 +1,9 @@
-import chai from 'chai';
-import dotenv from 'dotenv';
+import * as chai from 'chai';
+import { config as dotenvConfig } from 'dotenv';
 
 const { should } = chai;
 should();
-dotenv.config({ path: './.env' });
+dotenvConfig({ path: './.env' });
 
 describe('Environment Variables Tests', () => {
     it('should load environment variables from .env file', () => {
