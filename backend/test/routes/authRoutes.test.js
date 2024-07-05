@@ -3,7 +3,7 @@ import chaiHttp from 'chai-http';
 import mongoose from 'mongoose';
 import server from '../../server.js';
 import User from '../../models/User.js';
-import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import emailService from '../../utils/emailService.js';
 
@@ -25,7 +25,7 @@ describe('Auth Routes', () => {
     });
 
     describe('/POST register', () => {
-        it('it should register a user', (done) => {
+        it('should register a user', (done) => {
             const user = {
                 username: 'testuser',
                 email: 'testuser@example.com',
@@ -49,7 +49,7 @@ describe('Auth Routes', () => {
     });
 
     describe('/POST login', () => {
-        it('it should login a user', (done) => {
+        it('should login a user', (done) => {
             const user = new User({
                 username: 'testuser',
                 email: 'testuser@example.com',
@@ -74,7 +74,7 @@ describe('Auth Routes', () => {
             });
         });
 
-        it('it should not login a user with incorrect password', (done) => {
+        it('should not login a user with incorrect password', (done) => {
             const user = new User({
                 username: 'testuser',
                 email: 'testuser@example.com',
@@ -101,7 +101,7 @@ describe('Auth Routes', () => {
     });
 
     describe('/POST forgot-password', () => {
-        it('it should send a password reset token', (done) => {
+        it('should send a password reset token', (done) => {
             const user = new User({
                 username: 'testuser',
                 email: 'testuser@example.com',
@@ -125,7 +125,7 @@ describe('Auth Routes', () => {
             });
         });
 
-        it('it should return 404 for non-existent email', (done) => {
+        it('should return 404 for non-existent email', (done) => {
             chai.request(server)
                 .post('/api/auth/forgot-password')
                 .send({ email: 'nonexistent@example.com' })
@@ -138,7 +138,7 @@ describe('Auth Routes', () => {
     });
 
     describe('/PUT reset-password/:token', () => {
-        it('it should reset the password', (done) => {
+        it('should reset the password', (done) => {
             const user = new User({
                 username: 'testuser',
                 email: 'testuser@example.com',
@@ -167,7 +167,7 @@ describe('Auth Routes', () => {
             });
         });
 
-        it('it should return 400 for invalid or expired token', (done) => {
+        it('should return 400 for invalid or expired token', (done) => {
             chai.request(server)
                 .put('/api/auth/reset-password/invalidtoken')
                 .send({ password: 'newpassword123', securityAnswers: ['Answer1', 'Answer2', 'Answer3'] })
@@ -178,7 +178,7 @@ describe('Auth Routes', () => {
                 });
         });
 
-        it('it should return 400 for invalid security answers', (done) => {
+        it('should return 400 for invalid security answers', (done) => {
             const user = new User({
                 username: 'testuser',
                 email: 'testuser@example.com',
