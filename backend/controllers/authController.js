@@ -4,7 +4,7 @@ const User = require('../models/User');
 const crypto = require('crypto');
 const emailService = require('../utils/emailService');
 
-exports.register = async (req, res) => {
+const register = async (req, res) => {
     try {
         const { username, email, phone, password, securityQuestions } = req.body;
 
@@ -29,7 +29,7 @@ exports.register = async (req, res) => {
     }
 };
 
-exports.login = async (req, res) => {
+const login = async (req, res) => {
     try {
         const { emailOrPhone, password } = req.body;
         let user;
@@ -52,7 +52,7 @@ exports.login = async (req, res) => {
     }
 };
 
-exports.forgotPassword = async (req, res) => {
+const forgotPassword = async (req, res) => {
     try {
         const { email } = req.body;
         const user = await User.findOne({ email });
@@ -77,7 +77,7 @@ exports.forgotPassword = async (req, res) => {
     }
 };
 
-exports.resetPassword = async (req, res) => {
+const resetPassword = async (req, res) => {
     try {
         const { token, password, securityAnswers } = req.body;
         const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
@@ -107,4 +107,11 @@ exports.resetPassword = async (req, res) => {
         console.error('Reset password error:', error);
         res.status(500).json({ message: 'Internal server error', error: error.message });
     }
+};
+
+module.exports = {
+    register,
+    login,
+    forgotPassword,
+    resetPassword
 };
