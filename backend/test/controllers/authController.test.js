@@ -1,4 +1,4 @@
-import chai from 'chai';
+import * as chai from 'chai';
 import chaiHttp from 'chai-http';
 import server from '../../server.js';
 import User from '../../models/User.js';
@@ -6,19 +6,17 @@ import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import emailService from '../../utils/emailService.js';
 
-const { should } = chai;
-should();
+const should = chai.should();
 chai.use(chaiHttp);
 
 describe('Auth Controller', () => {
-
     beforeEach(async () => {
         await User.deleteMany({});
     });
 
     describe('/POST register', () => {
         it('should register a user', (done) => {
-            let user = {
+            const user = {
                 username: 'testuser',
                 email: 'testuser@example.com',
                 phone: '1234567890',
@@ -42,7 +40,7 @@ describe('Auth Controller', () => {
 
     describe('/POST login', () => {
         it('should login a user', (done) => {
-            let user = new User({
+            const user = new User({
                 username: 'testuser',
                 email: 'testuser@example.com',
                 phone: '1234567890',
@@ -69,7 +67,7 @@ describe('Auth Controller', () => {
 
     describe('/POST forgotPassword', () => {
         it('should send a password reset token', (done) => {
-            let user = new User({
+            const user = new User({
                 username: 'testuser',
                 email: 'testuser@example.com',
                 phone: '1234567890',
@@ -95,7 +93,7 @@ describe('Auth Controller', () => {
 
     describe('/PUT resetPassword', () => {
         it('should reset the user password', (done) => {
-            let user = new User({
+            const user = new User({
                 username: 'testuser',
                 email: 'testuser@example.com',
                 phone: '1234567890',
