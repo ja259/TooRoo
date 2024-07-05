@@ -93,7 +93,7 @@ describe('Auth Controller', () => {
         });
     });
 
-    describe('/POST resetPassword', () => {
+    describe('/PUT resetPassword', () => {
         it('should reset the user password', (done) => {
             let user = new User({
                 username: 'testuser',
