@@ -1,4 +1,4 @@
-import chai from 'chai';
+import * as chai from 'chai';
 import chaiHttp from 'chai-http';
 import mongoose from 'mongoose';
 import server from '../../server.js';
@@ -11,9 +11,8 @@ const should = chai.should();
 chai.use(chaiHttp);
 
 describe('Auth Routes', () => {
-
     before(async () => {
-        await mongoose.connect('mongodb://localhost:27017/testdb', { useNewUrlParser: true, useUnifiedTopology: true });
+        await mongoose.connect('mongodb://localhost:27017/testdb');
     });
 
     after(async () => {
