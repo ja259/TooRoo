@@ -1,7 +1,8 @@
-const chai = require('chai');
-const dotenv = require('dotenv');
+import chai from 'chai';
+import dotenv from 'dotenv';
 
-const should = chai.should();
+const { should } = chai;
+should();
 dotenv.config({ path: './.env' });
 
 describe('Environment Variables Tests', () => {
