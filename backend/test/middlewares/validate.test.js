@@ -39,4 +39,56 @@ describe('Validation Middleware Tests', () => {
         validateRegister[validateRegister.length - 1](req, res, next);
         res.status.calledWith(400).should.be.true;
     });
+
+    it('should validate login request', () => {
+        req.body = {
+            emailOrPhone: 'testuser@example.com',
+            password: 'password123'
+        };
+        validateLogin[validateLogin.length - 1](req, res, next);
+        next.calledOnce.should.be.true;
+    });
+
+    it('should return validation error for invalid login request', () => {
+        req.body = {
+            emailOrPhone: '',
+            password: ''
+        };
+        validateLogin[validateLogin.length - 1](req, res, next);
+        res.status.calledWith(400).should.be.true;
+    });
+
+    it('should validate forgot password request', () => {
+        req.body = {
+            email: 'testuser@example.com'
+        };
+        validateForgotPassword[validateForgotPassword.length - 1](req, res, next);
+        next.calledOnce.should.be.true;
+    });
+
+    it('should return validation error for invalid forgot password request', () => {
+        req.body = {
+            email: 'invalidemail'
+        };
+        validateForgotPassword[validateForgotPassword.length - 1](req, res, next);
+        res.status.calledWith(400).should.be.true;
+    });
+
+    it('should validate reset password request', () => {
+        req.body = {
+            password: 'newpassword123',
+            securityAnswers: ['Answer1', 'Answer2', 'Answer3']
+        };
+        validateResetPassword[validateResetPassword.length - 1](req, res, next);
+        next.calledOnce.should.be.true;
+    });
+
+    it('should return validation error for invalid reset password request', () => {
+        req.body = {
+            password: 'short',
+            securityAnswers: ['Answer1']
+        };
+        validateResetPassword[validateResetPassword.length - 1](req, res, next);
+        res.status.calledWith(400).should.be.true;
+    });
 });

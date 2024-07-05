@@ -21,4 +21,3 @@ router.put('/reset-password/:token', validateResetPassword, resetPassword);
 
 export default router;
 
-
