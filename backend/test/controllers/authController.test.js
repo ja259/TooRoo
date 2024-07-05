@@ -17,7 +17,7 @@ describe('Auth Controller', () => {
     });
 
     describe('/POST register', () => {
-        it('it should register a user', (done) => {
+        it('should register a user', (done) => {
             let user = {
                 username: 'testuser',
                 email: 'testuser@example.com',
@@ -41,7 +41,7 @@ describe('Auth Controller', () => {
     });
 
     describe('/POST login', () => {
-        it('it should login a user', (done) => {
+        it('should login a user', (done) => {
             let user = new User({
                 username: 'testuser',
                 email: 'testuser@example.com',
@@ -68,7 +68,7 @@ describe('Auth Controller', () => {
     });
 
     describe('/POST forgotPassword', () => {
-        it('it should send a password reset token', (done) => {
+        it('should send a password reset token', (done) => {
             let user = new User({
                 username: 'testuser',
                 email: 'testuser@example.com',
@@ -94,7 +94,7 @@ describe('Auth Controller', () => {
     });
 
     describe('/POST resetPassword', () => {
-        it('it should reset the user password', (done) => {
+        it('should reset the user password', (done) => {
             let user = new User({
                 username: 'testuser',
                 email: 'testuser@example.com',
@@ -114,7 +114,7 @@ describe('Auth Controller', () => {
             user.save((err, user) => {
                 const newPassword = 'newpassword123';
                 chai.request(server)
-                    .post('/api/auth/reset-password')
+                    .put(`/api/auth/reset-password/${resetToken}`)
                     .send({
                         token: resetToken,
                         password: newPassword,
