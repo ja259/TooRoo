@@ -1,5 +1,5 @@
 import analyzePreferences from './analyzePreferences.js';
-import Post from '../models/Post.js';
+import Post from './models/Post.js';
 
 const recommendContent = async (userId) => {
     try {
