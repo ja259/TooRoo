@@ -1,6 +1,6 @@
-const User = require('../models/User');
+import User from '../models/User.js';
 
-exports.getUserProfile = async (req, res) => {
+export const getUserProfile = async (req, res) => {
     try {
         const user = await User.findById(req.params.id).populate('posts');
         if (!user) {
@@ -13,7 +13,7 @@ exports.getUserProfile = async (req, res) => {
     }
 };
 
-exports.updateUserProfile = async (req, res) => {
+export const updateUserProfile = async (req, res) => {
     const { username, bio, avatar } = req.body;
     if (!username && !bio && !avatar) {
         return res.status(400).json({ message: 'Update information cannot be empty.' });
@@ -34,7 +34,7 @@ exports.updateUserProfile = async (req, res) => {
     }
 };
 
-exports.followUser = async (req, res) => {
+export const followUser = async (req, res) => {
     const { id: userId } = req.params;
     const { userId: currentUserId } = req.body;
 
@@ -61,7 +61,7 @@ exports.followUser = async (req, res) => {
     }
 };
 
-exports.unfollowUser = async (req, res) => {
+export const unfollowUser = async (req, res) => {
     const { id: userId } = req.params;
     const { userId: currentUserId } = req.body;
 
