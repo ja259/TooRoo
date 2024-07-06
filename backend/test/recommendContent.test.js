@@ -10,12 +10,12 @@ const should = chai.should();
 describe('Recommend Content Service Tests', () => {
     let analyzePreferencesStub, postStub;
 
-    before(() => {
-        mongoose.connect('mongodb://localhost:27017/testdb', { useNewUrlParser: true, useUnifiedTopology: true });
+    before(async () => {
+        await mongoose.connect('mongodb://localhost:27017/testdb', { useNewUrlParser: true, useUnifiedTopology: true });
     });
 
-    after(() => {
-        mongoose.connection.close();
+    after(async () => {
+        await mongoose.connection.close();
     });
 
     beforeEach(() => {
@@ -51,9 +51,9 @@ describe('Recommend Content Service Tests', () => {
         }).resolves(recommendedPosts);
 
         const result = await recommendContent(userId);
-        result.should.be.an('array').with.length.of2.
-        result[0].should.have.property._id.eql.recommendedPostId1.
-        result[1].should.have.property._id.eql.recommendedPostId2
+        result.should.be.an('array').with.lengthOf(2);
+        result[0].should.have.property('_id').eql('recommendedPostId1');
+        result[1].should.have.property('_id').eql('recommendedPostId2');
     });
 
     it('should handle no preferences found', async () => {
@@ -61,7 +61,7 @@ describe('Recommend Content Service Tests', () => {
         postStub.resolves([]);
 
         const result = await recommendContent('userId');
-        result.should.be.an('array').that.is.empty
+        result.should.be.an('array').that.is.empty;
     });
 
     it('should handle errors during content recommendation', async () => {
@@ -70,8 +70,8 @@ describe('Recommend Content Service Tests', () => {
         try {
             await recommendContent('userId');
         } catch (error) {
-            error.should.be.an.error
-            error.message.should.eql.Failed.to.recommend.content
+            error.should.be.an('error');
+            error.message.should.eql('Failed to recommend content');
         }
     });
 });

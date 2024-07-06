@@ -10,12 +10,12 @@ const should = chai.should();
 describe('Analyze Preferences Service Tests', () => {
     let interactionStub, postStub;
 
-    before(() => {
-        mongoose.connect('mongodb://localhost:27017/testdb', { useNewUrlParser: true, useUnifiedTopology: true });
+    before(async () => {
+        await mongoose.connect('mongodb://localhost:27017/testdb', { useNewUrlParser: true, useUnifiedTopology: true });
     });
 
-    after(() => {
-        mongoose.connection.close();
+    after(async () => {
+        await mongoose.connection.close();
     });
 
     beforeEach(() => {
@@ -61,7 +61,7 @@ describe('Analyze Preferences Service Tests', () => {
         const result = await analyzePreferences('nonexistentUserId');
         result.should.be.an('object');
         result.likes.should.be.an('array').that.is.empty;
-        result.comments.should.be.an('array').that.is.empty
+        result.comments.should.be.an('array').that.is.empty;
     });
 
     it('should handle errors during preference analysis', async () => {
