@@ -1,4 +1,4 @@
-const { createLogger, transports, format } = require('winston');
+import { createLogger, transports, format } from 'winston';
 
 const logger = createLogger({
     level: 'error',
@@ -19,7 +19,7 @@ const logger = createLogger({
     ]
 });
 
-module.exports = (err, req, res, next) => {
+const errorHandler = (err, req, res, next) => {
     logger.error('Error: %o', err);
 
     const statusCode = err.statusCode || 500;
@@ -35,3 +35,5 @@ module.exports = (err, req, res, next) => {
 
     res.status(statusCode).json(errorResponse);
 };
+
+export default errorHandler;
