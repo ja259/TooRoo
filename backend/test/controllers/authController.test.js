@@ -1,9 +1,13 @@
-import chai from 'chai';
+import * as chai from 'chai';
 import chaiHttp from 'chai-http';
 import server from '../../server.js';
 import User from '../../models/User.js';
 import Post from '../../models/Post.js';
 import Video from '../../models/Video.js';
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const should = chai.should();
 chai.use(chaiHttp);
