@@ -1,10 +1,10 @@
-import chai from 'chai';
+import * as chai from 'chai';
 import chaiHttp from 'chai-http';
 import server from '../../server.js';
 import Video from '../../models/Video.js';
 import User from '../../models/User.js';
 
-const should = chai.should();
+chai.should();
 chai.use(chaiHttp);
 
 describe('Media Routes', () => {

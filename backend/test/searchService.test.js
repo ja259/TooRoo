@@ -1,10 +1,10 @@
-import chai from 'chai';
+import * as chai from 'chai';
 import mongoose from 'mongoose';
 import User from '../models/User.js';
 import Post from '../models/Post.js';
 import searchService from '../services/searchService.js';
 
-const should = chai.should();
+chai.should();
 
 describe('Search Service Tests', () => {
     let userStub, postStub;

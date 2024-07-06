@@ -1,9 +1,9 @@
-import chai from 'chai';
+import * as chai from 'chai';
 import sinon from 'sinon';
 import nodemailer from 'nodemailer';
 import emailService from '../../utils/emailService.js';
 
-const should = chai.should();
+chai.should();
 
 describe('Email Service Tests', () => {
     let transporter;
