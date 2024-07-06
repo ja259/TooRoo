@@ -1,21 +1,21 @@
 import dotenv from 'dotenv';
-import { should } from 'chai';
+import * as chai from 'chai';
 import chaiHttp from 'chai-http';
 import mongoose from 'mongoose';
-import server from '../server.js';
-import User from '../models/User.js';
-import Post from '../models/Post.js';
-import Video from '../models/Video.js';
+import server from '../../server.js';
+import User from '../../models/User.js';
+import Post from '../../models/Post.js';
+import Video from '../../models/Video.js';
 
 dotenv.config();
 
-should();
+chai.should();
 chai.use(chaiHttp);
 
 describe('TooRoo Backend Tests', () => {
 
     before((done) => {
-        mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+        mongoose.connect(process.env.MONGODB_URI)
             .then(() => {
                 console.log('Connected to MongoDB');
                 done();
@@ -72,7 +72,6 @@ describe('TooRoo Backend Tests', () => {
                 });
         });
 
-        // Add tests for forgotPassword and resetPassword
         it('should send forgot password email on /api/auth/forgot-password POST', (done) => {
             let user = new User({
                 username: 'testuser',
@@ -441,7 +440,7 @@ describe('TooRoo Backend Tests', () => {
 
     describe('Socket.io', () => {
         it('should handle socket connection', (done) => {
-            const socket = require('socket.io-client')(`http://localhost:${port}`);
+            const socket = require('socket.io-client')(`http://localhost:${server.address().port}`);
             socket.on('connect', () => {
                 socket.emit('message', 'Test message');
                 socket.on('message', (msg) => {
