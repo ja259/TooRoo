@@ -1,6 +1,6 @@
-import chai from 'chai';
-import sinon from 'sinon';
-import errorHandler from '../../middlewares/errorHandler.js';
+const chai = require('chai');
+const sinon = require('sinon');
+const errorHandler = require('../../middlewares/errorHandler.js');
 
 const should = chai.should();
 
