@@ -1,5 +1,5 @@
-import Interaction from '../models/Interaction.js';
-import Post from '../models/Post.js';
+import Interaction from './models/Interaction.js';
+import Post from './models/Post.js';
 
 const analyzePreferences = async (userId) => {
     try {
