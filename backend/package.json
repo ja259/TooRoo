@@ -25,6 +25,7 @@
     "multer-gridfs-storage": "^5.0.2",
     "nodemailer": "^6.9.13",
     "socket.io": "^4.7.5",
+    "socket.io-client": "^4.7.5",
     "web-push": "^3.6.7",
     "winston": "^3.13.0",
     "xss-clean": "^0.1.4"
