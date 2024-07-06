@@ -1,4 +1,4 @@
-import chai from 'chai';
+import * as chai from 'chai';
 import sinon from 'sinon';
 import jwt from 'jsonwebtoken';
 import User from '../../models/User.js';
@@ -43,4 +43,3 @@ describe('Auth Middleware Tests', () => {
         jwt.verify.restore();
     });
 });
-
