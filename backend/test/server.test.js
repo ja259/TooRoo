@@ -1,5 +1,4 @@
-import { config as dotenvConfig } from 'dotenv';
-import chai from 'chai';
+import * as chai from 'chai';
 import chaiHttp from 'chai-http';
 import mongoose from 'mongoose';
 import sinon from 'sinon';
@@ -9,6 +8,7 @@ import Post from '../models/Post.js';
 import Video from '../models/Video.js';
 import { Server } from 'socket.io';
 import socketClient from 'socket.io-client';
+import { config as dotenvConfig } from 'dotenv';
 
 chai.use(chaiHttp);
 dotenvConfig({ path: './.env' });
