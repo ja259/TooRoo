@@ -1,10 +1,10 @@
-import chai from 'chai';
+import * as chai from 'chai';
 import chaiHttp from 'chai-http';
 import server from '../../server.js';
 import Post from '../../models/Post.js';
 import User from '../../models/User.js';
 
-const should = chai.should();
+chai.should();
 chai.use(chaiHttp);
 
 describe('Post Routes', () => {

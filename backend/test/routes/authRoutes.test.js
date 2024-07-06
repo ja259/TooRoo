@@ -1,4 +1,4 @@
-import chai from 'chai';
+import * as chai from 'chai';
 import chaiHttp from 'chai-http';
 import mongoose from 'mongoose';
 import server from '../../server.js';
@@ -6,7 +6,7 @@ import User from '../../models/User.js';
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 
-const should = chai.should();
+chai.should();
 chai.use(chaiHttp);
 
 describe('Auth Routes', () => {
