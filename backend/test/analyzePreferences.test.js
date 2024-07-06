@@ -70,8 +70,9 @@ describe('Analyze Preferences Service Tests', () => {
         try {
             await analyzePreferences('userId');
         } catch (error) {
-            error.should.be.an('error');
+            error.should.be.an.error;
             error.message.should.eql('Failed to analyze preferences');
         }
     });
 });
+
