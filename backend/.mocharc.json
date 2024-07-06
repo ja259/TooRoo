@@ -1,0 +1,6 @@
+{
+    "require": "esm",
+    "exit": true,
+    "spec": "test/**/*.test.js"
+  }
+  
