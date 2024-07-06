@@ -2,7 +2,7 @@ import * as chai from 'chai';
 import mongoose from 'mongoose';
 import User from '../models/User.js';
 import Post from '../models/Post.js';
-import searchService from '../services/searchService.js';
+import { searchUsers, searchPosts } from '../services/searchService.js';
 
 chai.should();
 
@@ -10,7 +10,7 @@ describe('Search Service Tests', () => {
     let userStub, postStub;
 
     before(() => {
-        mongoose.connect('mongodb://localhost:27017/testdb', { useNewUrlParser: true, useUnifiedTopology: true });
+        mongoose.connect('mongodb://localhost:27017/testdb');
     });
 
     after(() => {
@@ -41,7 +41,7 @@ describe('Search Service Tests', () => {
 
         userStub.withArgs({ username: new RegExp(query, 'i') }).resolves(users);
 
-        const result = await searchService.searchUsers(query);
+        const result = await searchUsers(query);
         result.should.be.an('array').with.lengthOf(1);
         result[0].should.have.property('username').eql('username');
         result[0].should.have.property('avatar').eql('avatarUrl');
@@ -76,7 +76,7 @@ describe('Search Service Tests', () => {
 
         postStub.withArgs({ content: new RegExp(query, 'i') }).resolves(posts);
 
-        const result = await searchService.searchPosts(query);
+        const result = await searchPosts(query);
         result.should.be.an('array').with.lengthOf(1);
         result[0].should.have.property('content').eql('post content');
         result[0].should.have.property('videoUrl').eql('videoUrl');
@@ -94,14 +94,14 @@ describe('Search Service Tests', () => {
     it('should handle no results found for users', async () => {
         userStub.resolves([]);
 
-        const result = await searchService.searchUsers('nonexistent');
+        const result = await searchUsers('nonexistent');
         result.should.be.an('array').that.is.empty;
     });
 
     it('should handle no results found for posts', async () => {
         postStub.resolves([]);
 
-        const result = await searchService.searchPosts('nonexistent');
+        const result = await searchPosts('nonexistent');
         result.should.be.an('array').that.is.empty;
     });
 
@@ -109,7 +109,7 @@ describe('Search Service Tests', () => {
         userStub.rejects(new Error('Search error'));
 
         try {
-            await searchService.searchUsers('username');
+            await searchUsers('username');
         } catch (error) {
             error.should.be.an('error');
             error.message.should.eql('Search error');
@@ -120,7 +120,7 @@ describe('Search Service Tests', () => {
         postStub.rejects(new Error('Search error'));
 
         try {
-            await searchService.searchPosts('post content');
+            await searchPosts('post content');
         } catch (error) {
             error.should.be.an('error');
             error.message.should.eql('Search error');
