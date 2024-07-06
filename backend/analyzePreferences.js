@@ -1,5 +1,5 @@
-const Interaction = require('../models/Interaction');
-const Post = require('../models/Post');
+import Interaction from '../models/Interaction.js';
+import Post from '../models/Post.js';
 
 const analyzePreferences = async (userId) => {
     try {
@@ -19,6 +19,6 @@ const analyzePreferences = async (userId) => {
     }
 };
 
-module.exports = analyzePreferences;
+export default analyzePreferences;
 
 

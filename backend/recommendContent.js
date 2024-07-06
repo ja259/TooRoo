@@ -1,5 +1,5 @@
-const analyzePreferences = require('./analyzePreferences');
-const Post = require('../models/Post');
+import analyzePreferences from './analyzePreferences.js';
+import Post from '../models/Post.js';
 
 const recommendContent = async (userId) => {
     try {
@@ -18,5 +18,5 @@ const recommendContent = async (userId) => {
     }
 };
 
-module.exports = recommendContent;
+export default recommendContent;
 
