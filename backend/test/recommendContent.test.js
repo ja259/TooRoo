@@ -1,9 +1,9 @@
-import chai from 'chai';
-import sinon from 'sinon';
-import mongoose from 'mongoose';
-import Post from '../models/Post.js';
-import analyzePreferences from '../analyzePreferences.js';
-import recommendContent from '../recommendContent.js';
+const chai = require('chai');
+const sinon = require('sinon');
+const mongoose = require('mongoose');
+const Post = require('../models/Post.js');
+const analyzePreferences = require('../analyzePreferences.js');
+const recommendContent = require('../recommendContent.js');
 
 const should = chai.should();
 
