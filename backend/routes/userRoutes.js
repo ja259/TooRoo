@@ -15,4 +15,3 @@ router.post('/:id/follow', authenticate, followUser);
 router.post('/:id/unfollow', authenticate, unfollowUser);
 
 export default router;
-
