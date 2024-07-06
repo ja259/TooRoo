@@ -9,6 +9,7 @@ import Video from '../models/Video.js';
 import { Server } from 'socket.io';
 import socketClient from 'socket.io-client';
 import { config as dotenvConfig } from 'dotenv';
+import { connectDB, disconnectDB } from '../db.js';
 
 chai.use(chaiHttp);
 dotenvConfig({ path: './.env' });
@@ -19,13 +20,11 @@ describe('Server and Routes Tests', function () {
     this.timeout(5000);
 
     before(async () => {
-        if (mongoose.connection.readyState === 0) {
-            await mongoose.connect(process.env.MONGODB_URI);
-        }
+        await connectDB();
     });
 
     after(async () => {
-        await mongoose.disconnect();
+        await disconnectDB();
     });
 
     describe('Auth Routes', () => {
