@@ -18,7 +18,7 @@ describe('User Model', () => {
         await User.deleteMany({});
     });
 
-    it('it should create a new user', (done) => {
+    it('should create a new user', (done) => {
         let user = new User({
             username: 'testuser',
             email: 'testuser@example.com',
@@ -42,7 +42,7 @@ describe('User Model', () => {
         });
     });
 
-    it('it should require a username', (done) => {
+    it('should require a username', (done) => {
         let user = new User({
             email: 'testuser@example.com',
             phone: '1234567890',
@@ -65,7 +65,7 @@ describe('User Model', () => {
         });
     });
 
-    it('it should require a valid email', (done) => {
+    it('should require a valid email', (done) => {
         let user = new User({
             username: 'testuser',
             email: 'notanemail',
@@ -89,7 +89,7 @@ describe('User Model', () => {
         });
     });
 
-    it('it should require a valid gender', (done) => {
+    it('should require a valid gender', (done) => {
         let user = new User({
             username: 'testuser',
             email: 'testuser@example.com',
@@ -113,7 +113,7 @@ describe('User Model', () => {
         });
     });
 
-    it('it should follow a user', async () => {
+    it('should follow a user', async () => {
         let user1 = new User({
             username: 'testuser1',
             email: 'testuser1@example.com',
@@ -161,7 +161,7 @@ describe('User Model', () => {
         updatedUser2.followers.should.include(user1._id);
     });
 
-    it('it should unfollow a user', async () => {
+    it('should unfollow a user', async () => {
         let user1 = new User({
             username: 'testuser1',
             email: 'testuser1@example.com',
