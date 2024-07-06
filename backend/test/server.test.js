@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-import chai from 'chai';
+import * as chai from 'chai';
 import chaiHttp from 'chai-http';
 import mongoose from 'mongoose';
 import server from '../../server.js';
@@ -9,13 +9,13 @@ import Video from '../../models/Video.js';
 
 dotenv.config();
 
-const should = chai.should();
+chai.should();
 chai.use(chaiHttp);
 
 describe('TooRoo Backend Tests', () => {
 
     before((done) => {
-        mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+        mongoose.connect(process.env.MONGODB_URI)
             .then(() => {
                 console.log('Connected to MongoDB');
                 done();
@@ -440,7 +440,7 @@ describe('TooRoo Backend Tests', () => {
 
     describe('Socket.io', () => {
         it('should handle socket connection', (done) => {
-            const socket = require('socket.io-client')(`http://localhost:${port}`);
+            const socket = require('socket.io-client')(`http://localhost:${server.address().port}`);
             socket.on('connect', () => {
                 socket.emit('message', 'Test message');
                 socket.on('message', (msg) => {
