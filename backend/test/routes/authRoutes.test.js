@@ -1,11 +1,10 @@
-import * as chai from 'chai';
-import chaiHttp from 'chai-http';
-import mongoose from 'mongoose';
-import server from '../../server.js';
-import User from '../../models/User.js';
-import bcrypt from 'bcryptjs';
-import crypto from 'crypto';
-import emailService from '../../utils/emailService.js';
+const chai = require('chai');
+const chaiHttp = require('chai-http');
+const mongoose = require('mongoose');
+const server = require('../../server');
+const User = require('../../models/User');
+const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 
 const should = chai.should();
 chai.use(chaiHttp);
