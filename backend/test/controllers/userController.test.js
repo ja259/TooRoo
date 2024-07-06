@@ -1,14 +1,13 @@
-import chai from 'chai';
+import { should } from 'chai';
 import chaiHttp from 'chai-http';
 import server from '../../server.js';
 import User from '../../models/User.js';
 import { generateAuthToken } from '../../utils/authUtils.js';
 
-const should = chai.should();
+should();
 chai.use(chaiHttp);
 
 describe('User Controller', () => {
-
     beforeEach(async () => {
         await User.deleteMany({});
     });

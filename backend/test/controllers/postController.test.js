@@ -1,10 +1,10 @@
-import chai from 'chai';
+import { should } from 'chai';
 import chaiHttp from 'chai-http';
 import server from '../../server.js';
 import User from '../../models/User.js';
 import Post from '../../models/Post.js';
 
-const should = chai.should();
+should();
 chai.use(chaiHttp);
 
 describe('Post Controller', () => {
