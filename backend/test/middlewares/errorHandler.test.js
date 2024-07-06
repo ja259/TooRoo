@@ -1,8 +1,8 @@
-const chai = require('chai');
-const sinon = require('sinon');
-const errorHandler = require('../../middlewares/errorHandler.js');
+import { should } from 'chai';
+import sinon from 'sinon';
+import errorHandler from '../../middlewares/errorHandler.js';
 
-const should = chai.should();
+should();
 
 describe('Error Handler Middleware Tests', () => {
     let req, res, next;
