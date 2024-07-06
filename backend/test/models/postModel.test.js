@@ -1,4 +1,4 @@
-import chai from 'chai';
+import * as chai from 'chai';
 import mongoose from 'mongoose';
 import Post from '../../models/Post.js';
 import User from '../../models/User.js';
@@ -8,7 +8,7 @@ const should = chai.should();
 describe('Post Model', () => {
 
     before(async () => {
-        await mongoose.connect('mongodb://localhost:27017/testdb', { useNewUrlParser: true, useUnifiedTopology: true });
+        await mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
     });
 
     after(async () => {
@@ -20,68 +20,68 @@ describe('Post Model', () => {
         await User.deleteMany({});
     });
 
-    it('it should create a new post', (done) => {
-        let user = new User({
-            username: 'testuser',
-            email: 'testuser@example.com',
-            phone: '1234567890',
-            password: 'password123'
-        });
-        user.save((err, user) => {
-            let post = new Post({
-                content: 'Test post',
-                author: user._id
-            });
-            post.save((err, post) => {
-                should.not.exist(err);
-                post.should.have.property('content').eql('Test post');
-                post.should.have.property('author').eql(user._id);
-                done();
-            });
-        });
-    });
-
-    it('it should require content', (done) => {
-        let user = new User({
-            username: 'testuser',
-            email: 'testuser@example.com',
-            phone: '1234567890',
-            password: 'password123'
-        });
-        user.save((err, user) => {
-            let post = new Post({
-                author: user._id
-            });
-            post.save((err) => {
-                should.exist(err);
-                err.errors.should.have.property('content');
-                err.errors.content.should.have.property('kind').eql('required');
-                done();
-            });
-        });
-    });
-
-    it('it should require an author', (done) => {
-        let post = new Post({
-            content: 'Test post'
-        });
-        post.save((err) => {
-            should.exist(err);
-            err.errors.should.have.property('author');
-            err.errors.author.should.have.property('kind').eql('required');
-            done();
-        });
-    });
-
-    it('it should add a like to a post', async () => {
-        let user = new User({
+    it('it should create a new post', async () => {
+        const user = new User({
             username: 'testuser',
             email: 'testuser@example.com',
             phone: '1234567890',
             password: 'password123'
         });
         await user.save();
-        let post = new Post({
+
+        const post = new Post({
+            content: 'Test post',
+            author: user._id
+        });
+
+        const savedPost = await post.save();
+        savedPost.should.have.property('content').eql('Test post');
+        savedPost.should.have.property('author').eql(user._id);
+    });
+
+    it('it should require content', async () => {
+        const user = new User({
+            username: 'testuser',
+            email: 'testuser@example.com',
+            phone: '1234567890',
+            password: 'password123'
+        });
+        await user.save();
+
+        const post = new Post({
+            author: user._id
+        });
+        try {
+            await post.save();
+        } catch (error) {
+            error.should.be.an('error');
+            error.errors.should.have.property('content');
+            error.errors.content.should.have.property('kind').eql('required');
+        }
+    });
+
+    it('it should require an author', async () => {
+        const post = new Post({
+            content: 'Test post'
+        });
+        try {
+            await post.save();
+        } catch (error) {
+            error.should.be.an('error');
+            error.errors.should.have.property('author');
+            error.errors.author.should.have.property('kind').eql('required');
+        }
+    });
+
+    it('it should add a like to a post', async () => {
+        const user = new User({
+            username: 'testuser',
+            email: 'testuser@example.com',
+            phone: '1234567890',
+            password: 'password123'
+        });
+        await user.save();
+        const post = new Post({
             content: 'Test post',
             author: user._id
         });
@@ -93,14 +93,14 @@ describe('Post Model', () => {
     });
 
     it('it should add a comment to a post', async () => {
-        let user = new User({
+        const user = new User({
             username: 'testuser',
             email: 'testuser@example.com',
             phone: '1234567890',
             password: 'password123'
         });
         await user.save();
-        let post = new Post({
+        const post = new Post({
             content: 'Test post',
             author: user._id
         });
@@ -117,14 +117,14 @@ describe('Post Model', () => {
     });
 
     it('it should update a post content', async () => {
-        let user = new User({
+        const user = new User({
             username: 'testuser',
             email: 'testuser@example.com',
             phone: '1234567890',
             password: 'password123'
         });
         await user.save();
-        let post = new Post({
+        const post = new Post({
             content: 'Test post',
             author: user._id
         });
@@ -136,14 +136,14 @@ describe('Post Model', () => {
     });
 
     it('it should delete a post', async () => {
-        let user = new User({
+        const user = new User({
             username: 'testuser',
             email: 'testuser@example.com',
             phone: '1234567890',
             password: 'password123'
         });
         await user.save();
-        let post = new Post({
+        const post = new Post({
             content: 'Test post',
             author: user._id
         });
@@ -155,14 +155,14 @@ describe('Post Model', () => {
 
     // Add tests for hooks
     it('it should update the user\'s post count after a post is created', async () => {
-        let user = new User({
+        const user = new User({
             username: 'testuser',
             email: 'testuser@example.com',
             phone: '1234567890',
             password: 'password123'
         });
         await user.save();
-        let post = new Post({
+        const post = new Post({
             content: 'Test post',
             author: user._id
         });
@@ -172,14 +172,14 @@ describe('Post Model', () => {
     });
 
     it('it should update the user\'s post count after a post is deleted', async () => {
-        let user = new User({
+        const user = new User({
             username: 'testuser',
             email: 'testuser@example.com',
             phone: '1234567890',
             password: 'password123'
         });
         await user.save();
-        let post = new Post({
+        const post = new Post({
             content: 'Test post',
             author: user._id
         });

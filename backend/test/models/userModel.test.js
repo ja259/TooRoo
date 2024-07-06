@@ -1,4 +1,4 @@
-import chai from 'chai';
+import * as chai from 'chai';
 import mongoose from 'mongoose';
 import User from '../../models/User.js';
 
@@ -7,7 +7,7 @@ const should = chai.should();
 describe('User Model', () => {
 
     before(async () => {
-        await mongoose.connect('mongodb://localhost:27017/testdb', { useNewUrlParser: true, useUnifiedTopology: true });
+        await mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
     });
 
     after(async () => {
@@ -18,8 +18,8 @@ describe('User Model', () => {
         await User.deleteMany({});
     });
 
-    it('should create a new user', (done) => {
-        let user = new User({
+    it('should create a new user', async () => {
+        const user = new User({
             username: 'testuser',
             email: 'testuser@example.com',
             phone: '1234567890',
@@ -34,16 +34,13 @@ describe('User Model', () => {
             securityQuestion3: 'Question3',
             securityAnswer3: 'Answer3'
         });
-        user.save((err, user) => {
-            should.not.exist(err);
-            user.should.have.property('username').eql('testuser');
-            user.should.have.property('email').eql('testuser@example.com');
-            done();
-        });
+        const savedUser = await user.save();
+        savedUser.should.have.property('username').eql('testuser');
+        savedUser.should.have.property('email').eql('testuser@example.com');
     });
 
-    it('should require a username', (done) => {
-        let user = new User({
+    it('should require a username', async () => {
+        const user = new User({
             email: 'testuser@example.com',
             phone: '1234567890',
             password: 'password123',
@@ -57,16 +54,17 @@ describe('User Model', () => {
             securityQuestion3: 'Question3',
             securityAnswer3: 'Answer3'
         });
-        user.save((err) => {
-            should.exist(err);
-            err.errors.should.have.property('username');
-            err.errors.username.should.have.property('kind').eql('required');
-            done();
-        });
+        try {
+            await user.save();
+        } catch (error) {
+            error.should.be.an('error');
+            error.errors.should.have.property('username');
+            error.errors.username.should.have.property('kind').eql('required');
+        }
     });
 
-    it('should require a valid email', (done) => {
-        let user = new User({
+    it('should require a valid email', async () => {
+        const user = new User({
             username: 'testuser',
             email: 'notanemail',
             phone: '1234567890',
@@ -81,16 +79,17 @@ describe('User Model', () => {
             securityQuestion3: 'Question3',
             securityAnswer3: 'Answer3'
         });
-        user.save((err) => {
-            should.exist(err);
-            err.errors.should.have.property('email');
-            err.errors.email.should.have.property('kind').eql('user defined');
-            done();
-        });
+        try {
+            await user.save();
+        } catch (error) {
+            error.should.be.an('error');
+            error.errors.should.have.property('email');
+            error.errors.email.should.have.property('kind').eql('user defined');
+        }
     });
 
-    it('should require a valid gender', (done) => {
-        let user = new User({
+    it('should require a valid gender', async () => {
+        const user = new User({
             username: 'testuser',
             email: 'testuser@example.com',
             phone: '1234567890',
@@ -105,16 +104,17 @@ describe('User Model', () => {
             securityQuestion3: 'Question3',
             securityAnswer3: 'Answer3'
         });
-        user.save((err) => {
-            should.exist(err);
-            err.errors.should.have.property('gender');
-            err.errors.gender.should.have.property('kind').eql('enum');
-            done();
-        });
+        try {
+            await user.save();
+        } catch (error) {
+            error.should.be.an('error');
+            error.errors.should.have.property('gender');
+            error.errors.gender.should.have.property('kind').eql('enum');
+        }
     });
 
     it('should follow a user', async () => {
-        let user1 = new User({
+        const user1 = new User({
             username: 'testuser1',
             email: 'testuser1@example.com',
             phone: '1234567890',
@@ -131,7 +131,7 @@ describe('User Model', () => {
         });
         await user1.save();
 
-        let user2 = new User({
+        const user2 = new User({
             username: 'testuser2',
             email: 'testuser2@example.com',
             phone: '1234567891',
@@ -162,7 +162,7 @@ describe('User Model', () => {
     });
 
     it('should unfollow a user', async () => {
-        let user1 = new User({
+        const user1 = new User({
             username: 'testuser1',
             email: 'testuser1@example.com',
             phone: '1234567890',
@@ -179,7 +179,7 @@ describe('User Model', () => {
         });
         await user1.save();
 
-        let user2 = new User({
+        const user2 = new User({
             username: 'testuser2',
             email: 'testuser2@example.com',
             phone: '1234567891',
