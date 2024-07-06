@@ -2,9 +2,9 @@ import chai from 'chai';
 import chaiHttp from 'chai-http';
 import server from '../../server.js';
 import User from '../../models/User.js';
+import { generateAuthToken } from '../../utils/authUtils.js';
 
 const should = chai.should();
-
 chai.use(chaiHttp);
 
 describe('User Controller', () => {
@@ -22,9 +22,10 @@ describe('User Controller', () => {
                 password: 'password123'
             });
             user.save((err, user) => {
+                const token = generateAuthToken(user._id);
                 chai.request(server)
                     .get(`/api/users/${user._id}`)
-                    .set('Authorization', `Bearer ${user.generateAuthToken()}`)
+                    .set('Authorization', `Bearer ${token}`)
                     .end((err, res) => {
                         res.should.have.status(200);
                         res.body.should.have.property('message').eql('User profile retrieved successfully');
@@ -44,9 +45,10 @@ describe('User Controller', () => {
                 password: 'password123'
             });
             user.save((err, user) => {
+                const token = generateAuthToken(user._id);
                 chai.request(server)
                     .put(`/api/users/${user._id}`)
-                    .set('Authorization', `Bearer ${user.generateAuthToken()}`)
+                    .set('Authorization', `Bearer ${token}`)
                     .send({ username: 'updateduser', bio: 'Updated bio', avatar: 'newavatarurl' })
                     .end((err, res) => {
                         res.should.have.status(200);
@@ -76,9 +78,10 @@ describe('User Controller', () => {
             });
             user1.save((err, user1) => {
                 user2.save((err, user2) => {
+                    const token = generateAuthToken(user1._id);
                     chai.request(server)
                         .post(`/api/users/${user2._id}/follow`)
-                        .set('Authorization', `Bearer ${user1.generateAuthToken()}`)
+                        .set('Authorization', `Bearer ${token}`)
                         .send({ userId: user1._id })
                         .end((err, res) => {
                             res.should.have.status(200);
@@ -110,9 +113,10 @@ describe('User Controller', () => {
                     user2.followers.push(user1._id);
                     user1.save((err, user1) => {
                         user2.save((err, user2) => {
+                            const token = generateAuthToken(user1._id);
                             chai.request(server)
                                 .post(`/api/users/${user2._id}/unfollow`)
-                                .set('Authorization', `Bearer ${user1.generateAuthToken()}`)
+                                .set('Authorization', `Bearer ${token}`)
                                 .send({ userId: user1._id })
                                 .end((err, res) => {
                                     res.should.have.status(200);
@@ -126,4 +130,3 @@ describe('User Controller', () => {
         });
     });
 });
-

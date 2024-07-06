@@ -1,7 +1,7 @@
-const Post = require('../models/Post');
-const User = require('../models/User');
+import Post from '../models/Post.js';
+import User from '../models/User.js';
 
-exports.createPost = async (req, res) => {
+export const createPost = async (req, res) => {
     const { content, authorId } = req.body;
 
     if (!content || !authorId) {
@@ -31,7 +31,7 @@ exports.createPost = async (req, res) => {
     }
 };
 
-exports.getPosts = async (req, res) => {
+export const getPosts = async (req, res) => {
     try {
         const posts = await Post.find()
             .populate('author', 'username email')
@@ -48,7 +48,7 @@ exports.getPosts = async (req, res) => {
     }
 };
 
-exports.getTimelinePosts = async (req, res) => {
+export const getTimelinePosts = async (req, res) => {
     try {
         const posts = await Post.find()
             .populate('author', 'username profilePicture')
@@ -61,7 +61,7 @@ exports.getTimelinePosts = async (req, res) => {
     }
 };
 
-exports.getYouAllVideos = async (req, res) => {
+export const getYouAllVideos = async (req, res) => {
     try {
         const videos = await Post.find({ videoUrl: { $exists: true } })
             .populate('author', 'username avatar')
@@ -75,7 +75,7 @@ exports.getYouAllVideos = async (req, res) => {
     }
 };
 
-exports.getFollowingVideos = async (req, res) => {
+export const getFollowingVideos = async (req, res) => {
     try {
         const user = await User.findById(req.user.id);
         if (!user) {
@@ -97,7 +97,7 @@ exports.getFollowingVideos = async (req, res) => {
     }
 };
 
-exports.likePost = async (req, res) => {
+export const likePost = async (req, res) => {
     const { id } = req.params;
     const { userId } = req.body;
 
@@ -126,7 +126,7 @@ exports.likePost = async (req, res) => {
     }
 };
 
-exports.commentOnPost = async (req, res) => {
+export const commentOnPost = async (req, res) => {
     const { id } = req.params;
     const { userId, content } = req.body;
 
@@ -154,7 +154,7 @@ exports.commentOnPost = async (req, res) => {
     }
 };
 
-exports.deletePost = async (req, res) => {
+export const deletePost = async (req, res) => {
     const { id } = req.params;
 
     try {
