@@ -1,5 +1,5 @@
 {
   "require": "esm",
   "exit": true,
-  "spec": "backend/test/**/*.test.js"
+  "spec": "test/**/*.test.js"
 }
