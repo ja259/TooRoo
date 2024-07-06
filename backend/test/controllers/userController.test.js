@@ -1,10 +1,10 @@
-import chai, { should } from 'chai';
+import * as chai from 'chai';
 import chaiHttp from 'chai-http';
 import server from '../../server.js';
 import User from '../../models/User.js';
 import { generateAuthToken } from '../../utils/authUtils.js';
 
-should();
+const should = chai.should();
 chai.use(chaiHttp);
 
 describe('User Controller', () => {
