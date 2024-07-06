@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import chai from 'chai';
 import chaiHttp from 'chai-http';
 import mongoose from 'mongoose';
-import server from '../../server.js'
+import server from '../../server.js';
 import User from '../../models/User.js';
 import Post from '../../models/Post.js';
 import Video from '../../models/Video.js';
@@ -72,7 +72,6 @@ describe('TooRoo Backend Tests', () => {
                 });
         });
 
-        // Add tests for forgotPassword and resetPassword
         it('should send forgot password email on /api/auth/forgot-password POST', (done) => {
             let user = new User({
                 username: 'testuser',

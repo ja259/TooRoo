@@ -1,4 +1,4 @@
-import { should } from 'chai';
+import chai, { should } from 'chai';
 import chaiHttp from 'chai-http';
 import server from '../../server.js';
 import Video from '../../models/Video.js';
