@@ -1,7 +1,7 @@
-const Video = require('../models/Video');
-const mongoose = require('mongoose');
+import Video from '../models/Video.js';
+import mongoose from 'mongoose';
 
-exports.uploadVideo = async (req, res) => {
+export const uploadVideo = async (req, res) => {
     try {
         if (!req.file) {
             return res.status(400).json({ message: 'No file provided' });
@@ -28,7 +28,7 @@ exports.uploadVideo = async (req, res) => {
     }
 };
 
-exports.getAllVideos = async (req, res) => {
+export const getAllVideos = async (req, res) => {
     try {
         const videos = await Video.find().populate('author', 'username email avatar');
 
@@ -43,7 +43,7 @@ exports.getAllVideos = async (req, res) => {
     }
 };
 
-exports.deleteVideo = async (req, res) => {
+export const deleteVideo = async (req, res) => {
     const { id } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -64,7 +64,7 @@ exports.deleteVideo = async (req, res) => {
     }
 };
 
-exports.updateVideo = async (req, res) => {
+export const updateVideo = async (req, res) => {
     const { id } = req.params;
     const { description } = req.body;
 
