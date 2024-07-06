@@ -19,6 +19,7 @@ import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import postRoutes from './routes/postRoutes.js';
 import mediaRoutes from './routes/mediaRoutes.js';
+import { connectDB, disconnectDB } from './db.js';
 
 dotenv.config();
 
@@ -56,13 +57,8 @@ app.use(cors({
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// MongoDB connection
-mongoose.connect(process.env.MONGODB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-})
-.then(() => console.log('MongoDB connected...'))
-.catch(err => console.error('MongoDB connection error:', err));
+// Connect to MongoDB
+connectDB();
 
 // Multer for file uploads
 const upload = multer({ storage: gridFsStorage });
@@ -117,5 +113,11 @@ io.on('connection', (socket) => {
 
 // Start the server
 server.listen(port, () => console.log(`Server running on port ${port}`));
+
+// Gracefully disconnect from MongoDB
+process.on('SIGINT', async () => {
+    await disconnectDB();
+    process.exit(0);
+});
 
 export default server;
