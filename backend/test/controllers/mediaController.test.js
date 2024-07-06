@@ -1,11 +1,10 @@
-import chai from 'chai';
+import { should } from 'chai';
 import chaiHttp from 'chai-http';
 import server from '../../server.js';
 import Video from '../../models/Video.js';
 import User from '../../models/User.js';
-import mongoose from 'mongoose';
 
-const should = chai.should();
+should();
 chai.use(chaiHttp);
 
 describe('Media Controller', () => {
