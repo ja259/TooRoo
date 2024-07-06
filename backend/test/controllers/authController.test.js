@@ -1,4 +1,4 @@
-import chai from 'chai';
+import { should } from 'chai';
 import chaiHttp from 'chai-http';
 import mongoose from 'mongoose';
 import server from '../../server.js';
@@ -7,7 +7,7 @@ import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import emailService from '../../utils/emailService.js';
 
-const should = chai.should();
+should();
 chai.use(chaiHttp);
 
 describe('Auth Controller', () => {

@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-import chai from 'chai';
+import { should } from 'chai';
 import chaiHttp from 'chai-http';
 import mongoose from 'mongoose';
 import server from '../server.js';
@@ -9,16 +9,13 @@ import Video from '../models/Video.js';
 
 dotenv.config();
 
-const should = chai.should();
+should();
 chai.use(chaiHttp);
 
 describe('TooRoo Backend Tests', () => {
+
     before((done) => {
-        mongoose.connect(process.env.MONGODB_URI, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-            useCreateIndex: true,
-        })
+        mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
             .then(() => {
                 console.log('Connected to MongoDB');
                 done();
@@ -75,6 +72,7 @@ describe('TooRoo Backend Tests', () => {
                 });
         });
 
+        // Add tests for forgotPassword and resetPassword
         it('should send forgot password email on /api/auth/forgot-password POST', (done) => {
             let user = new User({
                 username: 'testuser',
@@ -454,4 +452,5 @@ describe('TooRoo Backend Tests', () => {
             });
         });
     });
+
 });
