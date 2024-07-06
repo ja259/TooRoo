@@ -1,5 +1,6 @@
 import chai from 'chai';
 import chaiHttp from 'chai-http';
+import mongoose from 'mongoose';
 import server from '../../server.js';
 import User from '../../models/User.js';
 import bcrypt from 'bcryptjs';
@@ -107,7 +108,7 @@ describe('Auth Controller', () => {
 
             const resetToken = crypto.randomBytes(20).toString('hex');
             user.resetPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex');
-            user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+            user.resetPasswordExpires = Date.now() + 3600000;
 
             user.save((err, user) => {
                 const newPassword = 'newpassword123';

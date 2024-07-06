@@ -90,7 +90,6 @@ export const resetPassword = async (req, res) => {
             return res.status(400).json({ message: 'Token is invalid or has expired' });
         }
 
-        // Verify security answers
         for (let i = 0; i < securityAnswers.length; i++) {
             if (user.securityQuestions[i].answer !== securityAnswers[i]) {
                 return res.status(400).json({ message: 'Invalid security answer' });
