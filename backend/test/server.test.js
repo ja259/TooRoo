@@ -6,7 +6,6 @@ import server from '../server.js';
 import User from '../models/User.js';
 import Post from '../models/Post.js';
 import Video from '../models/Video.js';
-import { Server } from 'socket.io';
 import socketClient from 'socket.io-client';
 import { config as dotenvConfig } from 'dotenv';
 import { connectDB, disconnectDB } from '../db.js';

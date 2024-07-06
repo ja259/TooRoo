@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import Interaction from '../models/Interaction.js';
 import Post from '../models/Post.js';
 import analyzePreferences from '../analyzePreferences.js';
+import { connectDB, disconnectDB } from '../db.js';
 
 const should = chai.should();
 
@@ -11,11 +12,11 @@ describe('Analyze Preferences Service Tests', () => {
     let interactionStub, postStub;
 
     before(async () => {
-        await mongoose.connect('mongodb://localhost:27017/testdb', { useNewUrlParser: true, useUnifiedTopology: true });
+        await connectDB();
     });
 
     after(async () => {
-        await mongoose.connection.close();
+        await disconnectDB();
     });
 
     beforeEach(() => {
