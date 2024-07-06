@@ -3,9 +3,9 @@ import * as chai from 'chai';
 import chaiHttp from 'chai-http';
 import mongoose from 'mongoose';
 import server from '../server.js';
-import User from '../../models/User.js';
-import Post from '../../models/Post.js';
-import Video from '../../models/Video.js';
+import User from '../models/User.js';
+import Post from '../models/Post.js';
+import Video from '../models/Video.js';
 
 dotenv.config();
 
