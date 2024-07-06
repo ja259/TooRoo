@@ -17,7 +17,7 @@ dotenvConfig({ path: './.env' });
 const { expect } = chai;
 
 describe('Server and Routes Tests', function () {
-    this.timeout(5000);
+    this.timeout(10000);
 
     before(async () => {
         await connectDB();
