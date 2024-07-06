@@ -1,4 +1,4 @@
-import { should } from 'chai';
+import chai, { should } from 'chai';
 import chaiHttp from 'chai-http';
 import server from '../../server.js';
 import User from '../../models/User.js';
@@ -8,6 +8,7 @@ should();
 chai.use(chaiHttp);
 
 describe('User Controller', () => {
+
     beforeEach(async () => {
         await User.deleteMany({});
     });
