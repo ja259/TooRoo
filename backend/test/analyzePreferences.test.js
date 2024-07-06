@@ -3,7 +3,7 @@ import sinon from 'sinon';
 import mongoose from 'mongoose';
 import Interaction from '../models/Interaction.js';
 import Post from '../models/Post.js';
-import { analyzePreferences } from '../../analyzePreferences.js';
+import analyzePreferences from '../analyzePreferences.js';
 
 const should = chai.should();
 
@@ -61,7 +61,7 @@ describe('Analyze Preferences Service Tests', () => {
         const result = await analyzePreferences('nonexistentUserId');
         result.should.be.an('object');
         result.likes.should.be.an('array').that.is.empty;
-        result.comments.should.be.an('array').that.is.empty;
+        result.comments.should.be.an('array').that.is.empty
     });
 
     it('should handle errors during preference analysis', async () => {

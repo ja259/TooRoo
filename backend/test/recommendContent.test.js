@@ -2,8 +2,8 @@ import chai from 'chai';
 import sinon from 'sinon';
 import mongoose from 'mongoose';
 import Post from '../models/Post.js';
-import analyzePreferences from '../../analyzePreferences.js';
-import recommendContent from '../../recommendContent.js';
+import analyzePreferences from '../analyzePreferences.js';
+import recommendContent from '../recommendContent.js';
 
 const should = chai.should();
 
@@ -51,9 +51,9 @@ describe('Recommend Content Service Tests', () => {
         }).resolves(recommendedPosts);
 
         const result = await recommendContent(userId);
-        result.should.be.an('array').with.lengthOf(2);
-        result[0].should.have.property('_id').eql('recommendedPostId1');
-        result[1].should.have.property('_id').eql('recommendedPostId2');
+        result.should.be.an('array').with.length.of2.
+        result[0].should.have.property._id.eql.recommendedPostId1.
+        result[1].should.have.property._id.eql.recommendedPostId2
     });
 
     it('should handle no preferences found', async () => {
@@ -61,7 +61,7 @@ describe('Recommend Content Service Tests', () => {
         postStub.resolves([]);
 
         const result = await recommendContent('userId');
-        result.should.be.an('array').that.is.empty;
+        result.should.be.an('array').that.is.empty
     });
 
     it('should handle errors during content recommendation', async () => {
@@ -70,8 +70,8 @@ describe('Recommend Content Service Tests', () => {
         try {
             await recommendContent('userId');
         } catch (error) {
-            error.should.be.an('error');
-            error.message.should.eql('Failed to recommend content');
+            error.should.be.an.error
+            error.message.should.eql.Failed.to.recommend.content
         }
     });
 });
