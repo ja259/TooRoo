@@ -20,4 +20,3 @@ router.post('/forgot-password', validateForgotPassword, forgotPassword);
 router.put('/reset-password/:token', validateResetPassword, resetPassword);
 
 export default router;
-
