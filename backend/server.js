@@ -1,3 +1,4 @@
+// server.js
 import dotenv from 'dotenv';
 import express from 'express';
 import mongoose from 'mongoose';
@@ -119,3 +120,5 @@ io.on('connection', (socket) => {
 
 // Start the server
 server.listen(port, () => console.log(`Server running on port ${port}`));
+
+export default server;
