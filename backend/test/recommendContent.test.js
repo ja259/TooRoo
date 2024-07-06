@@ -2,8 +2,8 @@ import chai from 'chai';
 import sinon from 'sinon';
 import mongoose from 'mongoose';
 import Post from '../models/Post.js';
-import analyzePreferences from '../services/analyzePreferences.js';
-import recommendContent from '../services/recommendContent.js';
+import analyzePreferences from '../../analyzePreferences.js';
+import recommendContent from '../../recommendContent.js';
 
 const should = chai.should();
 
