@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const interactionSchema = new mongoose.Schema({
     userId: { 
@@ -24,5 +24,5 @@ const interactionSchema = new mongoose.Schema({
     timestamps: true 
 });
 
-module.exports = mongoose.model('Interaction', interactionSchema);
+export default mongoose.model('Interaction', interactionSchema);
 
