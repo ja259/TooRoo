@@ -1,13 +1,13 @@
-import { should } from 'chai';
+import chai from 'chai';
 import chaiHttp from 'chai-http';
 import mongoose from 'mongoose';
-import server from '../../server.js';
+import { default as server } from '../../server.js'; // Adjusted import statement
 import User from '../../models/User.js';
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import emailService from '../../utils/emailService.js';
 
-should();
+const should = chai.should();
 chai.use(chaiHttp);
 
 describe('Auth Controller', () => {
