@@ -159,7 +159,8 @@ describe('Server and Routes Tests', function () {
     });
 
     describe('Post Routes', () => {
-        let token, userId;
+        let token;
+        let userId;
 
         before(async () => {
             const user = new User({
@@ -177,10 +178,6 @@ describe('Server and Routes Tests', function () {
             token = res.body.token;
         });
 
-        beforeEach(async () => {
-            await Post.deleteMany({});
-        });
-
         it('should create a post on /api/posts POST', (done) => {
             const post = {
                 content: 'This is a test post',
@@ -194,11 +191,12 @@ describe('Server and Routes Tests', function () {
                     expect(res).to.have.status(201);
                     expect(res.body).to.be.an('object');
                     expect(res.body).to.have.property('content', 'This is a test post');
+                    expect(res.body).to.have.property('author', userId.toString());
                     done();
                 });
         });
 
-        it('should get posts on /api/posts GET', async () => {
+        it('should get a post by ID on /api/posts/:id GET', async () => {
             const post = new Post({
                 content: 'This is a test post',
                 author: userId
@@ -206,12 +204,12 @@ describe('Server and Routes Tests', function () {
             await post.save();
 
             const res = await chai.request(server)
-                .get('/api/posts')
+                .get(`/api/posts/${post._id}`)
                 .set('Authorization', `Bearer ${token}`);
 
             expect(res).to.have.status(200);
-            expect(res.body).to.be.an('array');
-            expect(res.body[0]).to.have.property('content', 'This is a test post');
+            expect(res.body).to.be.an('object');
+            expect(res.body).to.have.property('content', 'This is a test post');
         });
 
         it('should update a post on /api/posts/:id PUT', async () => {
@@ -250,6 +248,7 @@ describe('Server and Routes Tests', function () {
 
     describe('Media Routes', () => {
         let token;
+        let userId;
 
         before(async () => {
             const user = new User({
@@ -258,6 +257,7 @@ describe('Server and Routes Tests', function () {
                 password: 'password123'
             });
             await user.save();
+            userId = user._id;
 
             const res = await chai.request(server)
                 .post('/api/auth/login')
@@ -270,7 +270,7 @@ describe('Server and Routes Tests', function () {
             chai.request(server)
                 .post('/upload')
                 .set('Authorization', `Bearer ${token}`)
-                .attach('file', Buffer.from('test file content'), 'testfile.txt')
+                .attach('file', Buffer.from('test file content'), 'test.txt')
                 .end((err, res) => {
                     expect(res).to.have.status(200);
                     expect(res.body).to.be.an('object');
