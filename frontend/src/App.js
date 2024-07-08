@@ -34,6 +34,9 @@ import Explore from './Explore';
 import UserAnalytics from './UserAnalytics';
 import Menu from './Menu'; // Import Menu component
 import TermsAndPolicies from './TermsAndPolicies';
+import LocationSharing from './LocationSharing'; // Import LocationSharing component
+import QRCodeScanner from './QRCodeScanner'; // Import QRCodeScanner component
+import Translation from './Translation'; // Import Translation component
 
 const App = () => {
     const user = useSelector(state => state.auth.user);
@@ -94,6 +97,9 @@ const App = () => {
                                 <Route path="/marketplace" element={<Marketplace />} />
                                 <Route path="/explore" element={<Explore />} />
                                 <Route path="/analytics" element={<UserAnalytics />} />
+                                <Route path="/location-sharing" element={<LocationSharing />} />
+                                <Route path="/qr-code-scanner" element={<QRCodeScanner />} />
+                                <Route path="/translation" element={<Translation />} />
                                 <Route path="/two-factor-auth" element={<TwoFactorAuth />} />
                                 <Route path="*" element={<Navigate to="/" />} />
                             </>

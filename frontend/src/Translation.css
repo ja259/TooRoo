@@ -1,0 +1,86 @@
+.translation {
+    background-color: #333;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    margin: 20px auto;
+    max-width: 600px;
+    text-align: center;
+}
+
+.translation h2 {
+    color: #00bcd4;
+    margin-bottom: 20px;
+    font-size: 24px;
+}
+
+.translation textarea {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #555;
+    border-radius: 4px;
+    font-size: 16px;
+    background-color: #222;
+    color: #ffffff;
+}
+
+.translation textarea:focus {
+    outline: none;
+    border-color: #00bcd4;
+}
+
+.translation button {
+    padding: 12px 24px;
+    background-color: #00bcd4;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s;
+    margin-bottom: 20px;
+}
+
+.translation button:hover {
+    background-color: #0097a7;
+}
+
+.translation button svg {
+    margin-right: 8px;
+}
+
+.translated-text {
+    background-color: #222;
+    padding: 10px;
+    border-radius: 4px;
+    margin-top: 20px;
+    text-align: left;
+}
+
+.translated-text p {
+    margin: 5px 0;
+}
+
+@media (max-width: 600px) {
+    .translation {
+        padding: 10px;
+        margin: 10px;
+    }
+
+    .translation h2 {
+        font-size: 20px;
+    }
+
+    .translation button {
+        font-size: 14px;
+        padding: 10px 20px;
+    }
+
+    .translated-text {
+        padding: 8px;
+    }
+}
