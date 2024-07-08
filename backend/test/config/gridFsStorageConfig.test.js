@@ -1,11 +1,10 @@
 import * as chai from 'chai';
-import { config as dotenvConfig } from 'dotenv';
 import storage from '../../config/gridFsStorageConfig.js';
 
-dotenvConfig({ path: './.env' });
 const { should } = chai;
 should();
 
+// GridFS Storage Config Test
 describe('GridFS Storage Config Tests', () => {
     it('should have a valid GridFS storage configuration', () => {
         storage.should.be.an('object');
@@ -25,5 +24,3 @@ describe('GridFS Storage Config Tests', () => {
         }
     });
 });
-
-

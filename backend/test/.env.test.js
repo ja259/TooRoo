@@ -1,9 +1,11 @@
 import * as chai from 'chai';
 import { config as dotenvConfig } from 'dotenv';
 
-chai.should();
 dotenvConfig({ path: './.env' });
+const { expect, should } = chai;
+should();
 
+// Environment Variables Test
 describe('Environment Variables Tests', () => {
     it('should load environment variables from .env file', () => {
         process.env.should.have.property('MONGODB_URI').that.is.a('string');
