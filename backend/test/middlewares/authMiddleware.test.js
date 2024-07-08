@@ -1,11 +1,13 @@
 import * as chai from 'chai';
 import sinon from 'sinon';
 import jwt from 'jsonwebtoken';
-import User from '../../models/User.js';
 import { authenticate } from '../../middlewares/authMiddleware.js';
+import User from '../../models/User.js';
 
-const should = chai.should();
+const { should } = chai;
+should();
 
+// Auth Middleware Test
 describe('Auth Middleware Tests', () => {
     let req, res, next;
 

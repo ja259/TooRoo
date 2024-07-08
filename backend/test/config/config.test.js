@@ -1,8 +1,10 @@
 import * as chai from 'chai';
-import { execSync } from 'child_process';
+import { config as dotenvConfig } from 'dotenv';
 
+dotenvConfig({ path: './.env' });
 const { expect } = chai;
 
+// Config Test
 describe('Config Tests', () => {
     let config;
 

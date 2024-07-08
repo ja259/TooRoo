@@ -2,8 +2,10 @@ import * as chai from 'chai';
 import sinon from 'sinon';
 import errorHandler from '../../middlewares/errorHandler.js';
 
-const should = chai.should();
+const { should } = chai;
+should();
 
+// Error Handler Middleware Test
 describe('Error Handler Middleware Tests', () => {
     let req, res, next;
 
