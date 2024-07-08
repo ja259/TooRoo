@@ -1,11 +1,13 @@
-import { expect } from 'chai';
+import * as chai from 'chai';
 import { execSync } from 'child_process';
+
+const { expect } = chai;
 
 describe('Config Tests', () => {
     let config;
 
     before(async () => {
-        const conf = await import('../../config/config.js');
+        const conf = await import('../config/config.js');
         config = conf.default;
     });
 
@@ -25,7 +27,7 @@ describe('Config Tests', () => {
         process.env.DEV_JWT_SECRET = '';
 
         try {
-            await import('../../config/config.js');
+            await import('../config/config.js');
         } catch (error) {
             expect(error).to.be.an('error');
             expect(error.message).to.include('Missing required environment variable');

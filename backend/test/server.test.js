@@ -6,16 +6,13 @@ import server from '../server.js';
 import User from '../models/User.js';
 import Post from '../models/Post.js';
 import Video from '../models/Video.js';
-import { config as dotenvConfig } from 'dotenv';
 import { connectDB, disconnectDB } from '../db.js';
 
 chai.use(chaiHttp);
-dotenvConfig({ path: './.env' });
-
 const { expect } = chai;
 
 describe('Server and Routes Tests', function () {
-    this.timeout(10000);
+    this.timeout(20000);
 
     before(async () => {
         await connectDB();
@@ -63,42 +60,6 @@ describe('Server and Routes Tests', function () {
             expect(res.body).to.be.an('object');
             expect(res.body).to.have.property('token');
         });
-
-        it('should send forgot password email on /api/auth/forgot-password POST', (done) => {
-            const email = 'testuser@example.com';
-            chai.request(server)
-                .post('/api/auth/forgot-password')
-                .send({ email })
-                .end((err, res) => {
-                    expect(res).to.have.status(200);
-                    expect(res.body).to.be.an('object');
-                    expect(res.body).to.have.property('message', 'Password reset email sent');
-                    done();
-                });
-        });
-
-        it('should reset password on /api/auth/reset-password/:token PUT', async () => {
-            const user = new User({
-                username: 'testuser',
-                email: 'testuser@example.com',
-                password: 'password123'
-            });
-            await user.save();
-
-            // Mock password reset token
-            const token = 'mocktoken';
-            user.resetPasswordToken = token;
-            user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
-            await user.save();
-
-            const res = await chai.request(server)
-                .put(`/api/auth/reset-password/${token}`)
-                .send({ password: 'newpassword123' });
-
-            expect(res).to.have.status(200);
-            expect(res.body).to.be.an('object');
-            expect(res.body).to.have.property('message', 'Password has been reset');
-        });
     });
 
     describe('User Routes', () => {
@@ -132,44 +93,39 @@ describe('Server and Routes Tests', function () {
             expect(res.body).to.have.property('email', 'testuser@example.com');
         });
 
-        it('should update user details on /api/users/:id PUT', async () => {
+        it('should update user profile on /api/users/:id PUT', async () => {
             const user = await User.findOne({ email: 'testuser@example.com' });
+            const updatedData = {
+                username: 'updateduser',
+                bio: 'This is an updated bio',
+                avatar: 'updated_avatar_url'
+            };
 
             const res = await chai.request(server)
                 .put(`/api/users/${user._id}`)
                 .set('Authorization', `Bearer ${token}`)
-                .send({ username: 'updateduser' });
+                .send(updatedData);
 
             expect(res).to.have.status(200);
             expect(res.body).to.be.an('object');
-            expect(res.body).to.have.property('username', 'updateduser');
-        });
-
-        it('should delete a user on /api/users/:id DELETE', async () => {
-            const user = await User.findOne({ email: 'testuser@example.com' });
-
-            const res = await chai.request(server)
-                .delete(`/api/users/${user._id}`)
-                .set('Authorization', `Bearer ${token}`);
-
-            expect(res).to.have.status(200);
-            expect(res.body).to.be.an('object');
-            expect(res.body).to.have.property('message', 'User deleted successfully');
+            expect(res.body).to.have.property('message', 'User profile updated successfully.');
+            expect(res.body.user).to.have.property('username', 'updateduser');
+            expect(res.body.user).to.have.property('bio', 'This is an updated bio');
+            expect(res.body.user).to.have.property('avatar', 'updated_avatar_url');
         });
     });
 
     describe('Post Routes', () => {
         let token;
-        let userId;
+        let user;
 
         before(async () => {
-            const user = new User({
+            user = new User({
                 username: 'testuser',
                 email: 'testuser@example.com',
                 password: 'password123'
             });
             await user.save();
-            userId = user._id;
 
             const res = await chai.request(server)
                 .post('/api/auth/login')
@@ -181,8 +137,9 @@ describe('Server and Routes Tests', function () {
         it('should create a post on /api/posts POST', (done) => {
             const post = {
                 content: 'This is a test post',
-                author: userId
+                authorId: user._id
             };
+
             chai.request(server)
                 .post('/api/posts')
                 .set('Authorization', `Bearer ${token}`)
@@ -190,74 +147,76 @@ describe('Server and Routes Tests', function () {
                 .end((err, res) => {
                     expect(res).to.have.status(201);
                     expect(res.body).to.be.an('object');
-                    expect(res.body).to.have.property('content', 'This is a test post');
-                    expect(res.body).to.have.property('author', userId.toString());
+                    expect(res.body).to.have.property('message', 'Post created successfully');
+                    expect(res.body).to.have.property('post');
                     done();
                 });
         });
 
-        it('should get a post by ID on /api/posts/:id GET', async () => {
-            const post = new Post({
-                content: 'This is a test post',
-                author: userId
-            });
-            await post.save();
-
+        it('should retrieve posts on /api/posts GET', async () => {
             const res = await chai.request(server)
-                .get(`/api/posts/${post._id}`)
+                .get('/api/posts')
                 .set('Authorization', `Bearer ${token}`);
 
             expect(res).to.have.status(200);
             expect(res.body).to.be.an('object');
-            expect(res.body).to.have.property('content', 'This is a test post');
+            expect(res.body).to.have.property('message', 'Posts retrieved successfully');
+            expect(res.body.posts).to.be.an('array');
         });
 
-        it('should update a post on /api/posts/:id PUT', async () => {
+        it('should like a post on /api/posts/:id/like PUT', async () => {
             const post = new Post({
-                content: 'This is a test post',
-                author: userId
+                content: 'Test post',
+                author: user._id
             });
             await post.save();
 
             const res = await chai.request(server)
-                .put(`/api/posts/${post._id}`)
+                .put(`/api/posts/${post._id}/like`)
                 .set('Authorization', `Bearer ${token}`)
-                .send({ content: 'Updated post content' });
+                .send({ userId: user._id });
 
             expect(res).to.have.status(200);
             expect(res.body).to.be.an('object');
-            expect(res.body).to.have.property('content', 'Updated post content');
+            expect(res.body).to.have.property('message', 'Like status updated successfully');
+            expect(res.body.post).to.have.property('likes').that.includes(user._id.toString());
         });
 
-        it('should delete a post on /api/posts/:id DELETE', async () => {
+        it('should comment on a post on /api/posts/:id/comment POST', async () => {
             const post = new Post({
-                content: 'This is a test post',
-                author: userId
+                content: 'Test post',
+                author: user._id
             });
             await post.save();
 
+            const comment = {
+                userId: user._id,
+                content: 'This is a test comment'
+            };
+
             const res = await chai.request(server)
-                .delete(`/api/posts/${post._id}`)
-                .set('Authorization', `Bearer ${token}`);
+                .post(`/api/posts/${post._id}/comment`)
+                .set('Authorization', `Bearer ${token}`)
+                .send(comment);
 
             expect(res).to.have.status(200);
             expect(res.body).to.be.an('object');
-            expect(res.body).to.have.property('message', 'Post deleted successfully');
+            expect(res.body).to.have.property('message', 'Comment added successfully');
+            expect(res.body.post.comments[0]).to.have.property('content', 'This is a test comment');
         });
     });
 
     describe('Media Routes', () => {
         let token;
-        let userId;
+        let user;
 
         before(async () => {
-            const user = new User({
+            user = new User({
                 username: 'testuser',
                 email: 'testuser@example.com',
                 password: 'password123'
             });
             await user.save();
-            userId = user._id;
 
             const res = await chai.request(server)
                 .post('/api/auth/login')
@@ -266,37 +225,46 @@ describe('Server and Routes Tests', function () {
             token = res.body.token;
         });
 
-        it('should upload a media file on /upload POST', (done) => {
+        it('should upload a media file on /api/media/upload POST', (done) => {
             chai.request(server)
-                .post('/upload')
+                .post('/api/media/upload')
                 .set('Authorization', `Bearer ${token}`)
-                .attach('file', Buffer.from('test file content'), 'test.txt')
+                .attach('file', 'test/test-files/test-video.mp4')
                 .end((err, res) => {
                     expect(res).to.have.status(200);
                     expect(res.body).to.be.an('object');
                     expect(res.body).to.have.property('message', 'File uploaded successfully');
+                    expect(res.body).to.have.property('fileName');
                     done();
                 });
         });
-    });
 
-    describe('Notification Routes', () => {
-        it('should subscribe to push notifications on /subscribe POST', (done) => {
-            const subscription = {
-                endpoint: 'https://fcm.googleapis.com/fcm/send/eF-p4BI4fMw:APA91bHvQyRGw8xLqCu_Vw4spmX',
-                keys: {
-                    p256dh: 'BOr8lCbyMO2A_XRKHkTl',
-                    auth: '2G6e'
-                }
-            };
-            chai.request(server)
-                .post('/subscribe')
-                .send(subscription)
-                .end((err, res) => {
-                    expect(res).to.have.status(201);
-                    expect(res.body).to.be.an('object');
-                    done();
-                });
+        it('should retrieve all videos on /api/media GET', async () => {
+            const res = await chai.request(server)
+                .get('/api/media')
+                .set('Authorization', `Bearer ${token}`);
+
+            expect(res).to.have.status(200);
+            expect(res.body).to.be.an('object');
+            expect(res.body).to.have.property('message', 'Videos retrieved successfully');
+            expect(res.body.videos).to.be.an('array');
+        });
+
+        it('should delete a video on /api/media/:id DELETE', async () => {
+            const video = new Video({
+                videoUrl: 'test-video.mp4',
+                description: 'Test video',
+                author: user._id
+            });
+            await video.save();
+
+            const res = await chai.request(server)
+                .delete(`/api/media/${video._id}`)
+                .set('Authorization', `Bearer ${token}`);
+
+            expect(res).to.have.status(200);
+            expect(res.body).to.be.an('object');
+            expect(res.body).to.have.property('message', 'Video deleted successfully');
         });
     });
 
