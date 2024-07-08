@@ -9,6 +9,7 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-icons": "^5.2.1",
+    "react-qr-reader": "^3.0.0-beta-1",
     "react-redux": "^8.0.5",
     "react-router-dom": "^6.23.1",
     "socket.io-client": "^4.7.5",
@@ -51,7 +52,9 @@
     "deploy": "gh-pages -d dist"
   },
   "jest": {
-    "setupFilesAfterEnv": ["<rootDir>/src/setupTests.js"],
+    "setupFilesAfterEnv": [
+      "<rootDir>/src/setupTests.js"
+    ],
     "testEnvironment": "jsdom",
     "moduleNameMapper": {
       "\\.(css|less|scss|sass)$": "identity-obj-proxy"
@@ -59,8 +62,16 @@
     "transform": {
       "^.+\\.(js|jsx|ts|tsx)$": "babel-jest"
     },
-    "testPathIgnorePatterns": ["/node_modules/", "/build/"],
-    "moduleFileExtensions": ["js", "jsx", "ts", "tsx"]
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/build/"
+    ],
+    "moduleFileExtensions": [
+      "js",
+      "jsx",
+      "ts",
+      "tsx"
+    ]
   },
   "eslintConfig": {
     "extends": [
@@ -81,4 +92,3 @@
     ]
   }
 }
-

@@ -12,6 +12,9 @@
     color: #00bcd4;
     margin-bottom: 20px;
     font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .qr-code-scanner p {
