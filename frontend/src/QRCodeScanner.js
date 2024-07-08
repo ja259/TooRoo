@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FaQrcode } from 'react-icons/fa';
-import QrReader from 'react-qr-reader';
+import { QrReader } from 'react-qr-reader';
 import './QRCodeScanner.css';
 
 const QRCodeScanner = () => {
