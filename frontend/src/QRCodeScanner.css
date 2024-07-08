@@ -1,0 +1,40 @@
+.qr-code-scanner {
+    background-color: #333;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    margin: 20px auto;
+    max-width: 600px;
+    text-align: center;
+}
+
+.qr-code-scanner h2 {
+    color: #00bcd4;
+    margin-bottom: 20px;
+    font-size: 24px;
+}
+
+.qr-code-scanner p {
+    margin-top: 20px;
+    color: #ffffff;
+}
+
+.qr-code-scanner canvas {
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+@media (max-width: 600px) {
+    .qr-code-scanner {
+        padding: 10px;
+        margin: 10px;
+    }
+
+    .qr-code-scanner h2 {
+        font-size: 20px;
+    }
+
+    .qr-code-scanner p {
+        font-size: 14px;
+    }
+}
