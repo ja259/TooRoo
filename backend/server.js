@@ -8,7 +8,7 @@ import http from 'http';
 import { Server } from 'socket.io';
 import webPush from 'web-push';
 import gridFsStorage from './config/gridFsStorageConfig.js';
-import errorHandler from './middlewares/errorHandler.js';
+import { errorHandler, notFound } from './middlewares/errorHandler.js';
 import { authenticate } from './middlewares/authMiddleware.js';
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
@@ -18,7 +18,7 @@ import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import postRoutes from './routes/postRoutes.js';
 import mediaRoutes from './routes/mediaRoutes.js';
-import { connectDB, disconnectDB } from './db.js';
+import { connectDB, disconnectDB } from './config/db.js';
 
 dotenv.config();
 
@@ -89,13 +89,14 @@ app.post('/subscribe', (req, res) => {
 });
 
 // Error handling middleware
+app.use(notFound);
 app.use(errorHandler);
 
 // Serve static assets in production
 if (process.env.NODE_ENV === 'production') {
-    app.use(express.static(path.join(__dirname, 'frontend', 'build')));
+    app.use(express.static(path.join(path.resolve(), 'frontend', 'build')));
     app.get('*', (req, res) => {
-        res.sendFile(path.resolve(__dirname, 'frontend', 'build', 'index.html'));
+        res.sendFile(path.resolve(path.resolve(), 'frontend', 'build', 'index.html'));
     });
 }
 
