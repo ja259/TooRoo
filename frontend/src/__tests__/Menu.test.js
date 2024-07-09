@@ -15,7 +15,8 @@ describe('Menu Component', () => {
             </Router>
         );
         expect(screen.getByText('Profile')).toBeInTheDocument();
-        expect(screen.getByText('Inbox')).toBeInTheDocument();
+        expect(screen.getByText('Chat')).toBeInTheDocument();
+        expect(screen.getByText('Dashboard')).toBeInTheDocument();
     });
 
     test('calls onLogout when logout button is clicked', () => {

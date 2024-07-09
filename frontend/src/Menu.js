@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { FaUser, FaComments, FaBell, FaCog, FaSearch, FaSignOutAlt, FaShieldAlt, FaBook, FaLanguage, FaBookOpen, FaHome, FaStore, FaChartLine, FaLocationArrow, FaQrcode } from 'react-icons/fa';
+import { FaUser, FaComments, FaBell, FaCog, FaSearch, FaSignOutAlt, FaShieldAlt, FaBook, FaLanguage, FaBookOpen, FaHome, FaStore, FaChartLine, FaLocationArrow, FaQrcode, FaCommentAlt } from 'react-icons/fa';
 import './Menu.css';
 
 const Menu = ({ user, onLogout, menuOpen }) => {
@@ -13,7 +13,7 @@ const Menu = ({ user, onLogout, menuOpen }) => {
                 <span>{user.username}</span>
             </div>
             <NavLink to="/profile" className="menu-item"><FaUser /> Profile</NavLink>
-            <NavLink to="/inbox" className="menu-item"><FaComments /> Inbox</NavLink>
+            <NavLink to="/chat" className="menu-item"><FaCommentAlt /> Chat</NavLink>
             <NavLink to="/dashboard" className="menu-item"><FaHome /> Dashboard</NavLink>
             <NavLink to="/feed" className="menu-item"><FaBookOpen /> Feed</NavLink>
             <NavLink to="/notifications" className="menu-item"><FaBell /> Notifications</NavLink>
