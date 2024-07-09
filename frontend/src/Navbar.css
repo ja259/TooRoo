@@ -1,6 +1,6 @@
 .navbar {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-evenly;
   align-items: center;
   background-color: #333;
   color: white;
@@ -11,29 +11,19 @@
   z-index: 1000;
 }
 
-.navbar-left, .navbar-right {
-  display: flex;
-  align-items: center;
-}
-
-.navbar-left a, .navbar-right a {
+.navbar a {
   color: white;
   text-decoration: none;
   margin: 0 15px;
   font-size: 1em;
 }
 
-.navbar-left a.active, .navbar-right a.active {
+.navbar a.active {
   color: #ff5722;
   border-bottom: 2px solid #ff5722;
 }
 
-.navbar-right span {
-  margin-left: 20px;
-  font-size: 1em;
-}
-
-.navbar-right .fa-search {
+.fa-search {
   font-size: 1.5em;
 }
 

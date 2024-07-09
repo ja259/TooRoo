@@ -29,9 +29,19 @@ describe('Navbar Component', () => {
         expect(screen.getByText('Following')).toHaveClass('active');
     });
 
+    // Updated or additional tests
+    test('renders all icons', () => {
+        setup();
+        expect(screen.getByLabelText('live')).toBeInTheDocument();
+        expect(screen.getByLabelText('search')).toBeInTheDocument();
+        expect(screen.getByLabelText('menu')).toBeInTheDocument();
+    });
+
     test('calls onLogout when logout button is clicked', () => {
         setup();
-        fireEvent.click(screen.getByText('Logout'));
+        // Assuming there is a logout button or link in the Navbar
+        const logoutButton = screen.getByText('Logout');
+        fireEvent.click(logoutButton);
         expect(onLogout).toHaveBeenCalled();
     });
 });
