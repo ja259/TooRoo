@@ -18,7 +18,7 @@ import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import postRoutes from './routes/postRoutes.js';
 import mediaRoutes from './routes/mediaRoutes.js';
-import { connectDB, disconnectDB } from './config/db.js';
+import { connectDB, disconnectDB } from './db.js';
 
 dotenv.config();
 
