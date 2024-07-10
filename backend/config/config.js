@@ -20,11 +20,11 @@ const defaultConfig = {
 
 const developmentConfig = {
     port: process.env.DEV_PORT || defaultConfig.port,
-    dbUri: process.env.DEV_MONGODB_URI,
-    jwtSecret: process.env.DEV_JWT_SECRET,
-    email: process.env.DEV_EMAIL,
-    emailPassword: process.env.DEV_EMAIL_PASSWORD,
-    emailService: process.env.DEV_EMAIL_SERVICE || defaultConfig.emailService,
+    dbUri: process.env.MONGODB_URI,
+    jwtSecret: process.env.JWT_SECRET,
+    email: process.env.EMAIL,
+    emailPassword: process.env.EMAIL_PASSWORD,
+    emailService: process.env.EMAIL_SERVICE || defaultConfig.emailService,
     vapidPublicKey: process.env.VAPID_PUBLIC_KEY,
     vapidPrivateKey: process.env.VAPID_PRIVATE_KEY
 };
