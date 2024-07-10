@@ -1,89 +1,108 @@
 import * as chai from 'chai';
-import sinon from 'sinon';
-import mongoose from 'mongoose';
-import * as mediaController from '../../controllers/mediaController.js';
+import chaiHttp from 'chai-http';
+import server from '../../server.js';
 import Video from '../../models/Video.js';
+import User from '../../models/User.js';
 
-const { expect } = chai;
+const should = chai.should();
+chai.use(chaiHttp);
 
 describe('Media Controller', () => {
-    describe('uploadVideo', () => {
-        it('should upload a video', async () => {
-            const req = {
-                file: { filename: 'testfile.mp4' },
-                body: { description: 'Test video', authorId: mongoose.Types.ObjectId() }
-            };
-            const res = { status: sinon.stub().returnsThis(), json: sinon.stub() };
+    let token;
+    let authorId;
 
-            sinon.stub(Video.prototype, 'save').resolves();
-
-            await mediaController.uploadVideo(req, res);
-
-            expect(res.status.calledWith(201)).to.be.true;
-            expect(res.json.calledWith(sinon.match.has('message', 'Video uploaded successfully'))).to.be.true;
-
-            Video.prototype.save.restore();
+    before(async () => {
+        await User.deleteMany({});
+        await Video.deleteMany({});
+        const user = new User({
+            username: 'testuser',
+            email: 'testuser@example.com',
+            password: 'password123'
         });
+        await user.save();
+        token = user.generateAuthToken();
+        authorId = user._id.toString();
+    });
 
-        it('should return 400 if no file provided', async () => {
-            const req = { file: null };
-            const res = { status: sinon.stub().returnsThis(), json: sinon.stub() };
-
-            await mediaController.uploadVideo(req, res);
-
-            expect(res.status.calledWith(400)).to.be.true;
-            expect(res.json.calledWith({ message: 'No file provided' })).to.be.true;
+    describe('POST /api/media/upload', () => {
+        it('should upload a new video', (done) => {
+            chai.request(server)
+                .post('/api/media/upload')
+                .set('Authorization', `Bearer ${token}`)
+                .attach('video', './test/test-video.mp4')
+                .field('authorId', authorId)
+                .field('description', 'Test video')
+                .end((err, res) => {
+                    res.should.have.status(201);
+                    res.body.should.have.property('message').eql('Video uploaded successfully');
+                    done();
+                });
         });
     });
 
-    describe('getAllVideos', () => {
-        it('should get all videos', async () => {
-            const req = {};
-            const res = { status: sinon.stub().returnsThis(), json: sinon.stub() };
+    describe('GET /api/media/you-all-videos', () => {
+        it('should get all videos', (done) => {
+            chai.request(server)
+                .get('/api/media/you-all-videos')
+                .set('Authorization', `Bearer ${token}`)
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.have.property('message').eql('Videos retrieved successfully');
+                    res.body.videos.should.be.a('array');
+                    done();
+                });
+        });
+    });
 
-            sinon.stub(Video, 'find').returns({
-                populate: sinon.stub().returnsThis(),
-                exec: sinon.stub().resolves([])
+    describe('DELETE /api/media/:id', () => {
+        let videoId;
+
+        before(async () => {
+            const video = new Video({
+                videoUrl: 'test-video.mp4',
+                description: 'Test video',
+                author: authorId
             });
+            await video.save();
+            videoId = video._id.toString();
+        });
 
-            await mediaController.getAllVideos(req, res);
-
-            expect(res.status.calledWith(404)).to.be.true;
-            expect(res.json.calledWith({ message: 'No videos found' })).to.be.true;
-
-            Video.find.restore();
+        it('should delete the video', (done) => {
+            chai.request(server)
+                .delete(`/api/media/${videoId}`)
+                .set('Authorization', `Bearer ${token}`)
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.have.property('message').eql('Video deleted successfully');
+                    done();
+                });
         });
     });
 
-    describe('deleteVideo', () => {
-        it('should delete a video', async () => {
-            const req = { params: { id: mongoose.Types.ObjectId() } };
-            const res = { status: sinon.stub().returnsThis(), json: sinon.stub() };
+    describe('PUT /api/media/:id', () => {
+        let videoId;
 
-            sinon.stub(Video, 'findByIdAndRemove').resolves(true);
-
-            await mediaController.deleteVideo(req, res);
-
-            expect(res.status.calledWith(200)).to.be.true;
-            expect(res.json.calledWith({ message: 'Video deleted successfully' })).to.be.true;
-
-            Video.findByIdAndRemove.restore();
+        before(async () => {
+            const video = new Video({
+                videoUrl: 'test-video.mp4',
+                description: 'Test video',
+                author: authorId
+            });
+            await video.save();
+            videoId = video._id.toString();
         });
-    });
 
-    describe('updateVideo', () => {
-        it('should update a video description', async () => {
-            const req = { params: { id: mongoose.Types.ObjectId() }, body: { description: 'Updated description' } };
-            const res = { status: sinon.stub().returnsThis(), json: sinon.stub() };
-
-            sinon.stub(Video, 'findByIdAndUpdate').resolves(true);
-
-            await mediaController.updateVideo(req, res);
-
-            expect(res.status.calledWith(200)).to.be.true;
-            expect(res.json.calledWith(sinon.match.has('message', 'Video updated successfully'))).to.be.true;
-
-            Video.findByIdAndUpdate.restore();
+        it('should update the video description', (done) => {
+            chai.request(server)
+                .put(`/api/media/${videoId}`)
+                .set('Authorization', `Bearer ${token}`)
+                .send({ description: 'Updated description' })
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.have.property('message').eql('Video updated successfully');
+                    res.body.video.should.have.property('description').eql('Updated description');
+                    done();
+                });
         });
     });
 });

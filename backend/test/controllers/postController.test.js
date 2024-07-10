@@ -1,134 +1,136 @@
 import * as chai from 'chai';
-import sinon from 'sinon';
-import mongoose from 'mongoose';
-import * as postController from '../../controllers/postController.js';
-import Post from '../../models/Post.js';
+import chaiHttp from 'chai-http';
+import server from '../../server.js';
 import User from '../../models/User.js';
+import Post from '../../models/Post.js';
 
-const { expect } = chai;
+const should = chai.should();
+chai.use(chaiHttp);
 
 describe('Post Controller', () => {
-    describe('createPost', () => {
-        it('should create a new post', async () => {
-            const req = {
-                body: { content: 'Test post', authorId: mongoose.Types.ObjectId() },
-                file: { filename: 'testfile.jpg' }
+    let token;
+    let userId;
+
+    before(async () => {
+        await User.deleteMany({});
+        await Post.deleteMany({});
+        const user = new User({
+            username: 'testuser',
+            email: 'testuser@example.com',
+            password: 'password123'
+        });
+        await user.save();
+        token = user.generateAuthToken();
+        userId = user._id.toString();
+    });
+
+    describe('POST /api/posts', () => {
+        it('should create a new post', (done) => {
+            const post = {
+                content: 'This is a test post',
+                authorId: userId
             };
-            const res = { status: sinon.stub().returnsThis(), json: sinon.stub() };
-
-            sinon.stub(User, 'findById').resolves({ _id: mongoose.Types.ObjectId(), posts: [], save: sinon.stub().resolves() });
-            sinon.stub(Post.prototype, 'save').resolves();
-
-            await postController.createPost(req, res);
-
-            expect(res.status.calledWith(201)).to.be.true;
-            expect(res.json.calledWith(sinon.match.has('message', 'Post created successfully'))).to.be.true;
-
-            User.findById.restore();
-            Post.prototype.save.restore();
-        });
-
-        it('should return 400 if content or authorId is missing', async () => {
-            const req = { body: {} };
-            const res = { status: sinon.stub().returnsThis(), json: sinon.stub() };
-
-            await postController.createPost(req, res);
-
-            expect(res.status.calledWith(400)).to.be.true;
-            expect(res.json.calledWith({ message: 'Content and author ID are required.' })).to.be.true;
+            chai.request(server)
+                .post('/api/posts')
+                .set('Authorization', `Bearer ${token}`)
+                .send(post)
+                .end((err, res) => {
+                    res.should.have.status(201);
+                    res.body.should.have.property('message').eql('Post created successfully');
+                    done();
+                });
         });
     });
 
-    describe('getPosts', () => {
-        it('should get all posts', async () => {
-            const req = {};
-            const res = { status: sinon.stub().returnsThis(), json: sinon.stub() };
+    describe('GET /api/posts', () => {
+        it('should get all posts', (done) => {
+            chai.request(server)
+                .get('/api/posts')
+                .set('Authorization', `Bearer ${token}`)
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.have.property('message').eql('Posts retrieved successfully');
+                    res.body.posts.should.be.a('array');
+                    done();
+                });
+        });
+    });
 
-            sinon.stub(Post, 'find').returns({
-                populate: sinon.stub().returnsThis(),
-                exec: sinon.stub().resolves([])
+    describe('PUT /api/posts/:id/like', () => {
+        let postId;
+
+        before(async () => {
+            const post = new Post({
+                content: 'This is a test post',
+                author: userId
             });
+            await post.save();
+            postId = post._id.toString();
+        });
 
-            await postController.getPosts(req, res);
-
-            expect(res.status.calledWith(404)).to.be.true;
-            expect(res.json.calledWith({ message: 'No posts found.' })).to.be.true;
-
-            Post.find.restore();
+        it('should like the post', (done) => {
+            chai.request(server)
+                .put(`/api/posts/${postId}/like`)
+                .set('Authorization', `Bearer ${token}`)
+                .send({ userId })
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.have.property('message').eql('Like status updated successfully');
+                    done();
+                });
         });
     });
 
-    describe('likePost', () => {
-        it('should like a post', async () => {
-            const req = { params: { id: mongoose.Types.ObjectId() }, body: { userId: mongoose.Types.ObjectId() } };
-            const res = { status: sinon.stub().returnsThis(), json: sinon.stub() };
+    describe('POST /api/posts/:id/comment', () => {
+        let postId;
 
-            sinon.stub(Post, 'findById').resolves({
-                likes: [],
-                save: sinon.stub().resolves()
+        before(async () => {
+            const post = new Post({
+                content: 'This is a test post',
+                author: userId
             });
-
-            await postController.likePost(req, res);
-
-            expect(res.status.calledWith(200)).to.be.true;
-            expect(res.json.calledWith(sinon.match.has('message', 'Like status updated successfully'))).to.be.true;
-
-            Post.findById.restore();
+            await post.save();
+            postId = post._id.toString();
         });
 
-        it('should return 400 if userId is missing', async () => {
-            const req = { params: { id: mongoose.Types.ObjectId() }, body: {} };
-            const res = { status: sinon.stub().returnsThis(), json: sinon.stub() };
-
-            await postController.likePost(req, res);
-
-            expect(res.status.calledWith(400)).to.be.true;
-            expect(res.json.calledWith({ message: 'User ID is required.' })).to.be.true;
+        it('should comment on the post', (done) => {
+            const comment = {
+                userId,
+                content: 'This is a test comment'
+            };
+            chai.request(server)
+                .post(`/api/posts/${postId}/comment`)
+                .set('Authorization', `Bearer ${token}`)
+                .send(comment)
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.have.property('message').eql('Comment added successfully');
+                    done();
+                });
         });
     });
 
-    describe('commentOnPost', () => {
-        it('should add a comment to a post', async () => {
-            const req = { params: { id: mongoose.Types.ObjectId() }, body: { userId: mongoose.Types.ObjectId(), content: 'Test comment' } };
-            const res = { status: sinon.stub().returnsThis(), json: sinon.stub() };
+    describe('DELETE /api/posts/:id', () => {
+        let postId;
 
-            sinon.stub(Post, 'findById').resolves({
-                comments: [],
-                save: sinon.stub().resolves()
+        before(async () => {
+            const post = new Post({
+                content: 'This is a test post',
+                author: userId
             });
-
-            await postController.commentOnPost(req, res);
-
-            expect(res.status.calledWith(200)).to.be.true;
-            expect(res.json.calledWith(sinon.match.has('message', 'Comment added successfully'))).to.be.true;
-
-            Post.findById.restore();
+            await post.save();
+            postId = post._id.toString();
         });
 
-        it('should return 400 if content is missing', async () => {
-            const req = { params: { id: mongoose.Types.ObjectId() }, body: { userId: mongoose.Types.ObjectId() } };
-            const res = { status: sinon.stub().returnsThis(), json: sinon.stub() };
-
-            await postController.commentOnPost(req, res);
-
-            expect(res.status.calledWith(400)).to.be.true;
-            expect(res.json.calledWith({ message: 'Content is required for the comment.' })).to.be.true;
-        });
-    });
-
-    describe('deletePost', () => {
-        it('should delete a post', async () => {
-            const req = { params: { id: mongoose.Types.ObjectId() } };
-            const res = { status: sinon.stub().returnsThis(), json: sinon.stub() };
-
-            sinon.stub(Post, 'findByIdAndRemove').resolves(true);
-
-            await postController.deletePost(req, res);
-
-            expect(res.status.calledWith(200)).to.be.true;
-            expect(res.json.calledWith({ message: 'Post deleted successfully' })).to.be.true;
-
-            Post.findByIdAndRemove.restore();
+        it('should delete the post', (done) => {
+            chai.request(server)
+                .delete(`/api/posts/${postId}`)
+                .set('Authorization', `Bearer ${token}`)
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.have.property('message').eql('Post deleted successfully');
+                    done();
+                });
         });
     });
 });

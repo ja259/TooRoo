@@ -1,73 +1,208 @@
 import * as chai from 'chai';
-import sinon from 'sinon';
-import request from 'supertest';
-import app from '../../app.js';
-import * as authController from '../../controllers/authController.js';
+import chaiHttp from 'chai-http';
+import mongoose from 'mongoose';
+import server from '../../server.js';
+import User from '../../models/User.js';
+import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
 
-const { expect } = chai;
+chai.should();
+chai.use(chaiHttp);
 
 describe('Auth Routes', () => {
-    describe('POST /register', () => {
-        it('should call register controller', async () => {
-            const stub = sinon.stub(authController, 'register').callsFake((req, res) => res.status(201).json({ message: 'User registered successfully' }));
+    before(async () => {
+        await mongoose.connect(process.env.MONGODB_URI);
+    });
 
-            const res = await request(app)
+    after(async () => {
+        await mongoose.connection.close();
+    });
+
+    beforeEach(async () => {
+        await User.deleteMany({});
+    });
+
+    describe('/POST register', () => {
+        it('should register a user', (done) => {
+            const user = {
+                username: 'testuser',
+                email: 'testuser@example.com',
+                phone: '1234567890',
+                password: 'password123',
+                securityQuestions: [
+                    { question: 'Question1', answer: 'Answer1' },
+                    { question: 'Question2', answer: 'Answer2' },
+                    { question: 'Question3', answer: 'Answer3' }
+                ]
+            };
+            chai.request(server)
                 .post('/api/auth/register')
-                .send({ username: 'testuser', email: 'testuser@example.com', phone: '1234567890', password: 'password123', securityQuestions: [{ question: 'Q1', answer: 'A1' }, { question: 'Q2', answer: 'A2' }, { question: 'Q3', answer: 'A3' }] });
-
-            expect(res.status).to.equal(201);
-            expect(res.body.message).to.equal('User registered successfully');
-            expect(stub.calledOnce).to.be.true;
-
-            stub.restore();
+                .send(user)
+                .end((err, res) => {
+                    res.should.have.status(201);
+                    res.body.should.have.property('message').eql('User registered successfully');
+                    done();
+                });
         });
     });
 
-    describe('POST /login', () => {
-        it('should call login controller', async () => {
-            const stub = sinon.stub(authController, 'login').callsFake((req, res) => res.status(200).json({ message: 'Logged in successfully' }));
+    describe('/POST login', () => {
+        it('should login a user', (done) => {
+            const user = new User({
+                username: 'testuser',
+                email: 'testuser@example.com',
+                phone: '1234567890',
+                password: 'password123',
+                securityQuestions: [
+                    { question: 'Question1', answer: 'Answer1' },
+                    { question: 'Question2', answer: 'Answer2' },
+                    { question: 'Question3', answer: 'Answer3' }
+                ]
+            });
+            user.password = bcrypt.hashSync(user.password, 12);
+            user.save((err, user) => {
+                chai.request(server)
+                    .post('/api/auth/login')
+                    .send({ emailOrPhone: 'testuser@example.com', password: 'password123' })
+                    .end((err, res) => {
+                        res.should.have.status(200);
+                        res.body.should.have.property('message').eql('Logged in successfully');
+                        done();
+                    });
+            });
+        });
 
-            const res = await request(app)
-                .post('/api/auth/login')
-                .send({ emailOrPhone: 'testuser@example.com', password: 'password123' });
-
-            expect(res.status).to.equal(200);
-            expect(res.body.message).to.equal('Logged in successfully');
-            expect(stub.calledOnce).to.be.true;
-
-            stub.restore();
+        it('should not login a user with incorrect password', (done) => {
+            const user = new User({
+                username: 'testuser',
+                email: 'testuser@example.com',
+                phone: '1234567890',
+                password: 'password123',
+                securityQuestions: [
+                    { question: 'Question1', answer: 'Answer1' },
+                    { question: 'Question2', answer: 'Answer2' },
+                    { question: 'Question3', answer: 'Answer3' }
+                ]
+            });
+            user.password = bcrypt.hashSync(user.password, 12);
+            user.save((err, user) => {
+                chai.request(server)
+                    .post('/api/auth/login')
+                    .send({ emailOrPhone: 'testuser@example.com', password: 'wrongpassword' })
+                    .end((err, res) => {
+                        res.should.have.status(401);
+                        res.body.should.have.property('message').eql('Invalid credentials');
+                        done();
+                    });
+            });
         });
     });
 
-    describe('POST /forgot-password', () => {
-        it('should call forgotPassword controller', async () => {
-            const stub = sinon.stub(authController, 'forgotPassword').callsFake((req, res) => res.status(200).json({ message: 'Password reset token sent' }));
+    describe('/POST forgot-password', () => {
+        it('should send a password reset token', (done) => {
+            const user = new User({
+                username: 'testuser',
+                email: 'testuser@example.com',
+                phone: '1234567890',
+                password: 'password123',
+                securityQuestions: [
+                    { question: 'Question1', answer: 'Answer1' },
+                    { question: 'Question2', answer: 'Answer2' },
+                    { question: 'Question3', answer: 'Answer3' }
+                ]
+            });
+            user.save((err, user) => {
+                chai.request(server)
+                    .post('/api/auth/forgot-password')
+                    .send({ email: 'testuser@example.com' })
+                    .end((err, res) => {
+                        res.should.have.status(200);
+                        res.body.should.have.property('message').eql('Password reset token sent');
+                        done();
+                    });
+            });
+        });
 
-            const res = await request(app)
+        it('should return 404 for non-existent email', (done) => {
+            chai.request(server)
                 .post('/api/auth/forgot-password')
-                .send({ email: 'testuser@example.com' });
-
-            expect(res.status).to.equal(200);
-            expect(res.body.message).to.equal('Password reset token sent');
-            expect(stub.calledOnce).to.be.true;
-
-            stub.restore();
+                .send({ email: 'nonexistent@example.com' })
+                .end((err, res) => {
+                    res.should.have.status(404);
+                    res.body.should.have.property('message').eql('User not found');
+                    done();
+                });
         });
     });
 
-    describe('PUT /reset-password/:token', () => {
-        it('should call resetPassword controller', async () => {
-            const stub = sinon.stub(authController, 'resetPassword').callsFake((req, res) => res.status(200).json({ message: 'Password has been reset successfully' }));
+    describe('/PUT reset-password/:token', () => {
+        it('should reset the password', (done) => {
+            const user = new User({
+                username: 'testuser',
+                email: 'testuser@example.com',
+                phone: '1234567890',
+                password: 'password123',
+                securityQuestions: [
+                    { question: 'Question1', answer: 'Answer1' },
+                    { question: 'Question2', answer: 'Answer2' },
+                    { question: 'Question3', answer: 'Answer3' }
+                ]
+            });
+            user.save((err, user) => {
+                const resetToken = crypto.randomBytes(20).toString('hex');
+                user.resetPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+                user.resetPasswordExpires = Date.now() + 3600000;
+                user.save((err, user) => {
+                    chai.request(server)
+                        .put(`/api/auth/reset-password/${resetToken}`)
+                        .send({ password: 'newpassword123', securityAnswers: ['Answer1', 'Answer2', 'Answer3'] })
+                        .end((err, res) => {
+                            res.should.have.status(200);
+                            res.body.should.have.property('message').eql('Password has been reset successfully');
+                            done();
+                        });
+                });
+            });
+        });
 
-            const res = await request(app)
-                .put('/api/auth/reset-password/randomtoken')
-                .send({ token: 'randomtoken', password: 'newpassword123', securityAnswers: ['A1', 'A2', 'A3'] });
+        it('should return 400 for invalid or expired token', (done) => {
+            chai.request(server)
+                .put('/api/auth/reset-password/invalidtoken')
+                .send({ password: 'newpassword123', securityAnswers: ['Answer1', 'Answer2', 'Answer3'] })
+                .end((err, res) => {
+                    res.should.have.status(400);
+                    res.body.should.have.property('message').eql('Token is invalid or has expired');
+                    done();
+                });
+        });
 
-            expect(res.status).to.equal(200);
-            expect(res.body.message).to.equal('Password has been reset successfully');
-            expect(stub.calledOnce).to.be.true;
-
-            stub.restore();
+        it('should return 400 for invalid security answers', (done) => {
+            const user = new User({
+                username: 'testuser',
+                email: 'testuser@example.com',
+                phone: '1234567890',
+                password: 'password123',
+                securityQuestions: [
+                    { question: 'Question1', answer: 'Answer1' },
+                    { question: 'Question2', answer: 'Answer2' },
+                    { question: 'Question3', answer: 'Answer3' }
+                ]
+            });
+            user.save((err, user) => {
+                const resetToken = crypto.randomBytes(20).toString('hex');
+                user.resetPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+                user.resetPasswordExpires = Date.now() + 3600000;
+                user.save((err, user) => {
+                    chai.request(server)
+                        .put(`/api/auth/reset-password/${resetToken}`)
+                        .send({ password: 'newpassword123', securityAnswers: ['Wrong1', 'Wrong2', 'Wrong3'] })
+                        .end((err, res) => {
+                            res.should.have.status(400);
+                            res.body.should.have.property('message').eql('Invalid security answer');
+                            done();
+                        });
+                });
+            });
         });
     });
 });
