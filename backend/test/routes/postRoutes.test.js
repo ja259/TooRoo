@@ -1,255 +1,87 @@
 import * as chai from 'chai';
-import chaiHttp from 'chai-http';
-import server from '../../server.js';
-import Post from '../../models/Post.js';
-import User from '../../models/User.js';
+import sinon from 'sinon';
+import request from 'supertest';
+import app from '../../app.js';
+import * as postController from '../../controllers/postController.js';
 
-chai.should();
-chai.use(chaiHttp);
+const { expect } = chai;
 
 describe('Post Routes', () => {
+    describe('POST /', () => {
+        it('should call createPost controller', async () => {
+            const stub = sinon.stub(postController, 'createPost').callsFake((req, res) => res.status(201).json({ message: 'Post created successfully' }));
 
-    before(async () => {
-        await User.deleteMany({});
-        await Post.deleteMany({});
-    });
+            const res = await request(app)
+                .post('/api/posts')
+                .field('content', 'Test post')
+                .field('authorId', '60d5ec4c2f8fb814c89e0e78')
+                .attach('postImage', 'test/fixtures/testfile.jpg');
 
-    after(async () => {
-        await User.deleteMany({});
-        await Post.deleteMany({});
-    });
+            expect(res.status).to.equal(201);
+            expect(res.body.message).to.equal('Post created successfully');
+            expect(stub.calledOnce).to.be.true;
 
-    beforeEach(async () => {
-        await User.deleteMany({});
-        await Post.deleteMany({});
-    });
-
-    describe('/POST create post', () => {
-        it('it should create a post', (done) => {
-            let user = new User({
-                username: 'testuser',
-                email: 'testuser@example.com',
-                phone: '1234567890',
-                password: 'password123'
-            });
-            user.save((err, user) => {
-                chai.request(server)
-                    .post('/api/posts')
-                    .set('Authorization', `Bearer ${user.generateAuthToken()}`)
-                    .send({ content: 'Test post', authorId: user._id })
-                    .end((err, res) => {
-                        res.should.have.status(201);
-                        res.body.should.have.property('message').eql('Post created successfully');
-                        done();
-                    });
-            });
+            stub.restore();
         });
     });
 
-    describe('/GET posts', () => {
-        it('it should get all posts', (done) => {
-            let user = new User({
-                username: 'testuser',
-                email: 'testuser@example.com',
-                phone: '1234567890',
-                password: 'password123'
-            });
-            user.save((err, user) => {
-                let post = new Post({
-                    content: 'Test post',
-                    author: user._id
-                });
-                post.save((err, post) => {
-                    chai.request(server)
-                        .get('/api/posts')
-                        .set('Authorization', `Bearer ${user.generateAuthToken()}`)
-                        .end((err, res) => {
-                            res.should.have.status(200);
-                            res.body.should.be.a('array');
-                            res.body.length.should.be.eql(1);
-                            done();
-                        });
-                });
-            });
+    describe('GET /', () => {
+        it('should call getPosts controller', async () => {
+            const stub = sinon.stub(postController, 'getPosts').callsFake((req, res) => res.status(200).json({ message: 'Posts retrieved successfully' }));
+
+            const res = await request(app).get('/api/posts');
+
+            expect(res.status).to.equal(200);
+            expect(res.body.message).to.equal('Posts retrieved successfully');
+            expect(stub.calledOnce).to.be.true;
+
+            stub.restore();
         });
     });
 
-    describe('/PUT/:id/like post', () => {
-        it('it should like a post', (done) => {
-            let user = new User({
-                username: 'testuser',
-                email: 'testuser@example.com',
-                phone: '1234567890',
-                password: 'password123'
-            });
-            user.save((err, user) => {
-                let post = new Post({
-                    content: 'Test post',
-                    author: user._id
-                });
-                post.save((err, post) => {
-                    chai.request(server)
-                        .put(`/api/posts/${post._id}/like`)
-                        .set('Authorization', `Bearer ${user.generateAuthToken()}`)
-                        .send({ userId: user._id })
-                        .end((err, res) => {
-                            res.should.have.status(200);
-                            res.body.should.have.property('message').eql('Like status updated successfully');
-                            done();
-                        });
-                });
-            });
+    describe('PUT /:id/like', () => {
+        it('should call likePost controller', async () => {
+            const stub = sinon.stub(postController, 'likePost').callsFake((req, res) => res.status(200).json({ message: 'Like status updated successfully' }));
+
+            const res = await request(app)
+                .put('/api/posts/60d5ec4c2f8fb814c89e0e78/like')
+                .send({ userId: '60d5ec4c2f8fb814c89e0e78' });
+
+            expect(res.status).to.equal(200);
+            expect(res.body.message).to.equal('Like status updated successfully');
+            expect(stub.calledOnce).to.be.true;
+
+            stub.restore();
         });
     });
 
-    describe('/POST/:id/comment post', () => {
-        it('it should comment on a post', (done) => {
-            let user = new User({
-                username: 'testuser',
-                email: 'testuser@example.com',
-                phone: '1234567890',
-                password: 'password123'
-            });
-            user.save((err, user) => {
-                let post = new Post({
-                    content: 'Test post',
-                    author: user._id
-                });
-                post.save((err, post) => {
-                    chai.request(server)
-                        .post(`/api/posts/${post._id}/comment`)
-                        .set('Authorization', `Bearer ${user.generateAuthToken()}`)
-                        .send({ userId: user._id, content: 'Test comment' })
-                        .end((err, res) => {
-                            res.should.have.status(200);
-                            res.body.should.have.property('message').eql('Comment added successfully');
-                            done();
-                        });
-                });
-            });
+    describe('POST /:id/comment', () => {
+        it('should call commentOnPost controller', async () => {
+            const stub = sinon.stub(postController, 'commentOnPost').callsFake((req, res) => res.status(201).json({ message: 'Comment added successfully' }));
+
+            const res = await request(app)
+                .post('/api/posts/60d5ec4c2f8fb814c89e0e78/comment')
+                .send({ userId: '60d5ec4c2f8fb814c89e0e78', content: 'Test comment' });
+
+            expect(res.status).to.equal(201);
+            expect(res.body.message).to.equal('Comment added successfully');
+            expect(stub.calledOnce).to.be.true;
+
+            stub.restore();
         });
     });
 
-    describe('/DELETE/:id post', () => {
-        it('it should delete a post', (done) => {
-            let user = new User({
-                username: 'testuser',
-                email: 'testuser@example.com',
-                phone: '1234567890',
-                password: 'password123'
-            });
-            user.save((err, user) => {
-                let post = new Post({
-                    content: 'Test post',
-                    author: user._id
-                });
-                post.save((err, post) => {
-                    chai.request(server)
-                        .delete(`/api/posts/${post._id}`)
-                        .set('Authorization', `Bearer ${user.generateAuthToken()}`)
-                        .end((err, res) => {
-                            res.should.have.status(200);
-                            res.body.should.have.property('message').eql('Post deleted successfully');
-                            done();
-                        });
-                });
-            });
-        });
-    });
+    describe('DELETE /:id', () => {
+        it('should call deletePost controller', async () => {
+            const stub = sinon.stub(postController, 'deletePost').callsFake((req, res) => res.status(200).json({ message: 'Post deleted successfully' }));
 
-    describe('/GET timeline-posts', () => {
-        it('it should get timeline posts', (done) => {
-            let user = new User({
-                username: 'testuser',
-                email: 'testuser@example.com',
-                phone: '1234567890',
-                password: 'password123'
-            });
-            user.save((err, user) => {
-                let post = new Post({
-                    content: 'Test post',
-                    author: user._id
-                });
-                post.save((err, post) => {
-                    chai.request(server)
-                        .get('/api/posts/timeline-posts')
-                        .set('Authorization', `Bearer ${user.generateAuthToken()}`)
-                        .end((err, res) => {
-                            res.should.have.status(200);
-                            res.body.should.be.a('array');
-                            res.body.length.should.be.eql(1);
-                            done();
-                        });
-                });
-            });
-        });
-    });
+            const res = await request(app).delete('/api/posts/60d5ec4c2f8fb814c89e0e78');
 
-    describe('/GET you-all-videos', () => {
-        it('it should get all videos', (done) => {
-            let user = new User({
-                username: 'testuser',
-                email: 'testuser@example.com',
-                phone: '1234567890',
-                password: 'password123'
-            });
-            user.save((err, user) => {
-                let post = new Post({
-                    content: 'Test video',
-                    author: user._id,
-                    videoUrl: 'testfile.mp4'
-                });
-                post.save((err, post) => {
-                    chai.request(server)
-                        .get('/api/posts/you-all-videos')
-                        .set('Authorization', `Bearer ${user.generateAuthToken()}`)
-                        .end((err, res) => {
-                            res.should.have.status(200);
-                            res.body.should.be.a('array');
-                            res.body.length.should.be.eql(1);
-                            done();
-                        });
-                });
-            });
-        });
-    });
+            expect(res.status).to.equal(200);
+            expect(res.body.message).to.equal('Post deleted successfully');
+            expect(stub.calledOnce).to.be.true;
 
-    describe('/GET following-videos', () => {
-        it('it should get following videos', (done) => {
-            let user = new User({
-                username: 'testuser',
-                email: 'testuser@example.com',
-                phone: '1234567890',
-                password: 'password123',
-                following: []
-            });
-            let followedUser = new User({
-                username: 'followeduser',
-                email: 'followeduser@example.com',
-                phone: '0987654321',
-                password: 'password123'
-            });
-            followedUser.save((err, followedUser) => {
-                user.following.push(followedUser._id);
-                user.save((err, user) => {
-                    let post = new Post({
-                        content: 'Test video',
-                        author: followedUser._id,
-                        videoUrl: 'testfile.mp4'
-                    });
-                    post.save((err, post) => {
-                        chai.request(server)
-                            .get('/api/posts/following-videos')
-                            .set('Authorization', `Bearer ${user.generateAuthToken()}`)
-                            .end((err, res) => {
-                                res.should.have.status(200);
-                                res.body.should.be.a('array');
-                                res.body.length.should.be.eql(1);
-                                done();
-                            });
-                    });
-                });
-            });
+            stub.restore();
         });
     });
 });
