@@ -22,3 +22,4 @@ const analyzePreferences = async (userId) => {
 export default analyzePreferences;
 
 
+

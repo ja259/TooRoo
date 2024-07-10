@@ -44,17 +44,18 @@ export const followUser = async (req, res) => {
     try {
         const targetUser = await User.findById(userId);
         const currentUser = await User.findById(currentUserId);
+
         if (!targetUser || !currentUser) {
             return res.status(404).json({ message: 'User not found.' });
         }
+
         if (currentUser.following.includes(userId)) {
             return res.status(400).json({ message: 'You are already following this user.' });
         }
+
         currentUser.following.push(userId);
-        targetUser.followers.push(currentUserId);
         await currentUser.save();
-        await targetUser.save();
-        res.json({ message: 'Followed user successfully.' });
+        res.json({ message: 'Followed user successfully.', user: currentUser });
     } catch (error) {
         console.error('Failed to follow user:', error);
         res.status(500).json({ message: 'Failed to follow user.', error: error.message });
@@ -71,16 +72,41 @@ export const unfollowUser = async (req, res) => {
     try {
         const targetUser = await User.findById(userId);
         const currentUser = await User.findById(currentUserId);
+
         if (!targetUser || !currentUser) {
             return res.status(404).json({ message: 'User not found.' });
         }
-        currentUser.following = currentUser.following.filter(id => id.toString() !== userId);
-        targetUser.followers = targetUser.followers.filter(id => id.toString() !== currentUserId);
+
+        if (!currentUser.following.includes(userId)) {
+            return res.status(400).json({ message: 'You are not following this user.' });
+        }
+
+        currentUser.following = currentUser.following.filter(followedUserId => followedUserId.toString() !== userId);
         await currentUser.save();
-        await targetUser.save();
-        res.json({ message: 'Unfollowed user successfully.' });
+        res.json({ message: 'Unfollowed user successfully.', user: currentUser });
     } catch (error) {
         console.error('Failed to unfollow user:', error);
         res.status(500).json({ message: 'Failed to unfollow user.', error: error.message });
+    }
+};
+
+export const getUserAnalytics = async (req, res) => {
+    const { userId } = req.user;
+    try {
+        const user = await User.findById(userId);
+        const posts = await Post.find({ author: userId });
+        const likes = posts.reduce((acc, post) => acc + post.likes.length, 0);
+        const comments = posts.reduce((acc, post) => acc + post.comments.length, 0);
+
+        res.json({
+            posts: posts.length,
+            followers: user.followers.length,
+            following: user.following.length,
+            likes,
+            comments
+        });
+    } catch (error) {
+        console.error('Failed to retrieve user analytics:', error);
+        res.status(500).json({ message: 'Failed to retrieve user analytics', error: error.message });
     }
 };
