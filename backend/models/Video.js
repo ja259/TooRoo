@@ -1,51 +1,14 @@
 import mongoose from 'mongoose';
 
-const { Schema } = mongoose;
+const videoSchema = new mongoose.Schema({
+    videoUrl: { type: String, required: true },
+    description: String,
+    author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    views: { type: Number, default: 0 },
+    likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }],
+}, { timestamps: true });
 
-const commentSchema = new Schema({
-    author: { 
-        type: Schema.Types.ObjectId, 
-        ref: 'User', 
-        required: true 
-    },
-    content: { 
-        type: String, 
-        required: true 
-    },
-    timestamp: { 
-        type: Date, 
-        default: Date.now 
-    }
-}, { _id: false });
+const Video = mongoose.model('Video', videoSchema);
 
-const videoSchema = new Schema({
-    author: { 
-        type: Schema.Types.ObjectId, 
-        ref: 'User', 
-        required: true 
-    },
-    videoUrl: { 
-        type: String, 
-        required: true 
-    },
-    description: { 
-        type: String 
-    },
-    likes: [{ 
-        type: Schema.Types.ObjectId, 
-        ref: 'User' 
-    }],
-    comments: [commentSchema]
-}, { 
-    timestamps: true 
-});
-
-videoSchema.pre('save', function(next) {
-    if (!this.videoUrl) {
-        next(new Error('Video URL is required'));
-    } else {
-        next();
-    }
-});
-
-export default mongoose.model('Video', videoSchema);
+export default Video;
