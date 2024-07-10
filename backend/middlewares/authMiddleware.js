@@ -23,5 +23,6 @@ const authenticate = async (req, res, next) => {
     }
 };
 
-export { authenticate };
+const protect = authenticate; // Alias for easier understanding
 
+export { authenticate, protect };

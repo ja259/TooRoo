@@ -9,7 +9,7 @@ import { Server } from 'socket.io';
 import webPush from 'web-push';
 import gridFsStorage from './config/gridFsStorageConfig.js';
 import { errorHandler, notFound } from './middlewares/errorHandler.js';
-import { authenticate } from './middlewares/authMiddleware.js';
+import { authenticate, protect } from './middlewares/authMiddleware.js';
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 import xss from 'xss-clean';
