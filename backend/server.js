@@ -19,6 +19,7 @@ import userRoutes from './routes/userRoutes.js';
 import postRoutes from './routes/postRoutes.js';
 import mediaRoutes from './routes/mediaRoutes.js';
 import { connectDB, disconnectDB } from './db.js';
+import config from './config/config.js';
 
 dotenv.config();
 
@@ -30,7 +31,7 @@ const io = new Server(server, {
         methods: ['GET', 'POST']
     }
 });
-const port = process.env.PORT || 5000;
+const port = config.port || 5000;
 
 // Security Middleware
 app.use(helmet());
@@ -76,8 +77,8 @@ app.post('/upload', authenticate, upload.single('file'), (req, res) => {
 // Web Push configuration
 webPush.setVapidDetails(
     'mailto:example@yourdomain.org',
-    process.env.VAPID_PUBLIC_KEY,
-    process.env.VAPID_PRIVATE_KEY
+    config.vapidPublicKey,
+    config.vapidPrivateKey
 );
 
 // Push notification subscription route
