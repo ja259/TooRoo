@@ -1,71 +1,126 @@
 import * as chai from 'chai';
-import sinon from 'sinon';
-import request from 'supertest';
-import app from '../../app.js';
-import * as userController from '../../controllers/userController.js';
+import chaiHttp from 'chai-http';
+import server from '../../server.js';
+import User from '../../models/User.js';
 
-const { expect } = chai;
+chai.should();
+chai.use(chaiHttp);
 
 describe('User Routes', () => {
-    describe('GET /:id', () => {
-        it('should call getUserProfile controller', async () => {
-            const stub = sinon.stub(userController, 'getUserProfile').callsFake((req, res) => res.status(200).json({ message: 'User profile retrieved successfully' }));
 
-            const res = await request(app).get('/api/users/60d5ec4c2f8fb814c89e0e78');
+    beforeEach(async () => {
+        await User.deleteMany({});
+    });
 
-            expect(res.status).to.equal(200);
-            expect(res.body.message).to.equal('User profile retrieved successfully');
-            expect(stub.calledOnce).to.be.true;
-
-            stub.restore();
+    describe('/GET user profile', () => {
+        it('it should GET a user profile by the given id', (done) => {
+            let user = new User({
+                username: 'testuser',
+                email: 'testuser@example.com',
+                phone: '1234567890',
+                password: 'password123'
+            });
+            user.save((err, user) => {
+                chai.request(server)
+                    .get(`/api/users/${user._id}`)
+                    .set('Authorization', `Bearer ${user.generateAuthToken()}`)
+                    .end((err, res) => {
+                        res.should.have.status(200);
+                        res.body.should.have.property('message').eql('User profile retrieved successfully');
+                        done();
+                    });
+            });
         });
     });
 
-    describe('PUT /:id', () => {
-        it('should call updateUserProfile controller', async () => {
-            const stub = sinon.stub(userController, 'updateUserProfile').callsFake((req, res) => res.status(200).json({ message: 'User profile updated successfully.' }));
-
-            const res = await request(app)
-                .put('/api/users/60d5ec4c2f8fb814c89e0e78')
-                .send({ username: 'updatedUsername' });
-
-            expect(res.status).to.equal(200);
-            expect(res.body.message).to.equal('User profile updated successfully.');
-            expect(stub.calledOnce).to.be.true;
-
-            stub.restore();
+    describe('/PUT/:id update user profile', () => {
+        it('it should UPDATE a user profile by the given id', (done) => {
+            let user = new User({
+                username: 'testuser',
+                email: 'testuser@example.com',
+                phone: '1234567890',
+                password: 'password123'
+            });
+            user.save((err, user) => {
+                chai.request(server)
+                    .put(`/api/users/${user._id}`)
+                    .set('Authorization', `Bearer ${user.generateAuthToken()}`)
+                    .send({ username: 'updateduser', bio: 'Updated bio' })
+                    .end((err, res) => {
+                        res.should.have.status(200);
+                        res.body.should.have.property('message').eql('User profile updated successfully.');
+                        res.body.user.should.have.property('username').eql('updateduser');
+                        res.body.user.should.have.property('bio').eql('Updated bio');
+                        done();
+                    });
+            });
         });
     });
 
-    describe('POST /:id/follow', () => {
-        it('should call followUser controller', async () => {
-            const stub = sinon.stub(userController, 'followUser').callsFake((req, res) => res.status(200).json({ message: 'Followed user successfully.' }));
-
-            const res = await request(app)
-                .post('/api/users/60d5ec4c2f8fb814c89e0e78/follow')
-                .send({ userId: '60d5ec4c2f8fb814c89e0e78' });
-
-            expect(res.status).to.equal(200);
-            expect(res.body.message).to.equal('Followed user successfully.');
-            expect(stub.calledOnce).to.be.true;
-
-            stub.restore();
+    describe('/POST/:id/follow follow user', () => {
+        it('it should follow a user by the given id', (done) => {
+            let user1 = new User({
+                username: 'user1',
+                email: 'user1@example.com',
+                phone: '1234567890',
+                password: 'password123'
+            });
+            let user2 = new User({
+                username: 'user2',
+                email: 'user2@example.com',
+                phone: '0987654321',
+                password: 'password123'
+            });
+            user1.save((err, user1) => {
+                user2.save((err, user2) => {
+                    chai.request(server)
+                        .post(`/api/users/${user2._id}/follow`)
+                        .set('Authorization', `Bearer ${user1.generateAuthToken()}`)
+                        .send({ userId: user1._id })
+                        .end((err, res) => {
+                            res.should.have.status(200);
+                            res.body.should.have.property('message').eql('Followed user successfully.');
+                            done();
+                        });
+                });
+            });
         });
     });
 
-    describe('POST /:id/unfollow', () => {
-        it('should call unfollowUser controller', async () => {
-            const stub = sinon.stub(userController, 'unfollowUser').callsFake((req, res) => res.status(200).json({ message: 'Unfollowed user successfully.' }));
-
-            const res = await request(app)
-                .post('/api/users/60d5ec4c2f8fb814c89e0e78/unfollow')
-                .send({ userId: '60d5ec4c2f8fb814c89e0e78' });
-
-            expect(res.status).to.equal(200);
-            expect(res.body.message).to.equal('Unfollowed user successfully.');
-            expect(stub.calledOnce).to.be.true;
-
-            stub.restore();
+    describe('/POST/:id/unfollow unfollow user', () => {
+        it('it should unfollow a user by the given id', (done) => {
+            let user1 = new User({
+                username: 'user1',
+                email: 'user1@example.com',
+                phone: '1234567890',
+                password: 'password123'
+            });
+            let user2 = new User({
+                username: 'user2',
+                email: 'user2@example.com',
+                phone: '0987654321',
+                password: 'password123'
+            });
+            user1.save((err, user1) => {
+                user2.save((err, user2) => {
+                    chai.request(server)
+                        .post(`/api/users/${user2._id}/follow`)
+                        .set('Authorization', `Bearer ${user1.generateAuthToken()}`)
+                        .send({ userId: user1._id })
+                        .end((err, res) => {
+                            res.should.have.status(200);
+                            chai.request(server)
+                                .post(`/api/users/${user2._id}/unfollow`)
+                                .set('Authorization', `Bearer ${user1.generateAuthToken()}`)
+                                .send({ userId: user1._id })
+                                .end((err, res) => {
+                                    res.should.have.status(200);
+                                    res.body.should.have.property('message').eql('Unfollowed user successfully.');
+                                    done();
+                                });
+                        });
+                });
+            });
         });
     });
 });

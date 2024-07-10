@@ -1,71 +1,175 @@
 import * as chai from 'chai';
-import sinon from 'sinon';
-import request from 'supertest';
-import app from '../../app.js';
-import * as mediaController from '../../controllers/mediaController.js';
+import chaiHttp from 'chai-http';
+import server from '../../server.js';
+import Video from '../../models/Video.js';
+import User from '../../models/User.js';
 
-const { expect } = chai;
+chai.should();
+chai.use(chaiHttp);
 
 describe('Media Routes', () => {
-    describe('POST /upload', () => {
-        it('should call uploadVideo controller', async () => {
-            const stub = sinon.stub(mediaController, 'uploadVideo').callsFake((req, res) => res.status(201).json({ message: 'Video uploaded successfully' }));
 
-            const res = await request(app)
-                .post('/api/media/upload')
-                .attach('video', 'test/fixtures/testfile.mp4')
-                .field('description', 'Test video')
-                .field('authorId', '60d5ec4c2f8fb814c89e0e78');
+    before(async () => {
+        await User.deleteMany({});
+        await Video.deleteMany({});
+    });
 
-            expect(res.status).to.equal(201);
-            expect(res.body.message).to.equal('Video uploaded successfully');
-            expect(stub.calledOnce).to.be.true;
+    after(async () => {
+        await User.deleteMany({});
+        await Video.deleteMany({});
+    });
 
-            stub.restore();
+    beforeEach(async () => {
+        await User.deleteMany({});
+        await Video.deleteMany({});
+    });
+
+    describe('/POST upload video', () => {
+        it('it should upload a video', (done) => {
+            const user = new User({
+                username: 'testuser',
+                email: 'testuser@example.com',
+                phone: '1234567890',
+                password: 'password123'
+            });
+            user.save((err, user) => {
+                chai.request(server)
+                    .post('/api/media/upload')
+                    .set('Authorization', `Bearer ${user.generateAuthToken()}`)
+                    .attach('video', 'test/media/testfile.mp4')
+                    .end((err, res) => {
+                        res.should.have.status(201);
+                        res.body.should.have.property('message').eql('Video uploaded successfully');
+                        done();
+                    });
+            });
         });
     });
 
-    describe('GET /you-all-videos', () => {
-        it('should call getAllVideos controller', async () => {
-            const stub = sinon.stub(mediaController, 'getAllVideos').callsFake((req, res) => res.status(200).json({ message: 'Videos retrieved successfully' }));
-
-            const res = await request(app).get('/api/media/you-all-videos');
-
-            expect(res.status).to.equal(200);
-            expect(res.body.message).to.equal('Videos retrieved successfully');
-            expect(stub.calledOnce).to.be.true;
-
-            stub.restore();
+    describe('/GET you-all-videos', () => {
+        it('it should get all videos', (done) => {
+            const user = new User({
+                username: 'testuser',
+                email: 'testuser@example.com',
+                phone: '1234567890',
+                password: 'password123'
+            });
+            user.save((err, user) => {
+                const video = new Video({
+                    videoUrl: 'testfile.mp4',
+                    description: 'Test video',
+                    author: user._id
+                });
+                video.save((err, video) => {
+                    chai.request(server)
+                        .get('/api/media/you-all-videos')
+                        .set('Authorization', `Bearer ${user.generateAuthToken()}`)
+                        .end((err, res) => {
+                            res.should.have.status(200);
+                            res.body.should.have.property('message').eql('Videos retrieved successfully');
+                            res.body.videos.should.be.a('array');
+                            res.body.videos.length.should.be.eql(1);
+                            done();
+                        });
+                });
+            });
         });
     });
 
-    describe('DELETE /:id', () => {
-        it('should call deleteVideo controller', async () => {
-            const stub = sinon.stub(mediaController, 'deleteVideo').callsFake((req, res) => res.status(200).json({ message: 'Video deleted successfully' }));
+    describe('/DELETE/:id video', () => {
+        it('it should delete a video', (done) => {
+            const user = new User({
+                username: 'testuser',
+                email: 'testuser@example.com',
+                phone: '1234567890',
+                password: 'password123'
+            });
+            user.save((err, user) => {
+                const video = new Video({
+                    videoUrl: 'testfile.mp4',
+                    description: 'Test video',
+                    author: user._id
+                });
+                video.save((err, video) => {
+                    chai.request(server)
+                        .delete(`/api/media/${video._id}`)
+                        .set('Authorization', `Bearer ${user.generateAuthToken()}`)
+                        .end((err, res) => {
+                            res.should.have.status(200);
+                            res.body.should.have.property('message').eql('Video deleted successfully');
+                            done();
+                        });
+                });
+            });
+        });
 
-            const res = await request(app).delete('/api/media/60d5ec4c2f8fb814c89e0e78');
-
-            expect(res.status).to.equal(200);
-            expect(res.body.message).to.equal('Video deleted successfully');
-            expect(stub.calledOnce).to.be.true;
-
-            stub.restore();
+        it('it should return 404 for non-existent video', (done) => {
+            const user = new User({
+                username: 'testuser',
+                email: 'testuser@example.com',
+                phone: '1234567890',
+                password: 'password123'
+            });
+            user.save((err, user) => {
+                chai.request(server)
+                    .delete('/api/media/invalidid')
+                    .set('Authorization', `Bearer ${user.generateAuthToken()}`)
+                    .end((err, res) => {
+                        res.should.have.status(404);
+                        res.body.should.have.property('message').eql('Video not found');
+                        done();
+                    });
+            });
         });
     });
 
-    describe('PUT /:id', () => {
-        it('should call updateVideo controller', async () => {
-            const stub = sinon.stub(mediaController, 'updateVideo').callsFake((req, res) => res.status(200).json({ message: 'Video updated successfully' }));
+    describe('/PUT/:id video', () => {
+        it('it should update a video description', (done) => {
+            const user = new User({
+                username: 'testuser',
+                email: 'testuser@example.com',
+                phone: '1234567890',
+                password: 'password123'
+            });
+            user.save((err, user) => {
+                const video = new Video({
+                    videoUrl: 'testfile.mp4',
+                    description: 'Test video',
+                    author: user._id
+                });
+                video.save((err, video) => {
+                    chai.request(server)
+                        .put(`/api/media/${video._id}`)
+                        .set('Authorization', `Bearer ${user.generateAuthToken()}`)
+                        .send({ description: 'Updated description' })
+                        .end((err, res) => {
+                            res.should.have.status(200);
+                            res.body.should.have.property('message').eql('Video updated successfully');
+                            res.body.video.should.have.property('description').eql('Updated description');
+                            done();
+                        });
+                });
+            });
+        });
 
-            const res = await request(app)
-                .put('/api/media/60d5ec4c2f8fb814c89e0e78')
-                .send({ description: 'Updated description' });
-
-            expect(res.status).to.equal(200);
-            expect(res.body.message).to.equal('Video updated successfully');
-            expect(stub.calledOnce).to.be.true;
-
-            stub.restore();
+        it('it should return 404 for non-existent video', (done) => {
+            const user = new User({
+                username: 'testuser',
+                email: 'testuser@example.com',
+                phone: '1234567890',
+                password: 'password123'
+            });
+            user.save((err, user) => {
+                chai.request(server)
+                    .put('/api/media/invalidid')
+                    .set('Authorization', `Bearer ${user.generateAuthToken()}`)
+                    .send({ description: 'Updated description' })
+                    .end((err, res) => {
+                        res.should.have.status(404);
+                        res.body.should.have.property('message').eql('Video not found');
+                        done();
+                    });
+            });
         });
     });
 });

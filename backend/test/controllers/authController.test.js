@@ -1,177 +1,455 @@
 import * as chai from 'chai';
-import sinon from 'sinon';
-import jwt from 'jsonwebtoken';
-import bcrypt from 'bcryptjs';
-import * as authController from '../../controllers/authController.js';
+import chaiHttp from 'chai-http';
+import server from '../../server.js';
 import User from '../../models/User.js';
-import emailService from '../../utils/emailService.js';
+import Post from '../../models/Post.js';
+import Video from '../../models/Video.js';
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
 
-const { expect } = chai;
+dotenv.config();
 
-describe('Auth Controller', () => {
-    describe('register', () => {
-        it('should register a new user', async () => {
-            const req = {
-                body: {
-                    username: 'testuser',
-                    email: 'testuser@example.com',
-                    phone: '1234567890',
-                    password: 'password123',
-                    securityQuestions: [{ question: 'Q1', answer: 'A1' }, { question: 'Q2', answer: 'A2' }, { question: 'Q3', answer: 'A3' }]
-                }
-            };
-            const res = {
-                status: sinon.stub().returnsThis(),
-                json: sinon.stub()
-            };
+const should = chai.should();
+chai.use(chaiHttp);
 
-            sinon.stub(User, 'findOne').resolves(null);
-            sinon.stub(bcrypt, 'hash').resolves('hashedpassword');
-            sinon.stub(User.prototype, 'save').resolves({
-                _id: 'testUserId'
+describe('TooRoo Backend Tests', () => {
+
+    before((done) => {
+        mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+            .then(() => {
+                console.log('Connected to MongoDB');
+                done();
+            })
+            .catch(err => {
+                console.error('MongoDB connection error:', err);
+                done(err);
             });
-            sinon.stub(jwt, 'sign').returns('testToken');
+    });
 
-            await authController.register(req, res);
+    after((done) => {
+        mongoose.disconnect()
+            .then(() => {
+                console.log('Disconnected from MongoDB');
+                done();
+            })
+            .catch(err => {
+                console.error('MongoDB disconnection error:', err);
+                done(err);
+            });
+    });
 
-            expect(res.status.calledWith(201)).to.be.true;
-            expect(res.json.calledWith({ message: 'User registered successfully', token: 'testToken', userId: 'testUserId' })).to.be.true;
-
-            User.findOne.restore();
-            bcrypt.hash.restore();
-            User.prototype.save.restore();
-            jwt.sign.restore();
+    describe('Auth Routes', () => {
+        it('should register a user on /api/auth/register POST', (done) => {
+            let user = {
+                username: 'testuser',
+                email: 'testuser@example.com',
+                password: 'password123'
+            };
+            chai.request(server)
+                .post('/api/auth/register')
+                .send(user)
+                .end((err, res) => {
+                    res.should.have.status(201);
+                    res.body.should.be.a('object');
+                    res.body.should.have.property('message').eql('User registered successfully');
+                    done();
+                });
         });
 
-        it('should return 409 if user already exists', async () => {
-            const req = {
-                body: {
-                    username: 'testuser',
-                    email: 'testuser@example.com',
-                    phone: '1234567890',
-                    password: 'password123',
-                    securityQuestions: [{ question: 'Q1', answer: 'A1' }, { question: 'Q2', answer: 'A2' }, { question: 'Q3', answer: 'A3' }]
-                }
+        it('should login a user on /api/auth/login POST', (done) => {
+            let user = {
+                email: 'testuser@example.com',
+                password: 'password123'
             };
-            const res = {
-                status: sinon.stub().returnsThis(),
-                json: sinon.stub()
-            };
+            chai.request(server)
+                .post('/api/auth/login')
+                .send(user)
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.be.a('object');
+                    res.body.should.have.property('token');
+                    done();
+                });
+        });
 
-            sinon.stub(User, 'findOne').resolves({});
+        it('should send forgot password email on /api/auth/forgot-password POST', (done) => {
+            let user = new User({
+                username: 'testuser',
+                email: 'testuser@example.com',
+                password: 'password123'
+            });
+            user.save((err, user) => {
+                chai.request(server)
+                    .post('/api/auth/forgot-password')
+                    .send({ email: user.email })
+                    .end((err, res) => {
+                        res.should.have.status(200);
+                        res.body.should.have.property('message').eql('Password reset token sent');
+                        done();
+                    });
+            });
+        });
 
-            await authController.register(req, res);
-
-            expect(res.status.calledWith(409)).to.be.true;
-            expect(res.json.calledWith({ message: 'Email or phone already registered' })).to.be.true;
-
-            User.findOne.restore();
+        it('should reset password on /api/auth/reset-password/:token PUT', (done) => {
+            let user = new User({
+                username: 'testuser',
+                email: 'testuser@example.com',
+                password: 'password123'
+            });
+            user.save((err, user) => {
+                chai.request(server)
+                    .post('/api/auth/forgot-password')
+                    .send({ email: user.email })
+                    .end((err, res) => {
+                        chai.request(server)
+                            .put(`/api/auth/reset-password/${res.body.token}`)
+                            .send({ password: 'newpassword123' })
+                            .end((err, res) => {
+                                res.should.have.status(200);
+                                res.body.should.have.property('message').eql('Password has been reset successfully');
+                                done();
+                            });
+                    });
+            });
         });
     });
 
-    describe('login', () => {
-        it('should login user with correct credentials', async () => {
-            const req = {
-                body: {
-                    emailOrPhone: 'testuser@example.com',
-                    password: 'password123'
-                }
+    describe('User Routes', () => {
+        let token = '';
+
+        before((done) => {
+            let user = {
+                email: 'testuser@example.com',
+                password: 'password123'
             };
-            const res = {
-                status: sinon.stub().returnsThis(),
-                json: sinon.stub()
-            };
-
-            sinon.stub(User, 'findOne').resolves({
-                _id: 'testUserId',
-                password: 'hashedpassword',
-                select: function() { return this; }
-            });
-            sinon.stub(bcrypt, 'compare').resolves(true);
-            sinon.stub(jwt, 'sign').returns('testToken');
-
-            await authController.login(req, res);
-
-            expect(res.status.calledWith(200)).to.be.true;
-            expect(res.json.calledWith({ message: 'Logged in successfully', token: 'testToken', userId: 'testUserId' })).to.be.true;
-
-            User.findOne.restore();
-            bcrypt.compare.restore();
-            jwt.sign.restore();
+            chai.request(server)
+                .post('/api/auth/login')
+                .send(user)
+                .end((err, res) => {
+                    token = res.body.token;
+                    done();
+                });
         });
 
-        it('should return 401 if credentials are invalid', async () => {
-            const req = {
-                body: {
-                    emailOrPhone: 'testuser@example.com',
-                    password: 'wrongpassword'
-                }
-            };
-            const res = {
-                status: sinon.stub().returnsThis(),
-                json: sinon.stub()
-            };
+        it('should get user details on /api/users/:id GET', (done) => {
+            chai.request(server)
+                .get(`/api/users/testuser`)
+                .set('Authorization', `Bearer ${token}`)
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.be.a('object');
+                    res.body.should.have.property('username').eql('testuser');
+                    done();
+                });
+        });
 
-            sinon.stub(User, 'findOne').resolves({
-                password: 'hashedpassword',
-                select: function() { return this; }
+        it('should update user profile on /api/users/:id PUT', (done) => {
+            let updateUser = {
+                username: 'updateduser',
+                bio: 'Updated bio'
+            };
+            chai.request(server)
+                .put(`/api/users/testuser`)
+                .set('Authorization', `Bearer ${token}`)
+                .send(updateUser)
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.have.property('message').eql('User profile updated successfully.');
+                    done();
+                });
+        });
+
+        it('should follow a user on /api/users/:id/follow POST', (done) => {
+            let followUser = new User({
+                username: 'followuser',
+                email: 'followuser@example.com',
+                password: 'password123'
             });
-            sinon.stub(bcrypt, 'compare').resolves(false);
+            followUser.save((err, followUser) => {
+                chai.request(server)
+                    .post(`/api/users/${followUser._id}/follow`)
+                    .set('Authorization', `Bearer ${token}`)
+                    .send({ userId: followUser._id })
+                    .end((err, res) => {
+                        res.should.have.status(200);
+                        res.body.should.have.property('message').eql('Followed user successfully.');
+                        done();
+                    });
+            });
+        });
 
-            await authController.login(req, res);
-
-            expect(res.status.calledWith(401)).to.be.true;
-            expect(res.json.calledWith({ message: 'Invalid credentials' })).to.be.true;
-
-            User.findOne.restore();
-            bcrypt.compare.restore();
+        it('should unfollow a user on /api/users/:id/unfollow POST', (done) => {
+            let unfollowUser = new User({
+                username: 'unfollowuser',
+                email: 'unfollowuser@example.com',
+                password: 'password123'
+            });
+            unfollowUser.save((err, unfollowUser) => {
+                chai.request(server)
+                    .post(`/api/users/${unfollowUser._id}/unfollow`)
+                    .set('Authorization', `Bearer ${token}`)
+                    .send({ userId: unfollowUser._id })
+                    .end((err, res) => {
+                        res.should.have.status(200);
+                        res.body.should.have.property('message').eql('Unfollowed user successfully.');
+                        done();
+                    });
+            });
         });
     });
 
-    describe('forgotPassword', () => {
-        it('should send a password reset token', async () => {
-            const req = { body: { email: 'testuser@example.com' } };
-            const res = { status: sinon.stub().returnsThis(), json: sinon.stub() };
+    describe('Post Routes', () => {
+        let token = '';
 
-            sinon.stub(User, 'findOne').resolves({ email: 'testuser@example.com', save: sinon.stub() });
-            sinon.stub(crypto, 'randomBytes').callsFake((size, callback) => callback(null, Buffer.from('randomtoken')));
-            sinon.stub(emailService, 'sendEmail').resolves();
+        before((done) => {
+            let user = {
+                email: 'testuser@example.com',
+                password: 'password123'
+            };
+            chai.request(server)
+                .post('/api/auth/login')
+                .send(user)
+                .end((err, res) => {
+                    token = res.body.token;
+                    done();
+                });
+        });
 
-            await authController.forgotPassword(req, res);
+        it('should create a post on /api/posts POST', (done) => {
+            let post = {
+                content: 'This is a test post'
+            };
+            chai.request(server)
+                .post('/api/posts')
+                .set('Authorization', `Bearer ${token}`)
+                .send(post)
+                .end((err, res) => {
+                    res.should.have.status(201);
+                    res.body.should.be.a('object');
+                    res.body.should.have.property('message').eql('Post created successfully');
+                    done();
+                });
+        });
 
-            expect(res.status.calledWith(200)).to.be.true;
-            expect(res.json.calledWith({ message: 'Password reset token sent', token: 'randomtoken' })).to.be.true;
+        it('should get all posts on /api/posts GET', (done) => {
+            chai.request(server)
+                .get('/api/posts')
+                .set('Authorization', `Bearer ${token}`)
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.be.a('array');
+                    done();
+                });
+        });
 
-            User.findOne.restore();
-            crypto.randomBytes.restore();
-            emailService.sendEmail.restore();
+        it('should like a post on /api/posts/:id/like PUT', (done) => {
+            let post = new Post({
+                content: 'This is a test post',
+                author: 'testuser'
+            });
+            post.save((err, post) => {
+                chai.request(server)
+                    .put(`/api/posts/${post._id}/like`)
+                    .set('Authorization', `Bearer ${token}`)
+                    .send({ userId: 'testuser' })
+                    .end((err, res) => {
+                        res.should.have.status(200);
+                        res.body.should.have.property('message').eql('Like status updated successfully');
+                        done();
+                    });
+            });
+        });
+
+        it('should comment on a post on /api/posts/:id/comment POST', (done) => {
+            let post = new Post({
+                content: 'This is a test post',
+                author: 'testuser'
+            });
+            post.save((err, post) => {
+                chai.request(server)
+                    .post(`/api/posts/${post._id}/comment`)
+                    .set('Authorization', `Bearer ${token}`)
+                    .send({ userId: 'testuser', content: 'This is a test comment' })
+                    .end((err, res) => {
+                        res.should.have.status(200);
+                        res.body.should.have.property('message').eql('Comment added successfully');
+                        done();
+                    });
+            });
+        });
+
+        it('should delete a post on /api/posts/:id DELETE', (done) => {
+            let post = new Post({
+                content: 'This is a test post',
+                author: 'testuser'
+            });
+            post.save((err, post) => {
+                chai.request(server)
+                    .delete(`/api/posts/${post._id}`)
+                    .set('Authorization', `Bearer ${token}`)
+                    .end((err, res) => {
+                        res.should.have.status(200);
+                        res.body.should.have.property('message').eql('Post deleted successfully');
+                        done();
+                    });
+            });
+        });
+
+        it('should get timeline posts on /api/posts/timeline-posts GET', (done) => {
+            chai.request(server)
+                .get('/api/posts/timeline-posts')
+                .set('Authorization', `Bearer ${token}`)
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.be.a('array');
+                    done();
+                });
+        });
+
+        it('should get YouAll videos on /api/posts/you-all-videos GET', (done) => {
+            chai.request(server)
+                .get('/api/posts/you-all-videos')
+                .set('Authorization', `Bearer ${token}`)
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.be.a('array');
+                    done();
+                });
+        });
+
+        it('should get following videos on /api/posts/following-videos GET', (done) => {
+            chai.request(server)
+                .get('/api/posts/following-videos')
+                .set('Authorization', `Bearer ${token}`)
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.be.a('array');
+                    done();
+                });
         });
     });
 
-    describe('resetPassword', () => {
-        it('should reset the password', async () => {
-            const req = {
-                body: {
-                    token: 'randomtoken',
-                    password: 'newpassword123',
-                    securityAnswers: ['A1', 'A2', 'A3']
+    describe('Media Routes', () => {
+        let token = '';
+
+        before((done) => {
+            let user = {
+                email: 'testuser@example.com',
+                password: 'password123'
+            };
+            chai.request(server)
+                .post('/api/auth/login')
+                .send(user)
+                .end((err, res) => {
+                    token = res.body.token;
+                    done();
+                });
+        });
+
+        it('should upload a media file on /upload POST', (done) => {
+            chai.request(server)
+                .post('/upload')
+                .set('Authorization', `Bearer ${token}`)
+                .attach('file', 'test/media/testfile.jpg')
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.be.a('object');
+                    res.body.should.have.property('message').eql('File uploaded successfully');
+                    done();
+                });
+        });
+
+        it('should get all videos on /api/media/you-all-videos GET', (done) => {
+            chai.request(server)
+                .get('/api/media/you-all-videos')
+                .set('Authorization', `Bearer ${token}`)
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.be.a('array');
+                    done();
+                });
+        });
+
+        it('should delete a video on /api/media/:id DELETE', (done) => {
+            let video = new Video({
+                videoUrl: 'testfile.mp4',
+                author: 'testuser'
+            });
+            video.save((err, video) => {
+                chai.request(server)
+                    .delete(`/api/media/${video._id}`)
+                    .set('Authorization', `Bearer ${token}`)
+                    .end((err, res) => {
+                        res.should.have.status(200);
+                        res.body.should.have.property('message').eql('Video deleted successfully');
+                        done();
+                    });
+            });
+        });
+
+        it('should update a video on /api/media/:id PUT', (done) => {
+            let video = new Video({
+                videoUrl: 'testfile.mp4',
+                author: 'testuser'
+            });
+            video.save((err, video) => {
+                chai.request(server)
+                    .put(`/api/media/${video._id}`)
+                    .set('Authorization', `Bearer ${token}`)
+                    .send({ description: 'Updated description' })
+                    .end((err, res) => {
+                        res.should.have.status(200);
+                        res.body.should.have.property('message').eql('Video updated successfully');
+                        done();
+                    });
+            });
+        });
+    });
+
+    describe('Notification Routes', () => {
+        it('should subscribe to push notifications on /subscribe POST', (done) => {
+            let subscription = {
+                endpoint: 'https://example.com/endpoint',
+                keys: {
+                    p256dh: 'BEXAMPLEKEY',
+                    auth: 'AUTHKEY'
                 }
             };
-            const res = { status: sinon.stub().returnsThis(), json: sinon.stub() };
-
-            sinon.stub(User, 'findOne').resolves({
-                securityQuestions: [{ answer: 'A1' }, { answer: 'A2' }, { answer: 'A3' }],
-                save: sinon.stub()
-            });
-            sinon.stub(bcrypt, 'hash').resolves('hashedpassword');
-
-            await authController.resetPassword(req, res);
-
-            expect(res.status.calledWith(200)).to.be.true;
-            expect(res.json.calledWith({ message: 'Password has been reset successfully' })).to.be.true;
-
-            User.findOne.restore();
-            bcrypt.hash.restore();
+            chai.request(server)
+                .post('/subscribe')
+                .send(subscription)
+                .end((err, res) => {
+                    res.should.have.status(201);
+                    res.body.should.be.a('object');
+                    done();
+                });
         });
     });
+
+    describe('Static Files', () => {
+        it('should serve static files in production', (done) => {
+            process.env.NODE_ENV = 'production';
+            chai.request(server)
+                .get('/')
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    done();
+                });
+        });
+    });
+
+    describe('Socket.io', () => {
+        it('should handle socket connection', (done) => {
+            const socket = require('socket.io-client')(`http://localhost:${port}`);
+            socket.on('connect', () => {
+                socket.emit('message', 'Test message');
+                socket.on('message', (msg) => {
+                    msg.should.eql('Test message');
+                    socket.disconnect();
+                    done();
+                });
+            });
+        });
+    });
+
 });
