@@ -15,7 +15,7 @@ const validateConfig = (config) => {
 
 const defaultConfig = {
     port: 5000,
-    emailService: 'Gmail'
+    emailService: 'Gmail',
 };
 
 const developmentConfig = {
@@ -24,16 +24,30 @@ const developmentConfig = {
     jwtSecret: process.env.DEV_JWT_SECRET,
     email: process.env.DEV_EMAIL,
     emailPassword: process.env.DEV_EMAIL_PASSWORD,
-    emailService: process.env.DEV_EMAIL_SERVICE || defaultConfig.emailService
+    emailService: process.env.DEV_EMAIL_SERVICE || defaultConfig.emailService,
+    corsOrigin: process.env.CORS_ORIGIN.split(','),
+    gridFsBucket: process.env.GRIDFS_BUCKET || 'uploads',
+    logLevel: process.env.LOG_LEVEL || 'debug',
+    googleApiKey: process.env.GOOGLE_API_KEY,
+    stripeApiKey: process.env.STRIPE_API_KEY,
+    vapidPublicKey: process.env.VAPID_PUBLIC_KEY,
+    vapidPrivateKey: process.env.VAPID_PRIVATE_KEY,
 };
 
 const productionConfig = {
-    port: process.env.PORT,
+    port: process.env.PORT || defaultConfig.port,
     dbUri: process.env.MONGODB_URI,
     jwtSecret: process.env.JWT_SECRET,
     email: process.env.EMAIL,
     emailPassword: process.env.EMAIL_PASSWORD,
-    emailService: process.env.EMAIL_SERVICE || defaultConfig.emailService
+    emailService: process.env.EMAIL_SERVICE || defaultConfig.emailService,
+    corsOrigin: process.env.CORS_ORIGIN.split(','),
+    gridFsBucket: process.env.GRIDFS_BUCKET || 'uploads',
+    logLevel: process.env.LOG_LEVEL || 'error',
+    googleApiKey: process.env.GOOGLE_API_KEY,
+    stripeApiKey: process.env.STRIPE_API_KEY,
+    vapidPublicKey: process.env.VAPID_PUBLIC_KEY,
+    vapidPrivateKey: process.env.VAPID_PRIVATE_KEY,
 };
 
 const config = ENV === 'production' ? productionConfig : developmentConfig;
