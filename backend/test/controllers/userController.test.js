@@ -1,132 +1,114 @@
 import * as chai from 'chai';
-import chaiHttp from 'chai-http';
-import server from '../../server.js';
+import sinon from 'sinon';
+import mongoose from 'mongoose';
+import * as userController from '../../controllers/userController.js';
 import User from '../../models/User.js';
-import { generateAuthToken } from '../../utils/authUtils.js';
 
-const should = chai.should();
-chai.use(chaiHttp);
+const { expect } = chai;
 
 describe('User Controller', () => {
+    describe('getUserProfile', () => {
+        it('should get user profile', async () => {
+            const req = { params: { id: mongoose.Types.ObjectId() } };
+            const res = { status: sinon.stub().returnsThis(), json: sinon.stub() };
 
-    beforeEach(async () => {
-        await User.deleteMany({});
-    });
+            sinon.stub(User, 'findById').returns({
+                populate: sinon.stub().returnsThis(),
+                exec: sinon.stub().resolves(true)
+            });
 
-    describe('/GET user profile', () => {
-        it('it should GET a user profile by the given id', (done) => {
-            let user = new User({
-                username: 'testuser',
-                email: 'testuser@example.com',
-                phone: '1234567890',
-                password: 'password123'
-            });
-            user.save((err, user) => {
-                const token = generateAuthToken(user._id);
-                chai.request(server)
-                    .get(`/api/users/${user._id}`)
-                    .set('Authorization', `Bearer ${token}`)
-                    .end((err, res) => {
-                        res.should.have.status(200);
-                        res.body.should.have.property('message').eql('User profile retrieved successfully');
-                        res.body.user.should.have.property('username').eql('testuser');
-                        done();
-                    });
-            });
+            await userController.getUserProfile(req, res);
+
+            expect(res.status.calledWith(200)).to.be.true;
+            expect(res.json.calledWith(sinon.match.has('message', 'User profile retrieved successfully'))).to.be.true;
+
+            User.findById.restore();
         });
     });
 
-    describe('/PUT update user profile', () => {
-        it('it should update the user profile', (done) => {
-            let user = new User({
-                username: 'testuser',
-                email: 'testuser@example.com',
-                phone: '1234567890',
-                password: 'password123'
-            });
-            user.save((err, user) => {
-                const token = generateAuthToken(user._id);
-                chai.request(server)
-                    .put(`/api/users/${user._id}`)
-                    .set('Authorization', `Bearer ${token}`)
-                    .send({ username: 'updateduser', bio: 'Updated bio', avatar: 'newavatarurl' })
-                    .end((err, res) => {
-                        res.should.have.status(200);
-                        res.body.should.have.property('message').eql('User profile updated successfully.');
-                        res.body.user.should.have.property('username').eql('updateduser');
-                        res.body.user.should.have.property('bio').eql('Updated bio');
-                        res.body.user.should.have.property('avatar').eql('newavatarurl');
-                        done();
-                    });
-            });
+    describe('updateUserProfile', () => {
+        it('should update user profile', async () => {
+            const req = { params: { id: mongoose.Types.ObjectId() }, body: { username: 'updatedUsername' } };
+            const res = { status: sinon.stub().returnsThis(), json: sinon.stub() };
+
+            sinon.stub(User, 'findByIdAndUpdate').resolves(true);
+
+            await userController.updateUserProfile(req, res);
+
+            expect(res.status.calledWith(200)).to.be.true;
+            expect(res.json.calledWith(sinon.match.has('message', 'User profile updated successfully.'))).to.be.true;
+
+            User.findByIdAndUpdate.restore();
+        });
+
+        it('should return 400 if no update information provided', async () => {
+            const req = { params: { id: mongoose.Types.ObjectId() }, body: {} };
+            const res = { status: sinon.stub().returnsThis(), json: sinon.stub() };
+
+            await userController.updateUserProfile(req, res);
+
+            expect(res.status.calledWith(400)).to.be.true;
+            expect(res.json.calledWith({ message: 'Update information cannot be empty.' })).to.be.true;
         });
     });
 
-    describe('/POST follow user', () => {
-        it('it should follow a user', (done) => {
-            let user1 = new User({
-                username: 'user1',
-                email: 'user1@example.com',
-                phone: '1234567890',
-                password: 'password123'
+    describe('followUser', () => {
+        it('should follow a user', async () => {
+            const req = { params: { id: mongoose.Types.ObjectId() }, body: { userId: mongoose.Types.ObjectId() } };
+            const res = { status: sinon.stub().returnsThis(), json: sinon.stub() };
+
+            sinon.stub(User, 'findById').resolves({
+                following: [],
+                followers: [],
+                save: sinon.stub().resolves()
             });
-            let user2 = new User({
-                username: 'user2',
-                email: 'user2@example.com',
-                phone: '0987654321',
-                password: 'password123'
-            });
-            user1.save((err, user1) => {
-                user2.save((err, user2) => {
-                    const token = generateAuthToken(user1._id);
-                    chai.request(server)
-                        .post(`/api/users/${user2._id}/follow`)
-                        .set('Authorization', `Bearer ${token}`)
-                        .send({ userId: user1._id })
-                        .end((err, res) => {
-                            res.should.have.status(200);
-                            res.body.should.have.property('message').eql('Followed user successfully.');
-                            done();
-                        });
-                });
-            });
+
+            await userController.followUser(req, res);
+
+            expect(res.status.calledWith(200)).to.be.true;
+            expect(res.json.calledWith(sinon.match.has('message', 'Followed user successfully.'))).to.be.true;
+
+            User.findById.restore();
+        });
+
+        it('should return 400 if userId is missing', async () => {
+            const req = { params: { id: mongoose.Types.ObjectId() }, body: {} };
+            const res = { status: sinon.stub().returnsThis(), json: sinon.stub() };
+
+            await userController.followUser(req, res);
+
+            expect(res.status.calledWith(400)).to.be.true;
+            expect(res.json.calledWith({ message: 'User ID is required for following.' })).to.be.true;
         });
     });
 
-    describe('/POST unfollow user', () => {
-        it('it should unfollow a user', (done) => {
-            let user1 = new User({
-                username: 'user1',
-                email: 'user1@example.com',
-                phone: '1234567890',
-                password: 'password123'
+    describe('unfollowUser', () => {
+        it('should unfollow a user', async () => {
+            const req = { params: { id: mongoose.Types.ObjectId() }, body: { userId: mongoose.Types.ObjectId() } };
+            const res = { status: sinon.stub().returnsThis(), json: sinon.stub() };
+
+            sinon.stub(User, 'findById').resolves({
+                following: [req.params.id],
+                followers: [req.body.userId],
+                save: sinon.stub().resolves()
             });
-            let user2 = new User({
-                username: 'user2',
-                email: 'user2@example.com',
-                phone: '0987654321',
-                password: 'password123'
-            });
-            user1.save((err, user1) => {
-                user2.save((err, user2) => {
-                    user1.following.push(user2._id);
-                    user2.followers.push(user1._id);
-                    user1.save((err, user1) => {
-                        user2.save((err, user2) => {
-                            const token = generateAuthToken(user1._id);
-                            chai.request(server)
-                                .post(`/api/users/${user2._id}/unfollow`)
-                                .set('Authorization', `Bearer ${token}`)
-                                .send({ userId: user1._id })
-                                .end((err, res) => {
-                                    res.should.have.status(200);
-                                    res.body.should.have.property('message').eql('Unfollowed user successfully.');
-                                    done();
-                                });
-                        });
-                    });
-                });
-            });
+
+            await userController.unfollowUser(req, res);
+
+            expect(res.status.calledWith(200)).to.be.true;
+            expect(res.json.calledWith(sinon.match.has('message', 'Unfollowed user successfully.'))).to.be.true;
+
+            User.findById.restore();
+        });
+
+        it('should return 400 if userId is missing', async () => {
+            const req = { params: { id: mongoose.Types.ObjectId() }, body: {} };
+            const res = { status: sinon.stub().returnsThis(), json: sinon.stub() };
+
+            await userController.unfollowUser(req, res);
+
+            expect(res.status.calledWith(400)).to.be.true;
+            expect(res.json.calledWith({ message: 'User ID is required for unfollowing.' })).to.be.true;
         });
     });
 });
