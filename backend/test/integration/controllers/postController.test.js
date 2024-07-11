@@ -1,141 +1,117 @@
 import * as chai from 'chai';
 import chaiHttp from 'chai-http';
 import server from '../../../server.js';
-import Post from '../../../models/Post.js';
 import User from '../../../models/User.js';
-import mongoose from 'mongoose';
-import dotenv from 'dotenv';
+import Post from '../../../models/Post.js';
+import jwt from 'jsonwebtoken';
 
-dotenv.config();
-chai.should();
 chai.use(chaiHttp);
+const { expect } = chai;
 
-describe('Post Controller', () => {
-    let token;
-    let userId;
+describe('Post Controller Integration Tests', () => {
+    let token, userId, postId;
 
     before(async () => {
-        await mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
         await User.deleteMany({});
         await Post.deleteMany({});
+
         const user = new User({
             username: 'testuser',
             email: 'testuser@example.com',
+            phone: '1234567890',
             password: 'password123'
         });
-        await user.save();
-        token = user.generateAuthToken();
-        userId = user._id.toString();
+        const savedUser = await user.save();
+        userId = savedUser._id;
+        token = jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+        const post = new Post({
+            content: 'This is a test post',
+            author: userId
+        });
+        const savedPost = await post.save();
+        postId = savedPost._id;
     });
 
     after(async () => {
-        await mongoose.connection.close();
+        await User.deleteMany({});
+        await Post.deleteMany({});
     });
 
-    describe('/POST create post', () => {
-        it('it should create a post', (done) => {
+    describe('POST /posts', () => {
+        it('should create a new post', (done) => {
             const post = {
-                content: 'Test post',
-                authorId: userId
+                content: 'Another test post',
+                author: userId
             };
             chai.request(server)
-                .post('/api/posts')
+                .post('/posts')
                 .set('Authorization', `Bearer ${token}`)
                 .send(post)
                 .end((err, res) => {
-                    res.should.have.status(201);
-                    res.body.should.have.property('message').eql('Post created successfully');
+                    expect(res).to.have.status(201);
+                    expect(res.body).to.have.property('message', 'Post created successfully');
+                    expect(res.body.post).to.have.property('content', 'Another test post');
                     done();
                 });
         });
     });
 
-    describe('/GET posts', () => {
-        it('it should get all posts', (done) => {
+    describe('GET /posts', () => {
+        it('should retrieve all posts', (done) => {
             chai.request(server)
-                .get('/api/posts')
+                .get('/posts')
                 .set('Authorization', `Bearer ${token}`)
                 .end((err, res) => {
-                    res.should.have.status(200);
-                    res.body.posts.should.be.a('array');
+                    expect(res).to.have.status(200);
+                    expect(res.body.posts).to.be.an('array');
                     done();
                 });
         });
     });
 
-    describe('/PUT/:id/like post', () => {
-        let postId;
-
-        before(async () => {
-            const post = new Post({
-                content: 'Test post',
-                author: userId
-            });
-            await post.save();
-            postId = post._id.toString();
-        });
-
-        it('it should like a post', (done) => {
+    describe('PUT /posts/:id/like', () => {
+        it('should like a post', (done) => {
             chai.request(server)
-                .put(`/api/posts/${postId}/like`)
+                .put(`/posts/${postId}/like`)
                 .set('Authorization', `Bearer ${token}`)
                 .send({ userId })
                 .end((err, res) => {
-                    res.should.have.status(200);
-                    res.body.should.have.property('message').eql('Like status updated successfully');
+                    expect(res).to.have.status(200);
+                    expect(res.body).to.have.property('message', 'Like status updated successfully');
+                    expect(res.body.post.likes).to.include(userId.toString());
                     done();
                 });
         });
     });
 
-    describe('/POST/:id/comment post', () => {
-        let postId;
-
-        before(async () => {
-            const post = new Post({
-                content: 'Test post',
-                author: userId
-            });
-            await post.save();
-            postId = post._id.toString();
-        });
-
-        it('it should comment on a post', (done) => {
+    describe('POST /posts/:id/comment', () => {
+        it('should comment on a post', (done) => {
             const comment = {
                 userId,
-                content: 'Test comment'
+                content: 'This is a test comment'
             };
             chai.request(server)
-                .post(`/api/posts/${postId}/comment`)
+                .post(`/posts/${postId}/comment`)
                 .set('Authorization', `Bearer ${token}`)
                 .send(comment)
                 .end((err, res) => {
-                    res.should.have.status(200);
-                    res.body.should.have.property('message').eql('Comment added successfully');
+                    expect(res).to.have.status(200);
+                    expect(res.body).to.have.property('message', 'Comment added successfully');
+                    expect(res.body.post.comments[0]).to.have.property('content', 'This is a test comment');
                     done();
                 });
         });
     });
 
-    describe('/DELETE/:id post', () => {
-        let postId;
-
-        before(async () => {
-            const post = new Post({
-                content: 'Test post',
-                author: userId
-            });
-            await post.save();
-            postId = post._id.toString();
-        });
-
-        it('it should delete a post', (done) => {
+    describe('DELETE /posts/:id', () => {
+        it('should delete a post', (done) => {
             chai.request(server)
-                .delete(`/api/posts/${postId}`)
+                .delete(`/posts/${postId}`)
                 .set('Authorization', `Bearer ${token}`)
                 .end((err, res) => {
-                    res.should.have.status(200);
-                    res.body.should.have.property('message').eql('Post deleted successfully');
+                    expect(res).to.have.status(200);
+                    expect(res.body).to.have.property('message', 'Post deleted successfully');
                     done();
                 });
         });

@@ -18,7 +18,9 @@ describe('Auth Controller Tests', () => {
             const user = {
                 username: 'testuser',
                 email: 'testuser@example.com',
-                password: 'password123'
+                phone: '1234567890',
+                password: 'password123',
+                securityQuestions: ['Answer 1', 'Answer 2', 'Answer 3']
             };
             chai.request(server)
                 .post('/api/auth/register')
@@ -26,15 +28,18 @@ describe('Auth Controller Tests', () => {
                 .end((err, res) => {
                     expect(res).to.have.status(201);
                     expect(res.body).to.have.property('message', 'User registered successfully');
+                    expect(res.body).to.have.property('token');
                     done();
                 });
         });
 
-        it('should not register a user with existing email', (done) => {
+        it('should not register a user with existing email or phone', (done) => {
             const user = new User({
                 username: 'testuser',
                 email: 'testuser@example.com',
-                password: 'password123'
+                phone: '1234567890',
+                password: 'password123',
+                securityQuestions: ['Answer 1', 'Answer 2', 'Answer 3']
             });
             user.save().then(() => {
                 chai.request(server)
@@ -42,11 +47,13 @@ describe('Auth Controller Tests', () => {
                     .send({
                         username: 'testuser2',
                         email: 'testuser@example.com',
-                        password: 'password1234'
+                        phone: '0987654321',
+                        password: 'password1234',
+                        securityQuestions: ['Answer 1', 'Answer 2', 'Answer 3']
                     })
                     .end((err, res) => {
-                        expect(res).to.have.status(400);
-                        expect(res.body).to.have.property('message', 'Email already exists');
+                        expect(res).to.have.status(409);
+                        expect(res.body).to.have.property('message', 'Email or phone already registered');
                         done();
                     });
             });
@@ -58,12 +65,14 @@ describe('Auth Controller Tests', () => {
             const user = new User({
                 username: 'testuser',
                 email: 'testuser@example.com',
-                password: bcrypt.hashSync('password123', 10)
+                phone: '1234567890',
+                password: bcrypt.hashSync('password123', 12),
+                securityQuestions: ['Answer 1', 'Answer 2', 'Answer 3']
             });
             user.save().then(() => {
                 chai.request(server)
                     .post('/api/auth/login')
-                    .send({ email: 'testuser@example.com', password: 'password123' })
+                    .send({ emailOrPhone: 'testuser@example.com', password: 'password123' })
                     .end((err, res) => {
                         expect(res).to.have.status(200);
                         expect(res.body).to.have.property('token');
@@ -76,12 +85,14 @@ describe('Auth Controller Tests', () => {
             const user = new User({
                 username: 'testuser',
                 email: 'testuser@example.com',
-                password: bcrypt.hashSync('password123', 10)
+                phone: '1234567890',
+                password: bcrypt.hashSync('password123', 12),
+                securityQuestions: ['Answer 1', 'Answer 2', 'Answer 3']
             });
             user.save().then(() => {
                 chai.request(server)
                     .post('/api/auth/login')
-                    .send({ email: 'testuser@example.com', password: 'wrongpassword' })
+                    .send({ emailOrPhone: 'testuser@example.com', password: 'wrongpassword' })
                     .end((err, res) => {
                         expect(res).to.have.status(401);
                         expect(res.body).to.have.property('message', 'Invalid credentials');
