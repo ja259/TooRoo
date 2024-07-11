@@ -1,8 +1,8 @@
 import * as chai from 'chai';
 import mongoose from 'mongoose';
-import Interaction from '../models/Interaction.js';
-import User from '../models/User.js';
-import Post from '../models/Post.js';
+import Interaction from '../../models/Interaction.js';
+import User from '../../models/User.js';
+import Post from '../../models/Post.js';
 import dotenv from 'dotenv';
 
 dotenv.config();

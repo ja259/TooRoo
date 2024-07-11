@@ -1,7 +1,7 @@
 import * as chai from 'chai';
 import mongoose from 'mongoose';
-import Video from '../models/Video.js';
-import User from '../models/User.js';
+import Video from '../../models/Video.js';
+import User from '../../models/User.js';
 import dotenv from 'dotenv';
 
 dotenv.config();
