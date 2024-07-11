@@ -2,10 +2,10 @@ import * as chai from 'chai';
 import chaiHttp from 'chai-http';
 import mongoose from 'mongoose';
 import sinon from 'sinon';
-import server from '../../server.js';
-import User from '../../models/User.js';
-import Post from '../../models/Post.js';
-import Video from '../../models/Video.js';
+import server from '../server.js';
+import User from '../models/User.js';
+import Post from '../models/Post.js';
+import Video from '../models/Video.js';
 import { connectDB, disconnectDB } from '../db.js';
 
 chai.use(chaiHttp);
