@@ -1,5 +1,5 @@
 import * as chai from 'chai';
-import storage from '../config/gridFsStorageConfig.js';
+import storage from '../../config/gridFsStorageConfig.js';  // Adjust the path as needed
 
 const { should } = chai;
 should();
@@ -14,7 +14,7 @@ describe('GridFS Storage Config Tests', () => {
         process.env.MONGODB_URI = '';
 
         try {
-            await import('../config/gridFsStorageConfig.js');
+            await import('../../config/gridFsStorageConfig.js');
         } catch (error) {
             error.should.be.an('error');
             error.message.should.include('MONGODB_URI environment variable is not defined');
