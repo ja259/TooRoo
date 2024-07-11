@@ -1,7 +1,7 @@
 import * as chai from 'chai';
 import sinon from 'sinon';
 import nodemailer from 'nodemailer';
-import emailService from '../utils/emailService.js';
+import emailService from '../../utils/emailService.js';
 
 chai.should();
 
