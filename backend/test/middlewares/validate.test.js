@@ -1,14 +1,11 @@
 import * as chai from 'chai';
 import sinon from 'sinon';
-import {
-    validateRegister,
-    validateLogin,
-    validateResetPassword,
-    validateForgotPassword
-} from '../../middlewares/validate.js';
+import { validateRegister, validateLogin, validateForgotPassword, validateResetPassword } from '../../middlewares/validate.js';
 
-chai.should();
+const { should } = chai;
+should();
 
+// Validation Middleware Test
 describe('Validation Middleware Tests', () => {
     let req, res, next;
 
@@ -26,12 +23,9 @@ describe('Validation Middleware Tests', () => {
         req.body = {
             username: 'testuser',
             email: 'testuser@example.com',
+            phone: '1234567890',
             password: 'password123',
-            securityQuestions: [
-                { question: 'Question1', answer: 'Answer1' },
-                { question: 'Question2', answer: 'Answer2' },
-                { question: 'Question3', answer: 'Answer3' }
-            ]
+            securityQuestions: ['Question 1', 'Question 2', 'Question 3']
         };
         validateRegister[validateRegister.length - 1](req, res, next);
         next.calledOnce.should.be.true;
@@ -64,29 +58,10 @@ describe('Validation Middleware Tests', () => {
         res.status.calledWith(400).should.be.true;
     });
 
-    it('should validate reset password request', () => {
-        req.body = {
-            password: 'newpassword123',
-            confirmPassword: 'newpassword123',
-            securityAnswers: ['Answer1', 'Answer2', 'Answer3']
-        };
-        validateResetPassword[validateResetPassword.length - 1](req, res, next);
-        next.calledOnce.should.be.true;
-    });
-
-    it('should return validation error for invalid reset password request', () => {
-        req.body = {
-            password: 'short',
-            confirmPassword: 'short',
-            securityAnswers: ['Wrong1']
-        };
-        validateResetPassword[validateResetPassword.length - 1](req, res, next);
-        res.status.calledWith(400).should.be.true;
-    });
-
     it('should validate forgot password request', () => {
         req.body = {
-            email: 'testuser@example.com'
+            email: 'testuser@example.com',
+            securityAnswers: ['Answer1', 'Answer2', 'Answer3']
         };
         validateForgotPassword[validateForgotPassword.length - 1](req, res, next);
         next.calledOnce.should.be.true;
@@ -97,6 +72,24 @@ describe('Validation Middleware Tests', () => {
             email: 'invalidemail'
         };
         validateForgotPassword[validateForgotPassword.length - 1](req, res, next);
+        res.status.calledWith(400).should.be.true;
+    });
+
+    it('should validate reset password request', () => {
+        req.body = {
+            password: 'newpassword123',
+            securityAnswers: ['Answer1', 'Answer2', 'Answer3']
+        };
+        validateResetPassword[validateResetPassword.length - 1](req, res, next);
+        next.calledOnce.should.be.true;
+    });
+
+    it('should return validation error for invalid reset password request', () => {
+        req.body = {
+            password: 'short',
+            securityAnswers: ['Wrong1', 'Wrong2', 'Wrong3']
+        };
+        validateResetPassword[validateResetPassword.length - 1](req, res, next);
         res.status.calledWith(400).should.be.true;
     });
 });
