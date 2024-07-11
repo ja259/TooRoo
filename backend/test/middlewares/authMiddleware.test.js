@@ -1,9 +1,9 @@
 import * as chai from 'chai';
 import sinon from 'sinon';
 import jwt from 'jsonwebtoken';
-import { authenticate } from '../middlewares/authMiddleware.js';
-import { errorHandler } from '../middlewares/errorHandler.js';
-import User from '../models/User.js';
+import { authenticate } from '../../middlewares/authMiddleware.js';
+import { errorHandler } from '../../middlewares/errorHandler.js';
+import User from '../../models/User.js';
 
 chai.should();
 

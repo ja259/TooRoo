@@ -1,8 +1,8 @@
 import * as chai from 'chai';
 import chaiHttp from 'chai-http';
-import server from '../server.js';
-import User from '../models/User.js';
-import Post from '../models/Post.js';
+import server from '../../server.js';
+import User from '../../models/User.js';
+import Post from '../../models/Post.js';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 
