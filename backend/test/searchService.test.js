@@ -1,10 +1,10 @@
 import * as chai from 'chai';
 import sinon from 'sinon';
 import mongoose from 'mongoose';
-import { search } from '../../services/searchService.js'; // Adjust the import path as necessary
-import Post from '../../models/Post.js';
-import User from '../../models/User.js';
-import { connectDB, disconnectDB } from '../../db.js'; // Adjust the import path as necessary
+import { search } from '../services/searchService.js'; // Adjust the import path as necessary
+import Post from '../models/Post.js';
+import User from '../models/User.js';
+import { connectDB, disconnectDB } from '../db.js'; // Adjust the import path as necessary
 
 chai.should();
 const { expect } = chai;
