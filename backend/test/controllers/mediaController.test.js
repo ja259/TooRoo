@@ -3,7 +3,6 @@ import chaiHttp from 'chai-http';
 import server from '../../server.js';
 import User from '../../models/User.js';
 import Video from '../../models/Video.js';
-import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
 import fs from 'fs';
 import path from 'path';
@@ -48,8 +47,8 @@ describe('Media Controller Tests', () => {
                 .set('Authorization', `Bearer ${token}`)
                 .attach('video', path.resolve(__dirname, '../test-files/test-video.mp4'))
                 .end((err, res) => {
-                    expect(res).to.have.status(200);
-                    expect(res.body).to.have.property('message', 'File uploaded successfully');
+                    expect(res).to.have.status(201);
+                    expect(res.body).to.have.property('message', 'Video uploaded successfully');
                     done();
                 });
         });

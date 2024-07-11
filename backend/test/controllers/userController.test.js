@@ -32,7 +32,7 @@ describe('User Controller Tests', () => {
                 .set('Authorization', `Bearer ${token}`)
                 .end((err, res) => {
                     expect(res).to.have.status(200);
-                    expect(res.body).to.have.property('username', 'testuser');
+                    expect(res.body.user).to.have.property('username', 'testuser');
                     done();
                 });
         });
@@ -43,7 +43,7 @@ describe('User Controller Tests', () => {
                 .set('Authorization', `Bearer ${token}`)
                 .end((err, res) => {
                     expect(res).to.have.status(404);
-                    expect(res.body).to.have.property('message', 'User not found');
+                    expect(res.body).to.have.property('message', 'User not found!');
                     done();
                 });
         });
@@ -64,6 +64,48 @@ describe('User Controller Tests', () => {
                     expect(res.body).to.have.property('message', 'User profile updated successfully.');
                     done();
                 });
+        });
+    });
+
+    describe('POST /api/users/:id/follow', () => {
+        it('should follow a user', (done) => {
+            const newUser = new User({
+                username: 'followUser',
+                email: 'followUser@example.com',
+                password: 'password123'
+            });
+            newUser.save().then(savedNewUser => {
+                chai.request(server)
+                    .post(`/api/users/${savedNewUser._id}/follow`)
+                    .set('Authorization', `Bearer ${token}`)
+                    .send({ userId })
+                    .end((err, res) => {
+                        expect(res).to.have.status(200);
+                        expect(res.body).to.have.property('message', 'Followed user successfully.');
+                        done();
+                    });
+            });
+        });
+    });
+
+    describe('POST /api/users/:id/unfollow', () => {
+        it('should unfollow a user', (done) => {
+            const newUser = new User({
+                username: 'unfollowUser',
+                email: 'unfollowUser@example.com',
+                password: 'password123'
+            });
+            newUser.save().then(savedNewUser => {
+                chai.request(server)
+                    .post(`/api/users/${savedNewUser._id}/unfollow`)
+                    .set('Authorization', `Bearer ${token}`)
+                    .send({ userId })
+                    .end((err, res) => {
+                        expect(res).to.have.status(200);
+                        expect(res.body).to.have.property('message', 'Unfollowed user successfully.');
+                        done();
+                    });
+            });
         });
     });
 });

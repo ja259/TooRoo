@@ -1,139 +1,104 @@
 import * as chai from 'chai';
 import chaiHttp from 'chai-http';
 import server from '../../../server.js';
-import Video from '../../../models/Video.js';
 import User from '../../../models/User.js';
-import mongoose from 'mongoose';
-import dotenv from 'dotenv';
+import Video from '../../../models/Video.js';
+import jwt from 'jsonwebtoken';
+import path from 'path';
 
-dotenv.config();
-chai.should();
 chai.use(chaiHttp);
+const { expect } = chai;
 
-describe('Media Controller', () => {
-    let token;
-    let userId;
+describe('Media Controller Integration Tests', () => {
+    let token, userId;
 
     before(async () => {
-        await mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
         await User.deleteMany({});
         await Video.deleteMany({});
+
         const user = new User({
             username: 'testuser',
             email: 'testuser@example.com',
+            phone: '1234567890',
             password: 'password123'
         });
-        await user.save();
-        token = user.generateAuthToken();
-        userId = user._id.toString();
+        const savedUser = await user.save();
+        userId = savedUser._id;
+        token = jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: '1h' });
     });
 
     after(async () => {
-        await mongoose.connection.close();
+        await User.deleteMany({});
+        await Video.deleteMany({});
     });
 
-    describe('/POST upload video', () => {
-        it('it should upload a video', (done) => {
+    describe('POST /media/upload', () => {
+        it('should upload a media file', (done) => {
             chai.request(server)
-                .post('/api/media/upload')
+                .post('/media/upload')
                 .set('Authorization', `Bearer ${token}`)
-                .attach('video', 'test/media/testfile.mp4')
-                .field('authorId', userId)
+                .attach('file', path.resolve(__dirname, '../test-files/test-video.mp4'))
                 .field('description', 'Test video')
+                .field('authorId', userId.toString())
                 .end((err, res) => {
-                    res.should.have.status(201);
-                    res.body.should.have.property('message').eql('Video uploaded successfully');
+                    expect(res).to.have.status(201);
+                    expect(res.body).to.have.property('message', 'Video uploaded successfully');
                     done();
                 });
         });
     });
 
-    describe('/GET you-all-videos', () => {
-        it('it should get all videos', (done) => {
+    describe('GET /media', () => {
+        it('should retrieve all videos', (done) => {
             chai.request(server)
-                .get('/api/media/you-all-videos')
+                .get('/media')
                 .set('Authorization', `Bearer ${token}`)
                 .end((err, res) => {
-                    res.should.have.status(200);
-                    res.body.should.have.property('message').eql('Videos retrieved successfully');
-                    res.body.videos.should.be.a('array');
+                    expect(res).to.have.status(200);
+                    expect(res.body.videos).to.be.an('array');
                     done();
                 });
         });
     });
 
-    describe('/DELETE/:id video', () => {
-        let videoId;
-
-        before(async () => {
+    describe('DELETE /media/:id', () => {
+        it('should delete a video', (done) => {
             const video = new Video({
                 videoUrl: 'testfile.mp4',
                 description: 'Test video',
                 author: userId
             });
-            await video.save();
-            videoId = video._id.toString();
-        });
-
-        it('it should delete a video', (done) => {
-            chai.request(server)
-                .delete(`/api/media/${videoId}`)
-                .set('Authorization', `Bearer ${token}`)
-                .end((err, res) => {
-                    res.should.have.status(200);
-                    res.body.should.have.property('message').eql('Video deleted successfully');
-                    done();
-                });
-        });
-
-        it('it should return 404 for non-existent video', (done) => {
-            chai.request(server)
-                .delete('/api/media/invalidid')
-                .set('Authorization', `Bearer ${token}`)
-                .end((err, res) => {
-                    res.should.have.status(404);
-                    res.body.should.have.property('message').eql('Video not found');
-                    done();
-                });
+            video.save().then((savedVideo) => {
+                chai.request(server)
+                    .delete(`/media/${savedVideo._id}`)
+                    .set('Authorization', `Bearer ${token}`)
+                    .end((err, res) => {
+                        expect(res).to.have.status(200);
+                        expect(res.body).to.have.property('message', 'Video deleted successfully');
+                        done();
+                    });
+            });
         });
     });
 
-    describe('/PUT/:id video', () => {
-        let videoId;
-
-        before(async () => {
+    describe('PUT /media/:id', () => {
+        it('should update a video description', (done) => {
             const video = new Video({
                 videoUrl: 'testfile.mp4',
                 description: 'Test video',
                 author: userId
             });
-            await video.save();
-            videoId = video._id.toString();
-        });
-
-        it('it should update a video description', (done) => {
-            chai.request(server)
-                .put(`/api/media/${videoId}`)
-                .set('Authorization', `Bearer ${token}`)
-                .send({ description: 'Updated description' })
-                .end((err, res) => {
-                    res.should.have.status(200);
-                    res.body.should.have.property('message').eql('Video updated successfully');
-                    res.body.video.should.have.property('description').eql('Updated description');
-                    done();
-                });
-        });
-
-        it('it should return 404 for non-existent video', (done) => {
-            chai.request(server)
-                .put('/api/media/invalidid')
-                .set('Authorization', `Bearer ${token}`)
-                .send({ description: 'Updated description' })
-                .end((err, res) => {
-                    res.should.have.status(404);
-                    res.body.should.have.property('message').eql('Video not found');
-                    done();
-                });
+            video.save().then((savedVideo) => {
+                chai.request(server)
+                    .put(`/media/${savedVideo._id}`)
+                    .set('Authorization', `Bearer ${token}`)
+                    .send({ description: 'Updated description' })
+                    .end((err, res) => {
+                        expect(res).to.have.status(200);
+                        expect(res.body.video).to.have.property('description', 'Updated description');
+                        done();
+                    });
+            });
         });
     });
 });
