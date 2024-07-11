@@ -30,4 +30,10 @@ describe('Error Handler Middleware Tests', () => {
         errorHandler(error, req, res, next);
         res.status().json.calledWithMatch({ stack: error.stack }).should.be.true;
     });
+
+    it('should handle 404 errors correctly', () => {
+        notFound(req, res, next);
+        res.status.calledWith(404).should.be.true;
+        res.status().json.calledWithMatch({ success: false, message: 'Not Found' }).should.be.true;
+    });
 });

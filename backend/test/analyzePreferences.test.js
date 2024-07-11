@@ -6,7 +6,7 @@ import Post from '../models/Post.js';
 import analyzePreferences from '../analyzePreferences.js';
 import { connectDB, disconnectDB } from '../db.js';
 
-const should = chai.should();
+chai.should();
 
 describe('Analyze Preferences Service Tests', () => {
     let interactionStub, postStub;

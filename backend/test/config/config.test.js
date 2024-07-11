@@ -4,7 +4,6 @@ import { config as dotenvConfig } from 'dotenv';
 dotenvConfig({ path: './.env' });
 const { expect } = chai;
 
-// Config Test
 describe('Config Tests', () => {
     let config;
 
@@ -25,8 +24,8 @@ describe('Config Tests', () => {
     });
 
     it('should throw an error if a required environment variable is missing', async () => {
-        const originalJwtSecret = process.env.DEV_JWT_SECRET;
-        process.env.DEV_JWT_SECRET = '';
+        const originalJwtSecret = process.env.JWT_SECRET;
+        process.env.JWT_SECRET = '';
 
         try {
             await import('../config/config.js');
@@ -34,7 +33,7 @@ describe('Config Tests', () => {
             expect(error).to.be.an('error');
             expect(error.message).to.include('Missing required environment variable');
         } finally {
-            process.env.DEV_JWT_SECRET = originalJwtSecret;
+            process.env.JWT_SECRET = originalJwtSecret;
         }
     });
 });

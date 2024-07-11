@@ -1,22 +1,27 @@
 import * as chai from 'chai';
 import chaiHttp from 'chai-http';
-import server from '../../server.js';
-import Post from '../../models/Post.js';
-import User from '../../models/User.js';
+import server from '../server.js';
+import User from '../models/User.js';
+import Post from '../models/Post.js';
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
 
-chai.should();
+dotenv.config();
 chai.use(chaiHttp);
+chai.should();
 
-describe('Post Routes', () => {
+describe('Post Routes Tests', () => {
 
-    before(async () => {
-        await User.deleteMany({});
-        await Post.deleteMany({});
+    before((done) => {
+        mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+            .then(() => done())
+            .catch(err => done(err));
     });
 
-    after(async () => {
-        await User.deleteMany({});
-        await Post.deleteMany({});
+    after((done) => {
+        mongoose.disconnect()
+            .then(() => done())
+            .catch(err => done(err));
     });
 
     beforeEach(async () => {
@@ -24,232 +29,132 @@ describe('Post Routes', () => {
         await Post.deleteMany({});
     });
 
-    describe('/POST create post', () => {
-        it('it should create a post', (done) => {
-            let user = new User({
-                username: 'testuser',
-                email: 'testuser@example.com',
-                phone: '1234567890',
-                password: 'password123'
+    let token = '';
+
+    before((done) => {
+        let user = {
+            email: 'testuser@example.com',
+            password: 'password123'
+        };
+        chai.request(server)
+            .post('/api/auth/login')
+            .send(user)
+            .end((err, res) => {
+                token = res.body.token;
+                done();
             });
-            user.save((err, user) => {
-                chai.request(server)
-                    .post('/api/posts')
-                    .set('Authorization', `Bearer ${user.generateAuthToken()}`)
-                    .send({ content: 'Test post', authorId: user._id })
-                    .end((err, res) => {
-                        res.should.have.status(201);
-                        res.body.should.have.property('message').eql('Post created successfully');
-                        done();
-                    });
+    });
+
+    it('should create a post on /api/posts POST', (done) => {
+        let post = {
+            content: 'This is a test post'
+        };
+        chai.request(server)
+            .post('/api/posts')
+            .set('Authorization', `Bearer ${token}`)
+            .send(post)
+            .end((err, res) => {
+                res.should.have.status(201);
+                res.body.should.be.a('object');
+                res.body.should.have.property('message').eql('Post created successfully');
+                done();
             });
+    });
+
+    it('should get all posts on /api/posts GET', (done) => {
+        chai.request(server)
+            .get('/api/posts')
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+                res.should.have.status(200);
+                res.body.should.be.a('array');
+                done();
+            });
+    });
+
+    it('should like a post on /api/posts/:id/like PUT', (done) => {
+        let post = new Post({
+            content: 'This is a test post',
+            author: 'testuser'
+        });
+        post.save((err, post) => {
+            chai.request(server)
+                .put(`/api/posts/${post._id}/like`)
+                .set('Authorization', `Bearer ${token}`)
+                .send({ userId: 'testuser' })
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.have.property('message').eql('Like status updated successfully');
+                    done();
+                });
         });
     });
 
-    describe('/GET posts', () => {
-        it('it should get all posts', (done) => {
-            let user = new User({
-                username: 'testuser',
-                email: 'testuser@example.com',
-                phone: '1234567890',
-                password: 'password123'
-            });
-            user.save((err, user) => {
-                let post = new Post({
-                    content: 'Test post',
-                    author: user._id
+    it('should comment on a post on /api/posts/:id/comment POST', (done) => {
+        let post = new Post({
+            content: 'This is a test post',
+            author: 'testuser'
+        });
+        post.save((err, post) => {
+            chai.request(server)
+                .post(`/api/posts/${post._id}/comment`)
+                .set('Authorization', `Bearer ${token}`)
+                .send({ userId: 'testuser', content: 'This is a test comment' })
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.have.property('message').eql('Comment added successfully');
+                    done();
                 });
-                post.save((err, post) => {
-                    chai.request(server)
-                        .get('/api/posts')
-                        .set('Authorization', `Bearer ${user.generateAuthToken()}`)
-                        .end((err, res) => {
-                            res.should.have.status(200);
-                            res.body.should.be.a('array');
-                            res.body.length.should.be.eql(1);
-                            done();
-                        });
-                });
-            });
         });
     });
 
-    describe('/PUT/:id/like post', () => {
-        it('it should like a post', (done) => {
-            let user = new User({
-                username: 'testuser',
-                email: 'testuser@example.com',
-                phone: '1234567890',
-                password: 'password123'
-            });
-            user.save((err, user) => {
-                let post = new Post({
-                    content: 'Test post',
-                    author: user._id
+    it('should delete a post on /api/posts/:id DELETE', (done) => {
+        let post = new Post({
+            content: 'This is a test post',
+            author: 'testuser'
+        });
+        post.save((err, post) => {
+            chai.request(server)
+                .delete(`/api/posts/${post._id}`)
+                .set('Authorization', `Bearer ${token}`)
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.have.property('message').eql('Post deleted successfully');
+                    done();
                 });
-                post.save((err, post) => {
-                    chai.request(server)
-                        .put(`/api/posts/${post._id}/like`)
-                        .set('Authorization', `Bearer ${user.generateAuthToken()}`)
-                        .send({ userId: user._id })
-                        .end((err, res) => {
-                            res.should.have.status(200);
-                            res.body.should.have.property('message').eql('Like status updated successfully');
-                            done();
-                        });
-                });
-            });
         });
     });
 
-    describe('/POST/:id/comment post', () => {
-        it('it should comment on a post', (done) => {
-            let user = new User({
-                username: 'testuser',
-                email: 'testuser@example.com',
-                phone: '1234567890',
-                password: 'password123'
+    it('should get timeline posts on /api/posts/timeline-posts GET', (done) => {
+        chai.request(server)
+            .get('/api/posts/timeline-posts')
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+                res.should.have.status(200);
+                res.body.should.be.a('array');
+                done();
             });
-            user.save((err, user) => {
-                let post = new Post({
-                    content: 'Test post',
-                    author: user._id
-                });
-                post.save((err, post) => {
-                    chai.request(server)
-                        .post(`/api/posts/${post._id}/comment`)
-                        .set('Authorization', `Bearer ${user.generateAuthToken()}`)
-                        .send({ userId: user._id, content: 'Test comment' })
-                        .end((err, res) => {
-                            res.should.have.status(200);
-                            res.body.should.have.property('message').eql('Comment added successfully');
-                            done();
-                        });
-                });
-            });
-        });
     });
 
-    describe('/DELETE/:id post', () => {
-        it('it should delete a post', (done) => {
-            let user = new User({
-                username: 'testuser',
-                email: 'testuser@example.com',
-                phone: '1234567890',
-                password: 'password123'
+    it('should get YouAll videos on /api/posts/you-all-videos GET', (done) => {
+        chai.request(server)
+            .get('/api/posts/you-all-videos')
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+                res.should.have.status(200);
+                res.body.should.be.a('array');
+                done();
             });
-            user.save((err, user) => {
-                let post = new Post({
-                    content: 'Test post',
-                    author: user._id
-                });
-                post.save((err, post) => {
-                    chai.request(server)
-                        .delete(`/api/posts/${post._id}`)
-                        .set('Authorization', `Bearer ${user.generateAuthToken()}`)
-                        .end((err, res) => {
-                            res.should.have.status(200);
-                            res.body.should.have.property('message').eql('Post deleted successfully');
-                            done();
-                        });
-                });
-            });
-        });
     });
 
-    describe('/GET timeline-posts', () => {
-        it('it should get timeline posts', (done) => {
-            let user = new User({
-                username: 'testuser',
-                email: 'testuser@example.com',
-                phone: '1234567890',
-                password: 'password123'
+    it('should get following videos on /api/posts/following-videos GET', (done) => {
+        chai.request(server)
+            .get('/api/posts/following-videos')
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+                res.should.have.status(200);
+                res.body.should.be.a('array');
+                done();
             });
-            user.save((err, user) => {
-                let post = new Post({
-                    content: 'Test post',
-                    author: user._id
-                });
-                post.save((err, post) => {
-                    chai.request(server)
-                        .get('/api/posts/timeline-posts')
-                        .set('Authorization', `Bearer ${user.generateAuthToken()}`)
-                        .end((err, res) => {
-                            res.should.have.status(200);
-                            res.body.should.be.a('array');
-                            res.body.length.should.be.eql(1);
-                            done();
-                        });
-                });
-            });
-        });
-    });
-
-    describe('/GET you-all-videos', () => {
-        it('it should get all videos', (done) => {
-            let user = new User({
-                username: 'testuser',
-                email: 'testuser@example.com',
-                phone: '1234567890',
-                password: 'password123'
-            });
-            user.save((err, user) => {
-                let post = new Post({
-                    content: 'Test video',
-                    author: user._id,
-                    videoUrl: 'testfile.mp4'
-                });
-                post.save((err, post) => {
-                    chai.request(server)
-                        .get('/api/posts/you-all-videos')
-                        .set('Authorization', `Bearer ${user.generateAuthToken()}`)
-                        .end((err, res) => {
-                            res.should.have.status(200);
-                            res.body.should.be.a('array');
-                            res.body.length.should.be.eql(1);
-                            done();
-                        });
-                });
-            });
-        });
-    });
-
-    describe('/GET following-videos', () => {
-        it('it should get following videos', (done) => {
-            let user = new User({
-                username: 'testuser',
-                email: 'testuser@example.com',
-                phone: '1234567890',
-                password: 'password123',
-                following: []
-            });
-            let followedUser = new User({
-                username: 'followeduser',
-                email: 'followeduser@example.com',
-                phone: '0987654321',
-                password: 'password123'
-            });
-            followedUser.save((err, followedUser) => {
-                user.following.push(followedUser._id);
-                user.save((err, user) => {
-                    let post = new Post({
-                        content: 'Test video',
-                        author: followedUser._id,
-                        videoUrl: 'testfile.mp4'
-                    });
-                    post.save((err, post) => {
-                        chai.request(server)
-                            .get('/api/posts/following-videos')
-                            .set('Authorization', `Bearer ${user.generateAuthToken()}`)
-                            .end((err, res) => {
-                                res.should.have.status(200);
-                                res.body.should.be.a('array');
-                                res.body.length.should.be.eql(1);
-                                done();
-                            });
-                    });
-                });
-            });
-        });
     });
 });

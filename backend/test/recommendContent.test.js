@@ -5,7 +5,7 @@ import Post from '../models/Post.js';
 import analyzePreferences from '../analyzePreferences.js';
 import recommendContent from '../recommendContent.js';
 
-const should = chai.should();
+chai.should();
 
 describe('Recommend Content Service Tests', () => {
     let analyzePreferencesStub, postStub;

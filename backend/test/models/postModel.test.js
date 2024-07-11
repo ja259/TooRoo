@@ -1,9 +1,11 @@
 import * as chai from 'chai';
 import mongoose from 'mongoose';
-import Post from '../../models/Post.js';
-import User from '../../models/User.js';
+import Post from '../models/Post.js';
+import User from '../models/User.js';
+import dotenv from 'dotenv';
 
-const should = chai.should();
+dotenv.config();
+chai.should();
 
 describe('Post Model', () => {
 
@@ -20,7 +22,7 @@ describe('Post Model', () => {
         await User.deleteMany({});
     });
 
-    it('it should create a new post', async () => {
+    it('should create a new post', async () => {
         const user = new User({
             username: 'testuser',
             email: 'testuser@example.com',
@@ -39,7 +41,7 @@ describe('Post Model', () => {
         savedPost.should.have.property('author').eql(user._id);
     });
 
-    it('it should require content', async () => {
+    it('should require content', async () => {
         const user = new User({
             username: 'testuser',
             email: 'testuser@example.com',
@@ -60,7 +62,7 @@ describe('Post Model', () => {
         }
     });
 
-    it('it should require an author', async () => {
+    it('should require an author', async () => {
         const post = new Post({
             content: 'Test post'
         });
@@ -73,7 +75,7 @@ describe('Post Model', () => {
         }
     });
 
-    it('it should add a like to a post', async () => {
+    it('should add a like to a post', async () => {
         const user = new User({
             username: 'testuser',
             email: 'testuser@example.com',
@@ -92,7 +94,7 @@ describe('Post Model', () => {
         updatedPost.likes.should.include(user._id);
     });
 
-    it('it should add a comment to a post', async () => {
+    it('should add a comment to a post', async () => {
         const user = new User({
             username: 'testuser',
             email: 'testuser@example.com',
@@ -116,7 +118,7 @@ describe('Post Model', () => {
         updatedPost.comments[0].author.username.should.eql('testuser');
     });
 
-    it('it should update a post content', async () => {
+    it('should update a post content', async () => {
         const user = new User({
             username: 'testuser',
             email: 'testuser@example.com',
@@ -135,7 +137,7 @@ describe('Post Model', () => {
         updatedPost.content.should.eql('Updated test post');
     });
 
-    it('it should delete a post', async () => {
+    it('should delete a post', async () => {
         const user = new User({
             username: 'testuser',
             email: 'testuser@example.com',
@@ -154,7 +156,7 @@ describe('Post Model', () => {
     });
 
     // Add tests for hooks
-    it('it should update the user\'s post count after a post is created', async () => {
+    it('should update the user\'s post count after a post is created', async () => {
         const user = new User({
             username: 'testuser',
             email: 'testuser@example.com',
@@ -171,7 +173,7 @@ describe('Post Model', () => {
         updatedUser.posts.should.include(post._id);
     });
 
-    it('it should update the user\'s post count after a post is deleted', async () => {
+    it('should update the user\'s post count after a post is deleted', async () => {
         const user = new User({
             username: 'testuser',
             email: 'testuser@example.com',
