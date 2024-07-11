@@ -1,7 +1,7 @@
 import * as chai from 'chai';
 import sinon from 'sinon';
 import nodemailer from 'nodemailer';
-import emailService from '../../utils/emailService.js';
+import emailService from '../utils/emailService.js';
 
 chai.should();
 
@@ -9,9 +9,7 @@ describe('Email Service Tests', () => {
     let transporter;
 
     beforeEach(() => {
-        transporter = {
-            sendMail: sinon.stub().resolves()
-        };
+        transporter = { sendMail: sinon.stub().resolves() };
         sinon.stub(nodemailer, 'createTransport').returns(transporter);
     });
 
@@ -45,13 +43,8 @@ describe('Email Service Tests', () => {
         nodemailer.createTransport.calledOnce.should.be.true;
         nodemailer.createTransport.calledWithMatch({
             service: process.env.EMAIL_SERVICE || 'Gmail',
-            auth: {
-                user: process.env.EMAIL,
-                pass: process.env.EMAIL_PASSWORD
-            },
-            tls: {
-                rejectUnauthorized: false
-            }
+            auth: { user: process.env.EMAIL, pass: process.env.EMAIL_PASSWORD },
+            tls: { rejectUnauthorized: false }
         }).should.be.true;
     });
 
@@ -69,7 +62,7 @@ describe('Email Service Tests', () => {
         delete process.env.EMAIL_PASSWORD;
 
         (() => {
-            import('../../utils/emailService.js');
+            import('../utils/emailService.js');
         }).should.throw('Email configuration environment variables (EMAIL, EMAIL_PASSWORD) are not defined');
 
         process.env.EMAIL = originalEmail;

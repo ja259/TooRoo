@@ -1,8 +1,10 @@
 import * as chai from 'chai';
 import mongoose from 'mongoose';
-import User from '../../models/User.js';
+import User from '../models/User.js';
+import dotenv from 'dotenv';
 
-const should = chai.should();
+dotenv.config();
+chai.should();
 
 describe('User Model', () => {
 
@@ -141,8 +143,7 @@ describe('User Model', () => {
             gender: 'male',
             securityQuestion1: 'Question1',
             securityAnswer1: 'Answer1',
-            securityQuestion2: 'Question2',
-            securityAnswer2: 'Answer2',
+            securityQuestion2: 'Answer2',
             securityQuestion3: 'Question3',
             securityAnswer3: 'Answer3'
         });
