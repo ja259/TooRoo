@@ -2,10 +2,14 @@ import Interaction from './models/Interaction.js';
 import Post from './models/Post.js';
 
 const analyzePreferences = async (userId) => {
+    if (!userId) {
+        throw new Error('User ID is required');
+    }
+
     try {
         const interactions = await Interaction.find({ userId });
         const postIds = interactions.map(interaction => interaction.postId);
-        const posts = await Post.find({ _id: { $in: postIds } }).populate('author', 'username email');
+        const posts = await Post.find({ _id: { $in: postIds } }).populate('author', 'username email').exec();
 
         const preferences = {
             likes: posts.filter(post => post.likes.includes(userId)),
