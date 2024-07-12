@@ -1,6 +1,6 @@
 import * as chai from 'chai';
 import sinon from 'sinon';
-import { errorHandler, notFound } from '../../middlewares/errorHandler.js';
+import { errorHandler, notFound } from '../../../middlewares/errorHandler.js';
 
 chai.should();
 
