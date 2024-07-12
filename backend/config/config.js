@@ -5,7 +5,7 @@ dotenv.config();
 const ENV = process.env.NODE_ENV || 'development';
 
 const validateConfig = (config) => {
-    const requiredVars = ['dbUri', 'jwtSecret', 'email', 'emailPassword', 'vapidPublicKey', 'vapidPrivateKey'];
+    const requiredVars = ['MONGODB_URI', 'JWT_SECRET', 'EMAIL', 'EMAIL_PASSWORD', 'VAPID_PUBLIC_KEY', 'VAPID_PRIVATE_KEY'];
     requiredVars.forEach((varName) => {
         if (!config[varName]) {
             throw new Error(`Missing required environment variable: ${varName}`);
@@ -45,4 +45,3 @@ const config = ENV === 'production' ? productionConfig : developmentConfig;
 validateConfig(config);
 
 export default config;
-
