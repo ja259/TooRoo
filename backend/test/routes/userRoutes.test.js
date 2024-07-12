@@ -30,22 +30,24 @@ describe('User Routes Tests', () => {
     let token = '';
 
     before((done) => {
-        let user = {
+        const user = new User({
             email: 'testuser@example.com',
             password: 'password123'
-        };
-        chai.request(server)
-            .post('/api/auth/login')
-            .send(user)
-            .end((err, res) => {
-                token = res.body.token;
-                done();
-            });
+        });
+        user.save((err, user) => {
+            chai.request(server)
+                .post('/api/auth/login')
+                .send({ email: user.email, password: user.password })
+                .end((err, res) => {
+                    token = res.body.token;
+                    done();
+                });
+        });
     });
 
     it('should get user details on /api/users/:id GET', (done) => {
         chai.request(server)
-            .get(`/api/users/testuser`)
+            .get(`/api/users/${userId}`)
             .set('Authorization', `Bearer ${token}`)
             .end((err, res) => {
                 res.should.have.status(200);
@@ -56,14 +58,14 @@ describe('User Routes Tests', () => {
     });
 
     it('should update user profile on /api/users/:id PUT', (done) => {
-        let updateUser = {
+        const updatedUser = {
             username: 'updateduser',
             bio: 'Updated bio'
         };
         chai.request(server)
-            .put(`/api/users/testuser`)
+            .put(`/api/users/${userId}`)
             .set('Authorization', `Bearer ${token}`)
-            .send(updateUser)
+            .send(updatedUser)
             .end((err, res) => {
                 res.should.have.status(200);
                 res.body.should.have.property('message').eql('User profile updated successfully.');
@@ -72,7 +74,7 @@ describe('User Routes Tests', () => {
     });
 
     it('should follow a user on /api/users/:id/follow POST', (done) => {
-        let followUser = new User({
+        const followUser = new User({
             username: 'followuser',
             email: 'followuser@example.com',
             password: 'password123'
@@ -91,7 +93,7 @@ describe('User Routes Tests', () => {
     });
 
     it('should unfollow a user on /api/users/:id/unfollow POST', (done) => {
-        let unfollowUser = new User({
+        const unfollowUser = new User({
             username: 'unfollowuser',
             email: 'unfollowuser@example.com',
             password: 'password123'

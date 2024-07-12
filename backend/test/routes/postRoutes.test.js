@@ -32,21 +32,23 @@ describe('Post Routes Tests', () => {
     let token = '';
 
     before((done) => {
-        let user = {
+        const user = new User({
             email: 'testuser@example.com',
             password: 'password123'
-        };
-        chai.request(server)
-            .post('/api/auth/login')
-            .send(user)
-            .end((err, res) => {
-                token = res.body.token;
-                done();
-            });
+        });
+        user.save((err, user) => {
+            chai.request(server)
+                .post('/api/auth/login')
+                .send({ email: user.email, password: user.password })
+                .end((err, res) => {
+                    token = res.body.token;
+                    done();
+                });
+        });
     });
 
     it('should create a post on /api/posts POST', (done) => {
-        let post = {
+        const post = {
             content: 'This is a test post'
         };
         chai.request(server)
@@ -67,13 +69,13 @@ describe('Post Routes Tests', () => {
             .set('Authorization', `Bearer ${token}`)
             .end((err, res) => {
                 res.should.have.status(200);
-                res.body.should.be.a('array');
+                res.body.posts.should.be.a('array');
                 done();
             });
     });
 
     it('should like a post on /api/posts/:id/like PUT', (done) => {
-        let post = new Post({
+        const post = new Post({
             content: 'This is a test post',
             author: 'testuser'
         });
@@ -91,7 +93,7 @@ describe('Post Routes Tests', () => {
     });
 
     it('should comment on a post on /api/posts/:id/comment POST', (done) => {
-        let post = new Post({
+        const post = new Post({
             content: 'This is a test post',
             author: 'testuser'
         });
@@ -109,7 +111,7 @@ describe('Post Routes Tests', () => {
     });
 
     it('should delete a post on /api/posts/:id DELETE', (done) => {
-        let post = new Post({
+        const post = new Post({
             content: 'This is a test post',
             author: 'testuser'
         });

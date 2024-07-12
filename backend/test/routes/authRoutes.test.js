@@ -28,7 +28,7 @@ describe('Auth Routes Tests', () => {
     });
 
     it('should register a user on /api/auth/register POST', (done) => {
-        let user = {
+        const user = {
             username: 'testuser',
             email: 'testuser@example.com',
             password: 'password123'
@@ -45,7 +45,7 @@ describe('Auth Routes Tests', () => {
     });
 
     it('should login a user on /api/auth/login POST', (done) => {
-        let user = new User({
+        const user = new User({
             username: 'testuser',
             email: 'testuser@example.com',
             password: 'password123'
@@ -64,7 +64,7 @@ describe('Auth Routes Tests', () => {
     });
 
     it('should send forgot password email on /api/auth/forgot-password POST', (done) => {
-        let user = new User({
+        const user = new User({
             username: 'testuser',
             email: 'testuser@example.com',
             password: 'password123'
@@ -82,7 +82,7 @@ describe('Auth Routes Tests', () => {
     });
 
     it('should reset password on /api/auth/reset-password/:token PUT', (done) => {
-        let user = new User({
+        const user = new User({
             username: 'testuser',
             email: 'testuser@example.com',
             password: 'password123'
