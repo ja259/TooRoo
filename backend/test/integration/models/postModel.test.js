@@ -8,7 +8,6 @@ dotenv.config();
 chai.should();
 
 describe('Post Model Integration Tests', () => {
-
     before(async () => {
         await mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
     });
@@ -23,18 +22,10 @@ describe('Post Model Integration Tests', () => {
     });
 
     it('should create a new post', async () => {
-        const user = new User({
-            username: 'testuser',
-            email: 'testuser@example.com',
-            phone: '1234567890',
-            password: 'password123'
-        });
+        const user = new User({ username: 'testuser', email: 'testuser@example.com', phone: '1234567890', password: 'password123' });
         await user.save();
 
-        const post = new Post({
-            content: 'Test post',
-            author: user._id
-        });
+        const post = new Post({ content: 'Test post', author: user._id });
 
         const savedPost = await post.save();
         savedPost.should.have.property('content').eql('Test post');
@@ -42,17 +33,10 @@ describe('Post Model Integration Tests', () => {
     });
 
     it('should require content', async () => {
-        const user = new User({
-            username: 'testuser',
-            email: 'testuser@example.com',
-            phone: '1234567890',
-            password: 'password123'
-        });
+        const user = new User({ username: 'testuser', email: 'testuser@example.com', phone: '1234567890', password: 'password123' });
         await user.save();
 
-        const post = new Post({
-            author: user._id
-        });
+        const post = new Post({ author: user._id });
         try {
             await post.save();
         } catch (error) {
@@ -63,9 +47,7 @@ describe('Post Model Integration Tests', () => {
     });
 
     it('should require an author', async () => {
-        const post = new Post({
-            content: 'Test post'
-        });
+        const post = new Post({ content: 'Test post' });
         try {
             await post.save();
         } catch (error) {
@@ -76,17 +58,9 @@ describe('Post Model Integration Tests', () => {
     });
 
     it('should add a like to a post', async () => {
-        const user = new User({
-            username: 'testuser',
-            email: 'testuser@example.com',
-            phone: '1234567890',
-            password: 'password123'
-        });
+        const user = new User({ username: 'testuser', email: 'testuser@example.com', phone: '1234567890', password: 'password123' });
         await user.save();
-        const post = new Post({
-            content: 'Test post',
-            author: user._id
-        });
+        const post = new Post({ content: 'Test post', author: user._id });
         await post.save();
         post.likes.push(user._id);
         await post.save();
@@ -95,22 +69,11 @@ describe('Post Model Integration Tests', () => {
     });
 
     it('should add a comment to a post', async () => {
-        const user = new User({
-            username: 'testuser',
-            email: 'testuser@example.com',
-            phone: '1234567890',
-            password: 'password123'
-        });
+        const user = new User({ username: 'testuser', email: 'testuser@example.com', phone: '1234567890', password: 'password123' });
         await user.save();
-        const post = new Post({
-            content: 'Test post',
-            author: user._id
-        });
+        const post = new Post({ content: 'Test post', author: user._id });
         await post.save();
-        const comment = {
-            author: user._id,
-            content: 'Test comment'
-        };
+        const comment = { author: user._id, content: 'Test comment' };
         post.comments.push(comment);
         await post.save();
         const updatedPost = await Post.findById(post._id).populate('comments.author');
@@ -119,17 +82,9 @@ describe('Post Model Integration Tests', () => {
     });
 
     it('should update a post content', async () => {
-        const user = new User({
-            username: 'testuser',
-            email: 'testuser@example.com',
-            phone: '1234567890',
-            password: 'password123'
-        });
+        const user = new User({ username: 'testuser', email: 'testuser@example.com', phone: '1234567890', password: 'password123' });
         await user.save();
-        const post = new Post({
-            content: 'Test post',
-            author: user._id
-        });
+        const post = new Post({ content: 'Test post', author: user._id });
         await post.save();
         post.content = 'Updated test post';
         await post.save();
@@ -138,17 +93,9 @@ describe('Post Model Integration Tests', () => {
     });
 
     it('should delete a post', async () => {
-        const user = new User({
-            username: 'testuser',
-            email: 'testuser@example.com',
-            phone: '1234567890',
-            password: 'password123'
-        });
+        const user = new User({ username: 'testuser', email: 'testuser@example.com', phone: '1234567890', password: 'password123' });
         await user.save();
-        const post = new Post({
-            content: 'Test post',
-            author: user._id
-        });
+        const post = new Post({ content: 'Test post', author: user._id });
         await post.save();
         await Post.findByIdAndRemove(post._id);
         const deletedPost = await Post.findById(post._id);
@@ -156,34 +103,18 @@ describe('Post Model Integration Tests', () => {
     });
 
     it('should update the user\'s post count after a post is created', async () => {
-        const user = new User({
-            username: 'testuser',
-            email: 'testuser@example.com',
-            phone: '1234567890',
-            password: 'password123'
-        });
+        const user = new User({ username: 'testuser', email: 'testuser@example.com', phone: '1234567890', password: 'password123' });
         await user.save();
-        const post = new Post({
-            content: 'Test post',
-            author: user._id
-        });
+        const post = new Post({ content: 'Test post', author: user._id });
         await post.save();
         const updatedUser = await User.findById(user._id);
         updatedUser.posts.should.include(post._id);
     });
 
     it('should update the user\'s post count after a post is deleted', async () => {
-        const user = new User({
-            username: 'testuser',
-            email: 'testuser@example.com',
-            phone: '1234567890',
-            password: 'password123'
-        });
+        const user = new User({ username: 'testuser', email: 'testuser@example.com', phone: '1234567890', password: 'password123' });
         await user.save();
-        const post = new Post({
-            content: 'Test post',
-            author: user._id
-        });
+        const post = new Post({ content: 'Test post', author: user._id });
         await post.save();
         await Post.findByIdAndRemove(post._id);
         const updatedUser = await User.findById(user._id);

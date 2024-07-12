@@ -7,7 +7,6 @@ dotenv.config();
 chai.should();
 
 describe('User Model Integration Tests', () => {
-
     before(async () => {
         await mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
     });

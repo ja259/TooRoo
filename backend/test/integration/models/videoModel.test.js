@@ -8,7 +8,6 @@ dotenv.config();
 chai.should();
 
 describe('Video Model Integration Tests', () => {
-
     before(async () => {
         await mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
     });

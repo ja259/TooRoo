@@ -9,11 +9,8 @@ dotenv.config();
 chai.should();
 
 describe('Interaction Model Integration Tests', () => {
-
     before(async () => {
-        await mongoose.connect(process.env.MONGODB_URI, {
-            useNewUrlParser: true, useUnifiedTopology: true
-        });
+        await mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
     });
 
     beforeEach(async () => {
@@ -27,26 +24,13 @@ describe('Interaction Model Integration Tests', () => {
     });
 
     it('should create an interaction', async () => {
-        const user = new User({
-            username: 'testuser',
-            email: 'testuser@example.com',
-            phone: '1234567890',
-            password: 'password123'
-        });
+        const user = new User({ username: 'testuser', email: 'testuser@example.com', phone: '1234567890', password: 'password123' });
         await user.save();
 
-        const post = new Post({
-            content: 'Test post',
-            author: user._id
-        });
+        const post = new Post({ content: 'Test post', author: user._id });
         await post.save();
 
-        const interaction = new Interaction({
-            userId: user._id,
-            postId: post._id,
-            interactionType: 'like'
-        });
-
+        const interaction = new Interaction({ userId: user._id, postId: post._id, interactionType: 'like' });
         const savedInteraction = await interaction.save();
         savedInteraction.should.have.property('userId').eql(user._id);
         savedInteraction.should.have.property('postId').eql(post._id);
@@ -54,9 +38,7 @@ describe('Interaction Model Integration Tests', () => {
     });
 
     it('should not create an interaction without a required field', async () => {
-        const interaction = new Interaction({
-            interactionType: 'like'
-        });
+        const interaction = new Interaction({ interactionType: 'like' });
         try {
             await interaction.save();
         } catch (error) {
@@ -67,25 +49,13 @@ describe('Interaction Model Integration Tests', () => {
     });
 
     it('should find an interaction by ID', async () => {
-        const user = new User({
-            username: 'testuser',
-            email: 'testuser@example.com',
-            phone: '1234567890',
-            password: 'password123'
-        });
+        const user = new User({ username: 'testuser', email: 'testuser@example.com', phone: '1234567890', password: 'password123' });
         await user.save();
 
-        const post = new Post({
-            content: 'Test post',
-            author: user._id
-        });
+        const post = new Post({ content: 'Test post', author: user._id });
         await post.save();
 
-        const interaction = new Interaction({
-            userId: user._id,
-            postId: post._id,
-            interactionType: 'comment'
-        });
+        const interaction = new Interaction({ userId: user._id, postId: post._id, interactionType: 'comment' });
         await interaction.save();
 
         const foundInteraction = await Interaction.findById(interaction._id).populate('userId').populate('postId');
@@ -95,25 +65,13 @@ describe('Interaction Model Integration Tests', () => {
     });
 
     it('should update an interaction', async () => {
-        const user = new User({
-            username: 'testuser',
-            email: 'testuser@example.com',
-            phone: '1234567890',
-            password: 'password123'
-        });
+        const user = new User({ username: 'testuser', email: 'testuser@example.com', phone: '1234567890', password: 'password123' });
         await user.save();
 
-        const post = new Post({
-            content: 'Test post',
-            author: user._id
-        });
+        const post = new Post({ content: 'Test post', author: user._id });
         await post.save();
 
-        const interaction = new Interaction({
-            userId: user._id,
-            postId: post._id,
-            interactionType: 'share'
-        });
+        const interaction = new Interaction({ userId: user._id, postId: post._id, interactionType: 'share' });
         await interaction.save();
 
         interaction.interactionType = 'like';
@@ -122,25 +80,13 @@ describe('Interaction Model Integration Tests', () => {
     });
 
     it('should delete an interaction', async () => {
-        const user = new User({
-            username: 'testuser',
-            email: 'testuser@example.com',
-            phone: '1234567890',
-            password: 'password123'
-        });
+        const user = new User({ username: 'testuser', email: 'testuser@example.com', phone: '1234567890', password: 'password123' });
         await user.save();
 
-        const post = new Post({
-            content: 'Test post',
-            author: user._id
-        });
+        const post = new Post({ content: 'Test post', author: user._id });
         await post.save();
 
-        const interaction = new Interaction({
-            userId: user._id,
-            postId: post._id,
-            interactionType: 'comment'
-        });
+        const interaction = new Interaction({ userId: user._id, postId: post._id, interactionType: 'comment' });
         await interaction.save();
 
         await Interaction.findByIdAndRemove(interaction._id);
@@ -149,25 +95,13 @@ describe('Interaction Model Integration Tests', () => {
     });
 
     it('should not create an interaction with an invalid interactionType', async () => {
-        const user = new User({
-            username: 'testuser',
-            email: 'testuser@example.com',
-            phone: '1234567890',
-            password: 'password123'
-        });
+        const user = new User({ username: 'testuser', email: 'testuser@example.com', phone: '1234567890', password: 'password123' });
         await user.save();
 
-        const post = new Post({
-            content: 'Test post',
-            author: user._id
-        });
+        const post = new Post({ content: 'Test post', author: user._id });
         await post.save();
 
-        const interaction = new Interaction({
-            userId: user._id,
-            postId: post._id,
-            interactionType: 'invalidType'
-        });
+        const interaction = new Interaction({ userId: user._id, postId: post._id, interactionType: 'invalidType' });
         try {
             await interaction.save();
         } catch (error) {
@@ -175,5 +109,4 @@ describe('Interaction Model Integration Tests', () => {
             error.errors.should.have.property('interactionType');
         }
     });
-
 });
