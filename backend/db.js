@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import config from './config.js';
 
 const connectDB = async () => {
     if (mongoose.connection.readyState !== 0) {
@@ -7,7 +8,7 @@ const connectDB = async () => {
     }
 
     try {
-        await mongoose.connect(process.env.MONGODB_URI);
+        await mongoose.connect(config.dbUri, { useNewUrlParser: true, useUnifiedTopology: true });
         console.log('Connected to MongoDB');
     } catch (err) {
         console.error('Error connecting to MongoDB:', err);

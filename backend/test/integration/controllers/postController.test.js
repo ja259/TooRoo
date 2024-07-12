@@ -116,4 +116,43 @@ describe('Post Controller Tests', () => {
                 });
         });
     });
+
+    describe('GET /api/posts/timeline-posts', () => {
+        it('should get timeline posts', (done) => {
+            chai.request(server)
+                .get('/api/posts/timeline-posts')
+                .set('Authorization', `Bearer ${token}`)
+                .end((err, res) => {
+                    expect(res).to.have.status(200);
+                    expect(res.body).to.be.an('array');
+                    done();
+                });
+        });
+    });
+
+    describe('GET /api/posts/you-all-videos', () => {
+        it('should get YouAll videos', (done) => {
+            chai.request(server)
+                .get('/api/posts/you-all-videos')
+                .set('Authorization', `Bearer ${token}`)
+                .end((err, res) => {
+                    expect(res).to.have.status(200);
+                    expect(res.body).to.be.an('array');
+                    done();
+                });
+        });
+    });
+
+    describe('GET /api/posts/following-videos', () => {
+        it('should get following videos', (done) => {
+            chai.request(server)
+                .get('/api/posts/following-videos')
+                .set('Authorization', `Bearer ${token}`)
+                .end((err, res) => {
+                    expect(res).to.have.status(200);
+                    expect(res.body).to.be.an('array');
+                    done();
+                });
+        });
+    });
 });

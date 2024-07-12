@@ -2,6 +2,7 @@ import * as chai from 'chai';
 import chaiHttp from 'chai-http';
 import server from '../../../server.js';
 import User from '../../../models/User.js';
+import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
 
 chai.use(chaiHttp);
