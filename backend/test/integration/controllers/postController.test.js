@@ -1,14 +1,15 @@
 import * as chai from 'chai';
 import chaiHttp from 'chai-http';
-import server from '../../../server.js';
-import User from '../../../models/User.js';
-import Post from '../../../models/Post.js';
+import server from '../../server.js';
+import User from '../../models/User.js';
+import Post from '../../models/Post.js';
+import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
 
 chai.use(chaiHttp);
 const { expect } = chai;
 
-describe('Post Controller Integration Tests', () => {
+describe('Post Controller Tests', () => {
     let token, userId, postId;
 
     before(async () => {
@@ -18,12 +19,11 @@ describe('Post Controller Integration Tests', () => {
         const user = new User({
             username: 'testuser',
             email: 'testuser@example.com',
-            phone: '1234567890',
             password: 'password123'
         });
         const savedUser = await user.save();
         userId = savedUser._id;
-        token = jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        token = jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
         const post = new Post({
             content: 'This is a test post',
@@ -38,14 +38,14 @@ describe('Post Controller Integration Tests', () => {
         await Post.deleteMany({});
     });
 
-    describe('POST /posts', () => {
+    describe('POST /api/posts', () => {
         it('should create a new post', (done) => {
             const post = {
                 content: 'Another test post',
                 author: userId
             };
             chai.request(server)
-                .post('/posts')
+                .post('/api/posts')
                 .set('Authorization', `Bearer ${token}`)
                 .send(post)
                 .end((err, res) => {
@@ -57,10 +57,10 @@ describe('Post Controller Integration Tests', () => {
         });
     });
 
-    describe('GET /posts', () => {
+    describe('GET /api/posts', () => {
         it('should retrieve all posts', (done) => {
             chai.request(server)
-                .get('/posts')
+                .get('/api/posts')
                 .set('Authorization', `Bearer ${token}`)
                 .end((err, res) => {
                     expect(res).to.have.status(200);
@@ -70,10 +70,10 @@ describe('Post Controller Integration Tests', () => {
         });
     });
 
-    describe('PUT /posts/:id/like', () => {
+    describe('PUT /api/posts/:id/like', () => {
         it('should like a post', (done) => {
             chai.request(server)
-                .put(`/posts/${postId}/like`)
+                .put(`/api/posts/${postId}/like`)
                 .set('Authorization', `Bearer ${token}`)
                 .send({ userId })
                 .end((err, res) => {
@@ -85,14 +85,14 @@ describe('Post Controller Integration Tests', () => {
         });
     });
 
-    describe('POST /posts/:id/comment', () => {
+    describe('POST /api/posts/:id/comment', () => {
         it('should comment on a post', (done) => {
             const comment = {
                 userId,
                 content: 'This is a test comment'
             };
             chai.request(server)
-                .post(`/posts/${postId}/comment`)
+                .post(`/api/posts/${postId}/comment`)
                 .set('Authorization', `Bearer ${token}`)
                 .send(comment)
                 .end((err, res) => {
@@ -104,10 +104,10 @@ describe('Post Controller Integration Tests', () => {
         });
     });
 
-    describe('DELETE /posts/:id', () => {
+    describe('DELETE /api/posts/:id', () => {
         it('should delete a post', (done) => {
             chai.request(server)
-                .delete(`/posts/${postId}`)
+                .delete(`/api/posts/${postId}`)
                 .set('Authorization', `Bearer ${token}`)
                 .end((err, res) => {
                     expect(res).to.have.status(200);
