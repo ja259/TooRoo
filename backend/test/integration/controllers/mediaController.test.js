@@ -1,8 +1,8 @@
 import * as chai from 'chai';
 import chaiHttp from 'chai-http';
-import server from '../../server.js';
-import User from '../../models/User.js';
-import Video from '../../models/Video.js';
+import server from '../../../server.js';
+import User from '../../../models/User.js';
+import Video from '../../../models/Video.js';
 import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
 import fs from 'fs';
