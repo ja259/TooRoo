@@ -48,6 +48,55 @@ export const getPosts = async (req, res) => {
     }
 };
 
+export const getTimelinePosts = async (req, res) => {
+    try {
+        const posts = await Post.find()
+            .populate('author', 'username profilePicture')
+            .sort({ createdAt: -1 });
+
+        res.json(posts);
+    } catch (error) {
+        console.error('Failed to retrieve posts:', error);
+        res.status(500).json({ message: 'Failed to retrieve posts' });
+    }
+};
+
+export const getYouAllVideos = async (req, res) => {
+    try {
+        const videos = await Post.find({ videoUrl: { $exists: true } })
+            .populate('author', 'username avatar')
+            .sort({ createdAt: -1 })
+            .limit(20);
+
+        res.json(videos);
+    } catch (error) {
+        console.error('Error fetching videos for You All section:', error);
+        res.status(500).json({ message: 'Failed to retrieve videos', error: error.message });
+    }
+};
+
+export const getFollowingVideos = async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const videos = await Post.find({
+            author: { $in: user.following },
+            videoUrl: { $exists: true }
+        })
+            .populate('author', 'username avatar')
+            .sort({ createdAt: -1 })
+            .limit(20);
+
+        res.json(videos);
+    } catch (error) {
+        console.error('Error fetching following videos:', error);
+        res.status(500).json({ message: 'Failed to retrieve following videos', error: error.message });
+    }
+};
+
 export const likePost = async (req, res) => {
     const { id } = req.params;
     const { userId } = req.body;

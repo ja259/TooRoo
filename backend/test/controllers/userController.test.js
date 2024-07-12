@@ -43,7 +43,7 @@ describe('User Controller Tests', () => {
                 .set('Authorization', `Bearer ${token}`)
                 .end((err, res) => {
                     expect(res).to.have.status(404);
-                    expect(res.body).to.have.property('message', 'User not found!');
+                    expect(res.body).to.have.property('message', 'User not found');
                     done();
                 });
         });
@@ -68,44 +68,76 @@ describe('User Controller Tests', () => {
     });
 
     describe('POST /api/users/:id/follow', () => {
-        it('should follow a user', (done) => {
-            const newUser = new User({
-                username: 'followUser',
-                email: 'followUser@example.com',
+        let userToFollowId;
+
+        before(async () => {
+            const userToFollow = new User({
+                username: 'followuser',
+                email: 'followuser@example.com',
                 password: 'password123'
             });
-            newUser.save().then(savedNewUser => {
-                chai.request(server)
-                    .post(`/api/users/${savedNewUser._id}/follow`)
-                    .set('Authorization', `Bearer ${token}`)
-                    .send({ userId })
-                    .end((err, res) => {
-                        expect(res).to.have.status(200);
-                        expect(res.body).to.have.property('message', 'Followed user successfully.');
-                        done();
-                    });
-            });
+            const savedUserToFollow = await userToFollow.save();
+            userToFollowId = savedUserToFollow._id;
+        });
+
+        it('should follow a user', (done) => {
+            chai.request(server)
+                .post(`/api/users/${userToFollowId}/follow`)
+                .set('Authorization', `Bearer ${token}`)
+                .send({ userId })
+                .end((err, res) => {
+                    expect(res).to.have.status(200);
+                    expect(res.body).to.have.property('message', 'Followed user successfully.');
+                    done();
+                });
         });
     });
 
     describe('POST /api/users/:id/unfollow', () => {
-        it('should unfollow a user', (done) => {
-            const newUser = new User({
-                username: 'unfollowUser',
-                email: 'unfollowUser@example.com',
+        let userToUnfollowId;
+
+        before(async () => {
+            const userToUnfollow = new User({
+                username: 'unfollowuser',
+                email: 'unfollowuser@example.com',
                 password: 'password123'
             });
-            newUser.save().then(savedNewUser => {
-                chai.request(server)
-                    .post(`/api/users/${savedNewUser._id}/unfollow`)
-                    .set('Authorization', `Bearer ${token}`)
-                    .send({ userId })
-                    .end((err, res) => {
-                        expect(res).to.have.status(200);
-                        expect(res.body).to.have.property('message', 'Unfollowed user successfully.');
-                        done();
-                    });
-            });
+            const savedUserToUnfollow = await userToUnfollow.save();
+            userToUnfollowId = savedUserToUnfollow._id;
+
+            // Follow the user first
+            const currentUser = await User.findById(userId);
+            currentUser.following.push(userToUnfollowId);
+            await currentUser.save();
+        });
+
+        it('should unfollow a user', (done) => {
+            chai.request(server)
+                .post(`/api/users/${userToUnfollowId}/unfollow`)
+                .set('Authorization', `Bearer ${token}`)
+                .send({ userId })
+                .end((err, res) => {
+                    expect(res).to.have.status(200);
+                    expect(res.body).to.have.property('message', 'Unfollowed user successfully.');
+                    done();
+                });
+        });
+    });
+
+    describe('GET /api/users/analytics', () => {
+        it('should get user analytics', (done) => {
+            chai.request(server)
+                .get('/api/users/analytics')
+                .set('Authorization', `Bearer ${token}`)
+                .end((err, res) => {
+                    expect(res).to.have.status(200);
+                    expect(res.body).to.have.property('posts');
+                    expect(res.body).to.have.property('followers');
+                    expect(res.body).to.have.property('following');
+                    expect(res.body).to.have.property('likes');
+                    expect(res.body).to.have.property('comments');
+                    done();
+                });
         });
     });
 });

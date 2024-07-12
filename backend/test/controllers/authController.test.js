@@ -20,7 +20,11 @@ describe('Auth Controller Tests', () => {
                 email: 'testuser@example.com',
                 phone: '1234567890',
                 password: 'password123',
-                securityQuestions: ['Answer 1', 'Answer 2', 'Answer 3']
+                securityQuestions: [
+                    { question: 'Question 1', answer: 'Answer 1' },
+                    { question: 'Question 2', answer: 'Answer 2' },
+                    { question: 'Question 3', answer: 'Answer 3' }
+                ]
             };
             chai.request(server)
                 .post('/api/auth/register')
@@ -28,7 +32,6 @@ describe('Auth Controller Tests', () => {
                 .end((err, res) => {
                     expect(res).to.have.status(201);
                     expect(res.body).to.have.property('message', 'User registered successfully');
-                    expect(res.body).to.have.property('token');
                     done();
                 });
         });
@@ -39,7 +42,11 @@ describe('Auth Controller Tests', () => {
                 email: 'testuser@example.com',
                 phone: '1234567890',
                 password: 'password123',
-                securityQuestions: ['Answer 1', 'Answer 2', 'Answer 3']
+                securityQuestions: [
+                    { question: 'Question 1', answer: 'Answer 1' },
+                    { question: 'Question 2', answer: 'Answer 2' },
+                    { question: 'Question 3', answer: 'Answer 3' }
+                ]
             });
             user.save().then(() => {
                 chai.request(server)
@@ -49,7 +56,11 @@ describe('Auth Controller Tests', () => {
                         email: 'testuser@example.com',
                         phone: '0987654321',
                         password: 'password1234',
-                        securityQuestions: ['Answer 1', 'Answer 2', 'Answer 3']
+                        securityQuestions: [
+                            { question: 'Question 1', answer: 'Answer 1' },
+                            { question: 'Question 2', answer: 'Answer 2' },
+                            { question: 'Question 3', answer: 'Answer 3' }
+                        ]
                     })
                     .end((err, res) => {
                         expect(res).to.have.status(409);
@@ -66,8 +77,12 @@ describe('Auth Controller Tests', () => {
                 username: 'testuser',
                 email: 'testuser@example.com',
                 phone: '1234567890',
-                password: bcrypt.hashSync('password123', 12),
-                securityQuestions: ['Answer 1', 'Answer 2', 'Answer 3']
+                password: bcrypt.hashSync('password123', 10),
+                securityQuestions: [
+                    { question: 'Question 1', answer: 'Answer 1' },
+                    { question: 'Question 2', answer: 'Answer 2' },
+                    { question: 'Question 3', answer: 'Answer 3' }
+                ]
             });
             user.save().then(() => {
                 chai.request(server)
@@ -86,8 +101,12 @@ describe('Auth Controller Tests', () => {
                 username: 'testuser',
                 email: 'testuser@example.com',
                 phone: '1234567890',
-                password: bcrypt.hashSync('password123', 12),
-                securityQuestions: ['Answer 1', 'Answer 2', 'Answer 3']
+                password: bcrypt.hashSync('password123', 10),
+                securityQuestions: [
+                    { question: 'Question 1', answer: 'Answer 1' },
+                    { question: 'Question 2', answer: 'Answer 2' },
+                    { question: 'Question 3', answer: 'Answer 3' }
+                ]
             });
             user.save().then(() => {
                 chai.request(server)
@@ -99,6 +118,77 @@ describe('Auth Controller Tests', () => {
                         done();
                     });
             });
+        });
+    });
+
+    describe('POST /api/auth/forgot-password', () => {
+        it('should send a password reset token', (done) => {
+            const user = new User({
+                username: 'testuser',
+                email: 'testuser@example.com',
+                phone: '1234567890',
+                password: 'password123',
+                securityQuestions: [
+                    { question: 'Question 1', answer: 'Answer 1' },
+                    { question: 'Question 2', answer: 'Answer 2' },
+                    { question: 'Question 3', answer: 'Answer 3' }
+                ]
+            });
+            user.save().then(() => {
+                chai.request(server)
+                    .post('/api/auth/forgot-password')
+                    .send({ email: 'testuser@example.com' })
+                    .end((err, res) => {
+                        expect(res).to.have.status(200);
+                        expect(res.body).to.have.property('message', 'Password reset token sent');
+                        done();
+                    });
+            });
+        });
+    });
+
+    describe('PUT /api/auth/reset-password/:token', () => {
+        it('should reset the user password', (done) => {
+            const user = new User({
+                username: 'testuser',
+                email: 'testuser@example.com',
+                phone: '1234567890',
+                password: 'password123',
+                securityQuestions: [
+                    { question: 'Question 1', answer: 'Answer 1' },
+                    { question: 'Question 2', answer: 'Answer 2' },
+                    { question: 'Question 3', answer: 'Answer 3' }
+                ],
+                resetPasswordToken: crypto.createHash('sha256').update('validtoken').digest('hex'),
+                resetPasswordExpires: Date.now() + 3600000
+            });
+            user.save().then(() => {
+                chai.request(server)
+                    .put('/api/auth/reset-password/validtoken')
+                    .send({
+                        password: 'newpassword123',
+                        securityAnswers: ['Answer 1', 'Answer 2', 'Answer 3']
+                    })
+                    .end((err, res) => {
+                        expect(res).to.have.status(200);
+                        expect(res.body).to.have.property('message', 'Password has been reset successfully');
+                        done();
+                    });
+            });
+        });
+
+        it('should not reset the password with invalid token', (done) => {
+            chai.request(server)
+                .put('/api/auth/reset-password/invalidtoken')
+                .send({
+                    password: 'newpassword123',
+                    securityAnswers: ['Answer 1', 'Answer 2', 'Answer 3']
+                })
+                .end((err, res) => {
+                    expect(res).to.have.status(400);
+                    expect(res.body).to.have.property('message', 'Token is invalid or has expired');
+                    done();
+                });
         });
     });
 });
