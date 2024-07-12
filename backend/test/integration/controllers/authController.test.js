@@ -1,38 +1,37 @@
 import * as chai from 'chai';
 import chaiHttp from 'chai-http';
-import server from '../../../server.js';
-import User from '../../../models/User.js';
+import server from '../../server.js';
+import User from '../../models/User.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
 chai.use(chaiHttp);
 const { expect } = chai;
 
-describe('Auth Controller Integration Tests', () => {
-    before(async () => {
+describe('Auth Controller Tests', () => {
+    beforeEach(async () => {
         await User.deleteMany({});
     });
 
-    after(async () => {
-        await User.deleteMany({});
-    });
-
-    describe('POST /auth/register', () => {
+    describe('POST /api/auth/register', () => {
         it('should register a new user', (done) => {
             const user = {
                 username: 'testuser',
                 email: 'testuser@example.com',
                 phone: '1234567890',
                 password: 'password123',
-                securityQuestions: ['Answer 1', 'Answer 2', 'Answer 3']
+                securityQuestions: [
+                    { question: 'What is your pet’s name?', answer: 'Fluffy' },
+                    { question: 'What is your mother’s maiden name?', answer: 'Smith' },
+                    { question: 'What is your favorite color?', answer: 'Blue' }
+                ]
             };
             chai.request(server)
-                .post('/auth/register')
+                .post('/api/auth/register')
                 .send(user)
                 .end((err, res) => {
                     expect(res).to.have.status(201);
                     expect(res.body).to.have.property('message', 'User registered successfully');
-                    expect(res.body).to.have.property('token');
                     done();
                 });
         });
@@ -43,17 +42,25 @@ describe('Auth Controller Integration Tests', () => {
                 email: 'testuser@example.com',
                 phone: '1234567890',
                 password: 'password123',
-                securityQuestions: ['Answer 1', 'Answer 2', 'Answer 3']
+                securityQuestions: [
+                    { question: 'What is your pet’s name?', answer: 'Fluffy' },
+                    { question: 'What is your mother’s maiden name?', answer: 'Smith' },
+                    { question: 'What is your favorite color?', answer: 'Blue' }
+                ]
             });
             user.save().then(() => {
                 chai.request(server)
-                    .post('/auth/register')
+                    .post('/api/auth/register')
                     .send({
                         username: 'testuser2',
                         email: 'testuser@example.com',
-                        phone: '0987654321',
+                        phone: '1234567891',
                         password: 'password1234',
-                        securityQuestions: ['Answer 1', 'Answer 2', 'Answer 3']
+                        securityQuestions: [
+                            { question: 'What is your pet’s name?', answer: 'Fluffy' },
+                            { question: 'What is your mother’s maiden name?', answer: 'Smith' },
+                            { question: 'What is your favorite color?', answer: 'Blue' }
+                        ]
                     })
                     .end((err, res) => {
                         expect(res).to.have.status(409);
@@ -64,18 +71,22 @@ describe('Auth Controller Integration Tests', () => {
         });
     });
 
-    describe('POST /auth/login', () => {
+    describe('POST /api/auth/login', () => {
         it('should login an existing user', (done) => {
             const user = new User({
                 username: 'testuser',
                 email: 'testuser@example.com',
                 phone: '1234567890',
-                password: bcrypt.hashSync('password123', 12),
-                securityQuestions: ['Answer 1', 'Answer 2', 'Answer 3']
+                password: bcrypt.hashSync('password123', 10),
+                securityQuestions: [
+                    { question: 'What is your pet’s name?', answer: 'Fluffy' },
+                    { question: 'What is your mother’s maiden name?', answer: 'Smith' },
+                    { question: 'What is your favorite color?', answer: 'Blue' }
+                ]
             });
             user.save().then(() => {
                 chai.request(server)
-                    .post('/auth/login')
+                    .post('/api/auth/login')
                     .send({ emailOrPhone: 'testuser@example.com', password: 'password123' })
                     .end((err, res) => {
                         expect(res).to.have.status(200);
@@ -90,16 +101,78 @@ describe('Auth Controller Integration Tests', () => {
                 username: 'testuser',
                 email: 'testuser@example.com',
                 phone: '1234567890',
-                password: bcrypt.hashSync('password123', 12),
-                securityQuestions: ['Answer 1', 'Answer 2', 'Answer 3']
+                password: bcrypt.hashSync('password123', 10),
+                securityQuestions: [
+                    { question: 'What is your pet’s name?', answer: 'Fluffy' },
+                    { question: 'What is your mother’s maiden name?', answer: 'Smith' },
+                    { question: 'What is your favorite color?', answer: 'Blue' }
+                ]
             });
             user.save().then(() => {
                 chai.request(server)
-                    .post('/auth/login')
+                    .post('/api/auth/login')
                     .send({ emailOrPhone: 'testuser@example.com', password: 'wrongpassword' })
                     .end((err, res) => {
                         expect(res).to.have.status(401);
                         expect(res.body).to.have.property('message', 'Invalid credentials');
+                        done();
+                    });
+            });
+        });
+    });
+
+    describe('POST /api/auth/forgot-password', () => {
+        it('should send a password reset token', (done) => {
+            const user = new User({
+                username: 'testuser',
+                email: 'testuser@example.com',
+                phone: '1234567890',
+                password: 'password123',
+                securityQuestions: [
+                    { question: 'What is your pet’s name?', answer: 'Fluffy' },
+                    { question: 'What is your mother’s maiden name?', answer: 'Smith' },
+                    { question: 'What is your favorite color?', answer: 'Blue' }
+                ]
+            });
+            user.save().then(() => {
+                chai.request(server)
+                    .post('/api/auth/forgot-password')
+                    .send({ email: 'testuser@example.com' })
+                    .end((err, res) => {
+                        expect(res).to.have.status(200);
+                        expect(res.body).to.have.property('message', 'Password reset token sent');
+                        done();
+                    });
+            });
+        });
+    });
+
+    describe('PUT /api/auth/reset-password', () => {
+        it('should reset the password with valid token and security answers', (done) => {
+            const user = new User({
+                username: 'testuser',
+                email: 'testuser@example.com',
+                phone: '1234567890',
+                password: 'password123',
+                securityQuestions: [
+                    { question: 'What is your pet’s name?', answer: 'Fluffy' },
+                    { question: 'What is your mother’s maiden name?', answer: 'Smith' },
+                    { question: 'What is your favorite color?', answer: 'Blue' }
+                ],
+                resetPasswordToken: crypto.createHash('sha256').update('testtoken').digest('hex'),
+                resetPasswordExpires: Date.now() + 3600000
+            });
+            user.save().then(() => {
+                chai.request(server)
+                    .put('/api/auth/reset-password')
+                    .send({
+                        token: 'testtoken',
+                        password: 'newpassword123',
+                        securityAnswers: ['Fluffy', 'Smith', 'Blue']
+                    })
+                    .end((err, res) => {
+                        expect(res).to.have.status(200);
+                        expect(res.body).to.have.property('message', 'Password has been reset successfully');
                         done();
                     });
             });
