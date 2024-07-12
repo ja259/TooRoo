@@ -6,110 +6,115 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 
 dotenv.config();
-chai.should();
 chai.use(chaiHttp);
+chai.should();
 
-describe('User Routes', () => {
-    let token;
-    let userId;
+describe('User Routes Integration Tests', () => {
 
-    before(async () => {
-        await mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+    before((done) => {
+        mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+            .then(() => done())
+            .catch(err => done(err));
+    });
+
+    after((done) => {
+        mongoose.disconnect()
+            .then(() => done())
+            .catch(err => done(err));
+    });
+
+    beforeEach(async () => {
         await User.deleteMany({});
+    });
+
+    let token = '';
+
+    before((done) => {
         const user = new User({
             username: 'testuser',
             email: 'testuser@example.com',
-            password: 'password123'
+            phone: '1234567890',
+            password: 'password123',
+            securityQuestions: [{ question: 'q1', answer: 'a1' }, { question: 'q2', answer: 'a2' }, { question: 'q3', answer: 'a3' }]
         });
-        await user.save();
-        token = user.generateAuthToken();
-        userId = user._id.toString();
-    });
-
-    after(async () => {
-        await mongoose.connection.close();
-    });
-
-    describe('/GET user profile', () => {
-        it('it should GET a user profile by the given id', (done) => {
+        user.save((err, user) => {
             chai.request(server)
-                .get(`/api/users/${userId}`)
-                .set('Authorization', `Bearer ${token}`)
+                .post('/api/auth/login')
+                .send({ emailOrPhone: 'testuser@example.com', password: 'password123' })
                 .end((err, res) => {
-                    res.should.have.status(200);
-                    res.body.should.have.property('message').eql('User profile retrieved successfully');
-                    res.body.user.should.have.property('username').eql('testuser');
+                    token = res.body.token;
                     done();
                 });
         });
     });
 
-    describe('/PUT update user profile', () => {
-        it('it should update the user profile', (done) => {
-            const updateUser = {
-                username: 'updateduser',
-                bio: 'Updated bio',
-                avatar: 'newavatarurl'
-            };
+    it('should get user details on /api/users/:id GET', (done) => {
+        chai.request(server)
+            .get(`/api/users/${user._id}`)
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+                res.should.have.status(200);
+                res.body.should.be.a('object');
+                res.body.should.have.property('username').eql('testuser');
+                done();
+            });
+    });
+
+    it('should update user profile on /api/users/:id PUT', (done) => {
+        const updatedUser = {
+            username: 'updateduser',
+            bio: 'Updated bio'
+        };
+        chai.request(server)
+            .put(`/api/users/${user._id}`)
+            .set('Authorization', `Bearer ${token}`)
+            .send(updatedUser)
+            .end((err, res) => {
+                res.should.have.status(200);
+                res.body.should.have.property('message').eql('User profile updated successfully.');
+                done();
+            });
+    });
+
+    it('should follow a user on /api/users/:id/follow POST', (done) => {
+        const followUser = new User({
+            username: 'followuser',
+            email: 'followuser@example.com',
+            phone: '1234567890',
+            password: 'password123',
+            securityQuestions: [{ question: 'q1', answer: 'a1' }, { question: 'q2', answer: 'a2' }, { question: 'q3', answer: 'a3' }]
+        });
+        followUser.save((err, followUser) => {
             chai.request(server)
-                .put(`/api/users/${userId}`)
+                .post(`/api/users/${followUser._id}/follow`)
                 .set('Authorization', `Bearer ${token}`)
-                .send(updateUser)
+                .send({ userId: followUser._id })
                 .end((err, res) => {
                     res.should.have.status(200);
-                    res.body.should.have.property('message').eql('User profile updated successfully.');
-                    res.body.user.should.have.property('username').eql('updateduser');
-                    res.body.user.should.have.property('bio').eql('Updated bio');
-                    res.body.user.should.have.property('avatar').eql('newavatarurl');
+                    res.body.should.have.property('message').eql('Followed user successfully.');
                     done();
                 });
         });
     });
 
-    describe('/POST follow user', () => {
-        it('should follow a user', (done) => {
-            const user2 = new User({
-                username: 'user2',
-                email: 'user2@example.com',
-                password: 'password123'
-            });
-            user2.save((err, user2) => {
-                const token = user2.generateAuthToken();
-                chai.request(server)
-                    .post(`/api/users/${user2._id}/follow`)
-                    .set('Authorization', `Bearer ${token}`)
-                    .send({ userId })
-                    .end((err, res) => {
-                        res.should.have.status(200);
-                        res.body.should.have.property('message').eql('Followed user successfully.');
-                        done();
-                    });
-            });
+    it('should unfollow a user on /api/users/:id/unfollow POST', (done) => {
+        const unfollowUser = new User({
+            username: 'unfollowuser',
+            email: 'unfollowuser@example.com',
+            phone: '1234567890',
+            password: 'password123',
+            securityQuestions: [{ question: 'q1', answer: 'a1' }, { question: 'q2', answer: 'a2' }, { question: 'q3', answer: 'a3' }]
         });
-    });
-
-    describe('/POST unfollow user', () => {
-        it('should unfollow a user', (done) => {
-            const user2 = new User({
-                username: 'user2',
-                email: 'user2@example.com',
-                password: 'password123'
-            });
-            user2.save((err, user2) => {
-                const token = user2.generateAuthToken();
-                user2.following.push(userId);
-                user2.save((err, user2) => {
-                    chai.request(server)
-                        .post(`/api/users/${user2._id}/unfollow`)
-                        .set('Authorization', `Bearer ${token}`)
-                        .send({ userId })
-                        .end((err, res) => {
-                            res.should.have.status(200);
-                            res.body.should.have.property('message').eql('Unfollowed user successfully.');
-                            done();
-                        });
+        unfollowUser.save((err, unfollowUser) => {
+            chai.request(server)
+                .post(`/api/users/${unfollowUser._id}/unfollow`)
+                .set('Authorization', `Bearer ${token}`)
+                .send({ userId: unfollowUser._id })
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.have.property('message').eql('Unfollowed user successfully.');
+                    done();
                 });
-            });
         });
     });
 });

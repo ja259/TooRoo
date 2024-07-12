@@ -32,51 +32,53 @@ describe('Media Routes Tests', () => {
     let token = '';
 
     before((done) => {
-        let user = {
+        const user = new User({
             email: 'testuser@example.com',
             password: 'password123'
-        };
-        chai.request(server)
-            .post('/api/auth/login')
-            .send(user)
-            .end((err, res) => {
-                token = res.body.token;
-                done();
-            });
+        });
+        user.save((err, user) => {
+            chai.request(server)
+                .post('/api/auth/login')
+                .send({ email: user.email, password: user.password })
+                .end((err, res) => {
+                    token = res.body.token;
+                    done();
+                });
+        });
     });
 
     it('should upload a media file on /upload POST', (done) => {
         chai.request(server)
             .post('/upload')
             .set('Authorization', `Bearer ${token}`)
-            .attach('file', 'test/media/testfile.jpg')
+            .attach('video', 'test/media/testfile.mp4')
             .end((err, res) => {
-                res.should.have.status(200);
+                res.should.have.status(201);
                 res.body.should.be.a('object');
-                res.body.should.have.property('message').eql('File uploaded successfully');
+                res.body.should.have.property('message').eql('Video uploaded successfully');
                 done();
             });
     });
 
-    it('should get all videos on /api/media/you-all-videos GET', (done) => {
+    it('should get all videos on /api/media/videos GET', (done) => {
         chai.request(server)
-            .get('/api/media/you-all-videos')
+            .get('/api/media/videos')
             .set('Authorization', `Bearer ${token}`)
             .end((err, res) => {
                 res.should.have.status(200);
-                res.body.should.be.a('array');
+                res.body.videos.should.be.a('array');
                 done();
             });
     });
 
-    it('should delete a video on /api/media/:id DELETE', (done) => {
-        let video = new Video({
+    it('should delete a video on /api/media/videos/:id DELETE', (done) => {
+        const video = new Video({
             videoUrl: 'testfile.mp4',
             author: 'testuser'
         });
         video.save((err, video) => {
             chai.request(server)
-                .delete(`/api/media/${video._id}`)
+                .delete(`/api/media/videos/${video._id}`)
                 .set('Authorization', `Bearer ${token}`)
                 .end((err, res) => {
                     res.should.have.status(200);
@@ -86,14 +88,14 @@ describe('Media Routes Tests', () => {
         });
     });
 
-    it('should update a video on /api/media/:id PUT', (done) => {
-        let video = new Video({
+    it('should update a video on /api/media/videos/:id PUT', (done) => {
+        const video = new Video({
             videoUrl: 'testfile.mp4',
             author: 'testuser'
         });
         video.save((err, video) => {
             chai.request(server)
-                .put(`/api/media/${video._id}`)
+                .put(`/api/media/videos/${video._id}`)
                 .set('Authorization', `Bearer ${token}`)
                 .send({ description: 'Updated description' })
                 .end((err, res) => {
