@@ -8,11 +8,11 @@ import dotenv from 'dotenv';
 dotenv.config();
 chai.should();
 
-describe('Interaction Model', () => {
+describe('Interaction Model Integration Tests', () => {
+
     before(async () => {
         await mongoose.connect(process.env.MONGODB_URI, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true
+            useNewUrlParser: true, useUnifiedTopology: true
         });
     });
 
@@ -26,7 +26,7 @@ describe('Interaction Model', () => {
         await mongoose.connection.close();
     });
 
-    it('it should create an interaction', async () => {
+    it('should create an interaction', async () => {
         const user = new User({
             username: 'testuser',
             email: 'testuser@example.com',
@@ -53,7 +53,7 @@ describe('Interaction Model', () => {
         savedInteraction.should.have.property('interactionType').eql('like');
     });
 
-    it('it should not create an interaction without a required field', async () => {
+    it('should not create an interaction without a required field', async () => {
         const interaction = new Interaction({
             interactionType: 'like'
         });
@@ -66,7 +66,7 @@ describe('Interaction Model', () => {
         }
     });
 
-    it('it should find an interaction by ID', async () => {
+    it('should find an interaction by ID', async () => {
         const user = new User({
             username: 'testuser',
             email: 'testuser@example.com',
@@ -94,7 +94,7 @@ describe('Interaction Model', () => {
         foundInteraction.should.have.property('interactionType').eql('comment');
     });
 
-    it('it should update an interaction', async () => {
+    it('should update an interaction', async () => {
         const user = new User({
             username: 'testuser',
             email: 'testuser@example.com',
@@ -121,7 +121,7 @@ describe('Interaction Model', () => {
         updatedInteraction.should.have.property('interactionType').eql('like');
     });
 
-    it('it should delete an interaction', async () => {
+    it('should delete an interaction', async () => {
         const user = new User({
             username: 'testuser',
             email: 'testuser@example.com',
@@ -148,7 +148,7 @@ describe('Interaction Model', () => {
         should.not.exist(foundInteraction);
     });
 
-    it('it should not create an interaction with an invalid interactionType', async () => {
+    it('should not create an interaction with an invalid interactionType', async () => {
         const user = new User({
             username: 'testuser',
             email: 'testuser@example.com',
@@ -175,4 +175,5 @@ describe('Interaction Model', () => {
             error.errors.should.have.property('interactionType');
         }
     });
+
 });
