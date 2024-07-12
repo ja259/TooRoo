@@ -7,7 +7,8 @@ import dotenv from 'dotenv';
 dotenv.config();
 chai.should();
 
-describe('Video Model', () => {
+describe('Video Model Integration Tests', () => {
+
     before(async () => {
         await mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
     });
@@ -21,7 +22,7 @@ describe('Video Model', () => {
         await User.deleteMany({});
     });
 
-    it('it should create a new video', async () => {
+    it('should create a new video', async () => {
         const user = new User({
             username: 'testuser',
             email: 'testuser@example.com',
@@ -42,7 +43,7 @@ describe('Video Model', () => {
         savedVideo.should.have.property('author').eql(user._id);
     });
 
-    it('it should not create a video without a required author', async () => {
+    it('should not create a video without a required author', async () => {
         const video = new Video({
             videoUrl: 'testfile.mp4',
             description: 'Test video'
@@ -56,7 +57,7 @@ describe('Video Model', () => {
         }
     });
 
-    it('it should not create a video without a required video URL', async () => {
+    it('should not create a video without a required video URL', async () => {
         const user = new User({
             username: 'testuser',
             email: 'testuser@example.com',
@@ -78,7 +79,7 @@ describe('Video Model', () => {
         }
     });
 
-    it('it should add a comment to a video', async () => {
+    it('should add a comment to a video', async () => {
         const user = new User({
             username: 'testuser',
             email: 'testuser@example.com',
@@ -106,7 +107,7 @@ describe('Video Model', () => {
         updatedVideo.comments[0].author.username.should.eql('testuser');
     });
 
-    it('it should like a video', async () => {
+    it('should like a video', async () => {
         const user = new User({
             username: 'testuser',
             email: 'testuser@example.com',
@@ -128,4 +129,6 @@ describe('Video Model', () => {
         const updatedVideo = await Video.findById(video._id);
         updatedVideo.likes.should.include(user._id);
     });
+
+    // Add more tests for validation, methods, and hooks
 });
