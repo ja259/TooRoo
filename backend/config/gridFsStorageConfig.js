@@ -1,7 +1,9 @@
-import { GridFsStorage } from 'multer-gridfs-storage';
+import pkg from 'multer-gridfs-storage';
 import crypto from 'crypto';
 import path from 'path';
 import config from './config.js';
+
+const { GridFsStorage } = pkg;
 
 const mongoURI = config.dbUri;
 const bucketName = process.env.GRIDFS_BUCKET || 'uploads';
