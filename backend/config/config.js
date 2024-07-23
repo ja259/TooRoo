@@ -2,6 +2,9 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+// Debug statement to print loaded environment variables
+console.log("Loaded Environment Variables:", process.env);
+
 const ENV = process.env.NODE_ENV || 'development';
 
 const validateConfig = (config) => {
