@@ -11,6 +11,7 @@ const ENV = process.env.NODE_ENV || 'development';
 const validateConfig = (config) => {
     const requiredVars = ['MONGODB_URI', 'JWT_SECRET', 'EMAIL', 'EMAIL_PASSWORD', 'VAPID_PUBLIC_KEY', 'VAPID_PRIVATE_KEY'];
     requiredVars.forEach((varName) => {
+        console.log(`Validating: ${varName}, Value: ${config[varName]}`);
         if (!config[varName]) {
             throw new Error(`Missing required environment variable: ${varName}`);
         }
