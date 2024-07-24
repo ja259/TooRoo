@@ -40,4 +40,42 @@ describe('Environment Variables Tests', () => {
         const validEnvironments = ['development', 'production', 'test'];
         validEnvironments.should.include(process.env.NODE_ENV);
     });
+
+    it('should validate the MONGODB_URI format', () => {
+        const uriPattern = /^mongodb(\+srv)?:\/\/.+$/;
+        uriPattern.test(process.env.MONGODB_URI).should.be.true;
+    });
+
+    it('should validate EMAIL is a valid email format', () => {
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        emailPattern.test(process.env.EMAIL).should.be.true;
+    });
+
+    it('should validate CORS_ORIGIN contains valid URLs', () => {
+        const origins = process.env.CORS_ORIGIN.split(',');
+        origins.forEach(origin => {
+            const urlPattern = /^(https?:\/\/)?([^\s$.?#].[^\s]*)?$/i;
+            urlPattern.test(origin).should.be.true;
+        });
+    });
+
+    it('should validate that GRIDFS_BUCKET is not empty', () => {
+        process.env.GRIDFS_BUCKET.should.not.be.empty;
+    });
+
+    it('should validate that GOOGLE_API_KEY is set', () => {
+        process.env.GOOGLE_API_KEY.should.not.be.empty;
+    });
+
+    it('should validate that STRIPE_API_KEY is set', () => {
+        process.env.STRIPE_API_KEY.should.not.be.empty;
+    });
+
+    it('should validate that VAPID_PUBLIC_KEY is not empty', () => {
+        process.env.VAPID_PUBLIC_KEY.should.not.be.empty;
+    });
+
+    it('should validate that VAPID_PRIVATE_KEY is not empty', () => {
+        process.env.VAPID_PRIVATE_KEY.should.not.be.empty;
+    });
 });
