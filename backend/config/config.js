@@ -50,6 +50,9 @@ const config = ENV === 'production' ? productionConfig : developmentConfig;
 // Print the config object for debugging
 console.log("Config Object before validation:", config);
 
+// Additional logging for MONGODB_URI
+console.log(`MONGODB_URI before validation: ${config.dbUri}`);
+
 validateConfig(config);
 
 export default config;
