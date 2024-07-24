@@ -34,10 +34,9 @@ const developmentConfig = {
     vapidPrivateKey: process.env.VAPID_PRIVATE_KEY
 };
 
-
 const productionConfig = {
     port: process.env.PORT,
-    dbUri: process.env.MONGODB_URI,
+    dbUri: 'mongodb+srv://Jmarvin89:Omodia1949@cluster0.epvm71z.mongodb.net/test',  // Hardcoded for debugging
     jwtSecret: process.env.JWT_SECRET,
     email: process.env.EMAIL,
     emailPassword: process.env.EMAIL_PASSWORD,
