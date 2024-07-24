@@ -25,7 +25,7 @@ const defaultConfig = {
 
 const developmentConfig = {
     port: process.env.DEV_PORT || defaultConfig.port,
-    dbUri: 'mongodb+srv://Jmarvin89:Omodia1949@cluster0.epvm71z.mongodb.net/test',  // Hardcoded for debugging
+    dbUri: process.env.MONGODB_URI || 'mongodb+srv://fallback_uri/test',  // Temporary fallback for debugging
     jwtSecret: process.env.JWT_SECRET,
     email: process.env.EMAIL,
     emailPassword: process.env.EMAIL_PASSWORD,
@@ -36,7 +36,7 @@ const developmentConfig = {
 
 const productionConfig = {
     port: process.env.PORT,
-    dbUri: 'mongodb+srv://Jmarvin89:Omodia1949@cluster0.epvm71z.mongodb.net/test',  // Hardcoded for debugging
+    dbUri: process.env.MONGODB_URI || 'mongodb+srv://fallback_uri/test',  // Temporary fallback for debugging
     jwtSecret: process.env.JWT_SECRET,
     email: process.env.EMAIL,
     emailPassword: process.env.EMAIL_PASSWORD,
