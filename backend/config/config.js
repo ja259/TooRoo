@@ -1,8 +1,9 @@
 import dotenv from 'dotenv';
 
+// Load environment variables from .env file
 dotenv.config();
 
-// Debug statement to print loaded environment variables
+// Print loaded environment variables for debugging
 console.log("Loaded Environment Variables:", process.env);
 
 const ENV = process.env.NODE_ENV || 'development';
@@ -44,6 +45,9 @@ const productionConfig = {
 };
 
 const config = ENV === 'production' ? productionConfig : developmentConfig;
+
+// Print the config object for debugging
+console.log("Config Object:", config);
 
 validateConfig(config);
 
