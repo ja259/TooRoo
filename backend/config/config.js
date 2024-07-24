@@ -25,7 +25,7 @@ const defaultConfig = {
 
 const developmentConfig = {
     port: process.env.DEV_PORT || defaultConfig.port,
-    dbUri: process.env.MONGODB_URI || 'mongodb+srv://fallback_uri/test',  // Temporary fallback for debugging
+    dbUri: process.env.MONGODB_URI,
     jwtSecret: process.env.JWT_SECRET,
     email: process.env.EMAIL,
     emailPassword: process.env.EMAIL_PASSWORD,
@@ -36,7 +36,7 @@ const developmentConfig = {
 
 const productionConfig = {
     port: process.env.PORT,
-    dbUri: process.env.MONGODB_URI || 'mongodb+srv://fallback_uri/test',  // Temporary fallback for debugging
+    dbUri: process.env.MONGODB_URI,
     jwtSecret: process.env.JWT_SECRET,
     email: process.env.EMAIL,
     emailPassword: process.env.EMAIL_PASSWORD,
@@ -49,9 +49,6 @@ const config = ENV === 'production' ? productionConfig : developmentConfig;
 
 // Print the config object for debugging
 console.log("Config Object before validation:", config);
-
-// Additional logging for MONGODB_URI
-console.log(`MONGODB_URI before validation: ${process.env.MONGODB_URI}`);
 
 validateConfig(config);
 
