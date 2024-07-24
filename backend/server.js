@@ -23,6 +23,9 @@ import config from './config/config.js';
 
 dotenv.config();
 
+console.log("Loading environment variables...");
+console.log("Loaded Environment Variables:", process.env);
+
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
