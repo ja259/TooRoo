@@ -48,7 +48,10 @@ const productionConfig = {
 const config = ENV === 'production' ? productionConfig : developmentConfig;
 
 // Print the config object for debugging
-console.log("Config Object:", config);
+console.log("Config Object before validation:", config);
+
+// Additional logging for MONGODB_URI
+console.log(`MONGODB_URI before validation: ${process.env.MONGODB_URI}`);
 
 validateConfig(config);
 
