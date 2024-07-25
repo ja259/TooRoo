@@ -13,6 +13,7 @@ console.log("Loaded Environment Variables:", process.env);
 
 const ENV = process.env.NODE_ENV || 'development';
 
+// Function to log and validate environment variables
 const validateConfig = (config) => {
     const requiredVars = ['MONGODB_URI', 'JWT_SECRET', 'EMAIL', 'EMAIL_PASSWORD', 'VAPID_PUBLIC_KEY', 'VAPID_PRIVATE_KEY'];
     requiredVars.forEach((varName) => {
