@@ -13,14 +13,6 @@ console.log("Loaded Environment Variables:", process.env);
 
 const ENV = process.env.NODE_ENV || 'development';
 
-// Directly log the environment variables to ensure they are loaded correctly
-console.log('MONGODB_URI:', process.env.MONGODB_URI);
-console.log('JWT_SECRET:', process.env.JWT_SECRET);
-console.log('EMAIL:', process.env.EMAIL);
-console.log('EMAIL_PASSWORD:', process.env.EMAIL_PASSWORD);
-console.log('VAPID_PUBLIC_KEY:', process.env.VAPID_PUBLIC_KEY);
-console.log('VAPID_PRIVATE_KEY:', process.env.VAPID_PRIVATE_KEY);
-
 const validateConfig = (config) => {
     const requiredVars = ['MONGODB_URI', 'JWT_SECRET', 'EMAIL', 'EMAIL_PASSWORD', 'VAPID_PUBLIC_KEY', 'VAPID_PRIVATE_KEY'];
     requiredVars.forEach((varName) => {
@@ -32,34 +24,16 @@ const validateConfig = (config) => {
     });
 };
 
-const defaultConfig = {
-    port: 5000,
-    emailService: 'Gmail'
-};
-
-const developmentConfig = {
-    port: process.env.PORT || defaultConfig.port,
-    dbUri: process.env.MONGODB_URI || 'mongodb+srv://fallback_uri/test',  // Temporary fallback for debugging
+const config = {
+    port: process.env.PORT || 5000,
+    dbUri: process.env.MONGODB_URI,
     jwtSecret: process.env.JWT_SECRET,
     email: process.env.EMAIL,
     emailPassword: process.env.EMAIL_PASSWORD,
-    emailService: process.env.EMAIL_SERVICE || defaultConfig.emailService,
+    emailService: process.env.EMAIL_SERVICE || 'Gmail',
     vapidPublicKey: process.env.VAPID_PUBLIC_KEY,
-    vapidPrivateKey: process.env.VAPID_PRIVATE_KEY
+    vapidPrivateKey: process.env.VAPID_PRIVATE_KEY,
 };
-
-const productionConfig = {
-    port: process.env.PORT,
-    dbUri: process.env.MONGODB_URI || 'mongodb+srv://fallback_uri/test',  // Temporary fallback for debugging
-    jwtSecret: process.env.JWT_SECRET,
-    email: process.env.EMAIL,
-    emailPassword: process.env.EMAIL_PASSWORD,
-    emailService: process.env.EMAIL_SERVICE || defaultConfig.emailService,
-    vapidPublicKey: process.env.VAPID_PUBLIC_KEY,
-    vapidPrivateKey: process.env.VAPID_PRIVATE_KEY
-};
-
-const config = ENV === 'production' ? productionConfig : developmentConfig;
 
 // Print the config object for debugging
 console.log("Config Object before validation:", config);
