@@ -12,8 +12,6 @@ console.log(`Loading environment variables from: ${envPath}`);
 dotenv.config({ path: envPath });
 console.log("Loaded Environment Variables:", process.env);
 
-const ENV = process.env.NODE_ENV || 'development';
-
 // Function to log and validate environment variables
 const validateConfig = (config) => {
     const requiredVars = ['MONGODB_URI', 'JWT_SECRET', 'EMAIL', 'EMAIL_PASSWORD', 'VAPID_PUBLIC_KEY', 'VAPID_PRIVATE_KEY'];
@@ -43,6 +41,9 @@ console.log("Config Object before validation:", config);
 // Additional logging for MONGODB_URI
 console.log(`MONGODB_URI before validation: ${process.env.MONGODB_URI}`);
 console.log(`MONGODB_URI in config: ${config.dbUri}`);
+
+// Additional environment variable log for verification
+console.log("Environment Variable MONGODB_URI:", process.env.MONGODB_URI);
 
 validateConfig(config);
 
