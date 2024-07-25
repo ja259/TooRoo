@@ -1,5 +1,10 @@
 import dotenv from 'dotenv';
+import { fileURLToPath } from 'url';
 import path from 'path';
+
+// Get __dirname equivalent in ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Load environment variables from .env file
 console.log("Loading environment variables...");
