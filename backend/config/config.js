@@ -12,19 +12,20 @@ const validateConfig = (config) => {
     requiredVars.forEach((varName) => {
         console.log(`Validating: ${varName}, Value: ${config[varName]}`);
         if (!config[varName]) {
+            console.log(`Error: Missing value for ${varName}`);
             throw new Error(`Missing required environment variable: ${varName}`);
         }
     });
 };
 
 const defaultConfig = {
-    port: 5000,
+    port: process.env.PORT || 5000,
     emailService: 'Gmail'
 };
 
 const developmentConfig = {
     port: process.env.PORT || defaultConfig.port,
-    dbUri: process.env.MONGODB_URI,  // Ensure there is no fallback here
+    dbUri: process.env.MONGODB_URI || '',
     jwtSecret: process.env.JWT_SECRET,
     email: process.env.EMAIL,
     emailPassword: process.env.EMAIL_PASSWORD,
@@ -35,7 +36,7 @@ const developmentConfig = {
 
 const productionConfig = {
     port: process.env.PORT,
-    dbUri: process.env.MONGODB_URI,  // Ensure there is no fallback here
+    dbUri: process.env.MONGODB_URI || '',
     jwtSecret: process.env.JWT_SECRET,
     email: process.env.EMAIL,
     emailPassword: process.env.EMAIL_PASSWORD,
