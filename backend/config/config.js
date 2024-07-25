@@ -1,8 +1,9 @@
 import dotenv from 'dotenv';
+import path from 'path';
 
 // Load environment variables from .env file
 console.log("Loading environment variables...");
-dotenv.config();
+dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 console.log("Loaded Environment Variables:", process.env);
 
 const ENV = process.env.NODE_ENV || 'development';
@@ -12,20 +13,19 @@ const validateConfig = (config) => {
     requiredVars.forEach((varName) => {
         console.log(`Validating: ${varName}, Value: ${config[varName]}`);
         if (!config[varName]) {
-            console.log(`Error: Missing value for ${varName}`);
             throw new Error(`Missing required environment variable: ${varName}`);
         }
     });
 };
 
 const defaultConfig = {
-    port: process.env.PORT || 5000,
+    port: 5000,
     emailService: 'Gmail'
 };
 
 const developmentConfig = {
     port: process.env.PORT || defaultConfig.port,
-    dbUri: process.env.MONGODB_URI || '',
+    dbUri: process.env.MONGODB_URI || 'mongodb+srv://fallback_uri/test',  // Temporary fallback for debugging
     jwtSecret: process.env.JWT_SECRET,
     email: process.env.EMAIL,
     emailPassword: process.env.EMAIL_PASSWORD,
@@ -36,7 +36,7 @@ const developmentConfig = {
 
 const productionConfig = {
     port: process.env.PORT,
-    dbUri: process.env.MONGODB_URI || '',
+    dbUri: process.env.MONGODB_URI || 'mongodb+srv://fallback_uri/test',  // Temporary fallback for debugging
     jwtSecret: process.env.JWT_SECRET,
     email: process.env.EMAIL,
     emailPassword: process.env.EMAIL_PASSWORD,
