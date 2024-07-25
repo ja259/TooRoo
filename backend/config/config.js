@@ -24,7 +24,7 @@ const defaultConfig = {
 
 const developmentConfig = {
     port: process.env.DEV_PORT || defaultConfig.port,
-    dbUri: process.env.MONGODB_URI || 'mongodb+srv://fallback_uri/tooroo',  // Temporary fallback for debugging
+    dbUri: process.env.MONGODB_URI,
     jwtSecret: process.env.JWT_SECRET,
     email: process.env.EMAIL,
     emailPassword: process.env.EMAIL_PASSWORD,
@@ -35,7 +35,7 @@ const developmentConfig = {
 
 const productionConfig = {
     port: process.env.PORT,
-    dbUri: process.env.MONGODB_URI || 'mongodb+srv://fallback_uri/tooroo',  // Temporary fallback for debugging
+    dbUri: process.env.MONGODB_URI,
     jwtSecret: process.env.JWT_SECRET,
     email: process.env.EMAIL,
     emailPassword: process.env.EMAIL_PASSWORD,
