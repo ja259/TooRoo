@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import path from 'path';
 
-// Get __dirname equivalent in ES modules
+// Get __filename and __dirname equivalent in ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -18,6 +18,7 @@ const validateConfig = (config) => {
     requiredVars.forEach((varName) => {
         console.log(`Validating: ${varName}, Value: ${config[varName]}`);
         if (!config[varName]) {
+            console.error(`Missing value for ${varName}`);
             throw new Error(`Missing required environment variable: ${varName}`);
         }
     });
