@@ -13,6 +13,14 @@ console.log("Loaded Environment Variables:", process.env);
 
 const ENV = process.env.NODE_ENV || 'development';
 
+// Directly log the environment variables to ensure they are loaded correctly
+console.log('MONGODB_URI:', process.env.MONGODB_URI);
+console.log('JWT_SECRET:', process.env.JWT_SECRET);
+console.log('EMAIL:', process.env.EMAIL);
+console.log('EMAIL_PASSWORD:', process.env.EMAIL_PASSWORD);
+console.log('VAPID_PUBLIC_KEY:', process.env.VAPID_PUBLIC_KEY);
+console.log('VAPID_PRIVATE_KEY:', process.env.VAPID_PRIVATE_KEY);
+
 const validateConfig = (config) => {
     const requiredVars = ['MONGODB_URI', 'JWT_SECRET', 'EMAIL', 'EMAIL_PASSWORD', 'VAPID_PUBLIC_KEY', 'VAPID_PRIVATE_KEY'];
     requiredVars.forEach((varName) => {
