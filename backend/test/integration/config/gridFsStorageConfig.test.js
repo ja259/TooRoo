@@ -15,7 +15,6 @@ describe('GridFS Storage Config Tests', () => {
         gridFsStorageStub = sinon.stub(pkg, 'GridFsStorage').callsFake((options) => {
             return {
                 url: options.url,
-                options: options.options,
                 file: options.file
             };
         });
@@ -35,7 +34,7 @@ describe('GridFS Storage Config Tests', () => {
         process.env.MONGODB_URI = '';
 
         try {
-            await import('../config/gridFsStorageConfig.js');
+            await import('../../../config/gridFsStorageConfig.js');
         } catch (error) {
             error.should.be.an('error');
             error.message.should.include('MONGODB_URI environment variable is not defined');
