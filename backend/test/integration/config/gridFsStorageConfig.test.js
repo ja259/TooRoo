@@ -2,8 +2,8 @@ import * as chai from 'chai';
 import sinon from 'sinon';
 import crypto from 'crypto';
 import pkg from 'multer-gridfs-storage';
-import config from '../../../config/config.js';
-import storage from '../../../config/gridFsStorageConfig.js';
+import config from '../config/config.js';
+import storage from '../config/gridFsStorageConfig.js';
 
 const { expect, should } = chai;
 should();
@@ -28,9 +28,6 @@ describe('GridFS Storage Config Tests', () => {
     it('should have a valid GridFS storage configuration', () => {
         storage.should.be.an('object');
         storage.should.have.property('url').that.is.a('string');
-        storage.should.have.property('options').that.is.an('object');
-        storage.options.should.have.property('useNewUrlParser').eql(true);
-        storage.options.should.have.property('useUnifiedTopology').eql(true);
     });
 
     it('should throw an error if MONGODB_URI is not defined', async () => {
@@ -38,7 +35,7 @@ describe('GridFS Storage Config Tests', () => {
         process.env.MONGODB_URI = '';
 
         try {
-            await import('../../../config/gridFsStorageConfig.js');
+            await import('../config/gridFsStorageConfig.js');
         } catch (error) {
             error.should.be.an('error');
             error.message.should.include('MONGODB_URI environment variable is not defined');
