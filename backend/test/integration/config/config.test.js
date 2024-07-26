@@ -1,9 +1,14 @@
+import dotenv from 'dotenv';
+import { fileURLToPath } from 'url';
+import path from 'path';
 import * as chai from 'chai';
 import { config as dotenvConfig } from 'dotenv';
 import sinon from 'sinon';
 
-dotenvConfig({ path: './.env' });
 const { expect } = chai;
+
+// Load environment variables
+dotenvConfig({ path: './.env' });
 
 describe('Config Tests', () => {
     let config;

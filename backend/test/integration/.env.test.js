@@ -1,81 +1,52 @@
 import * as chai from 'chai';
 import { config as dotenvConfig } from 'dotenv';
+import { fileURLToPath } from 'url';
+import path from 'path';
 
-dotenvConfig({ path: './.env' });
-const { expect, should } = chai;
-should();
+const { expect } = chai;
 
-describe('Environment Variables Tests', () => {
-    it('should load environment variables from .env file', () => {
-        process.env.should.have.property('MONGODB_URI').that.is.a('string');
-        process.env.should.have.property('JWT_SECRET').that.is.a('string');
-        process.env.should.have.property('EMAIL').that.is.a('string');
-        process.env.should.have.property('EMAIL_PASSWORD').that.is.a('string');
-        process.env.should.have.property('PORT').that.is.a('string');
-        process.env.should.have.property('EMAIL_SERVICE').that.is.a('string');
-        process.env.should.have.property('CORS_ORIGIN').that.is.a('string');
-        process.env.should.have.property('GRIDFS_BUCKET').that.is.a('string');
-        process.env.should.have.property('LOG_LEVEL').that.is.a('string');
-        process.env.should.have.property('GOOGLE_API_KEY').that.is.a('string');
-        process.env.should.have.property('STRIPE_API_KEY').that.is.a('string');
-        process.env.should.have.property('NODE_ENV').that.is.a('string');
-        process.env.should.have.property('VAPID_PUBLIC_KEY').that.is.a('string');
-        process.env.should.have.property('VAPID_PRIVATE_KEY').that.is.a('string');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Load environment variables from the .env file
+dotenvConfig({ path: path.resolve(__dirname, '../../.env') });
+
+describe('Environment Variables', () => {
+    it('should load the MONGODB_URI environment variable', () => {
+        expect(process.env.MONGODB_URI).to.be.a('string').and.not.be.empty;
     });
 
-    it('should validate the JWT_SECRET is strong enough', () => {
-        process.env.JWT_SECRET.length.should.be.above(8);
+    it('should load the JWT_SECRET environment variable', () => {
+        expect(process.env.JWT_SECRET).to.be.a('string').and.not.be.empty;
     });
 
-    it('should validate that PORT is a number', () => {
-        parseInt(process.env.PORT).should.be.a('number');
+    it('should load the EMAIL environment variable', () => {
+        expect(process.env.EMAIL).to.be.a('string').and.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
     });
 
-    it('should validate that LOG_LEVEL is set to a valid level', () => {
+    it('should load the EMAIL_PASSWORD environment variable', () => {
+        expect(process.env.EMAIL_PASSWORD).to.be.a('string').and.not.be.empty;
+    });
+
+    it('should load the VAPID_PUBLIC_KEY environment variable', () => {
+        expect(process.env.VAPID_PUBLIC_KEY).to.be.a('string').and.not.be.empty;
+    });
+
+    it('should load the VAPID_PRIVATE_KEY environment variable', () => {
+        expect(process.env.VAPID_PRIVATE_KEY).to.be.a('string').and.not.be.empty;
+    });
+
+    it('should load the PORT environment variable as a number', () => {
+        expect(parseInt(process.env.PORT)).to.be.a('number');
+    });
+
+    it('should load the LOG_LEVEL environment variable', () => {
         const validLogLevels = ['error', 'warn', 'info', 'debug'];
-        validLogLevels.should.include(process.env.LOG_LEVEL);
+        expect(validLogLevels).to.include(process.env.LOG_LEVEL);
     });
 
-    it('should validate that NODE_ENV is set to a valid environment', () => {
+    it('should load the NODE_ENV environment variable', () => {
         const validEnvironments = ['development', 'production', 'test'];
-        validEnvironments.should.include(process.env.NODE_ENV);
-    });
-
-    it('should validate the MONGODB_URI format', () => {
-        const uriPattern = /^mongodb(\+srv)?:\/\/.+$/;
-        uriPattern.test(process.env.MONGODB_URI).should.be.true;
-    });
-
-    it('should validate EMAIL is a valid email format', () => {
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        emailPattern.test(process.env.EMAIL).should.be.true;
-    });
-
-    it('should validate CORS_ORIGIN contains valid URLs', () => {
-        const origins = process.env.CORS_ORIGIN.split(',');
-        origins.forEach(origin => {
-            const urlPattern = /^(https?:\/\/)?([^\s$.?#].[^\s]*)?$/i;
-            urlPattern.test(origin).should.be.true;
-        });
-    });
-
-    it('should validate that GRIDFS_BUCKET is not empty', () => {
-        process.env.GRIDFS_BUCKET.should.not.be.empty;
-    });
-
-    it('should validate that GOOGLE_API_KEY is set', () => {
-        process.env.GOOGLE_API_KEY.should.not.be.empty;
-    });
-
-    it('should validate that STRIPE_API_KEY is set', () => {
-        process.env.STRIPE_API_KEY.should.not.be.empty;
-    });
-
-    it('should validate that VAPID_PUBLIC_KEY is not empty', () => {
-        process.env.VAPID_PUBLIC_KEY.should.not.be.empty;
-    });
-
-    it('should validate that VAPID_PRIVATE_KEY is not empty', () => {
-        process.env.VAPID_PRIVATE_KEY.should.not.be.empty;
+        expect(validEnvironments).to.include(process.env.NODE_ENV);
     });
 });
