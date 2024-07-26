@@ -2,8 +2,8 @@ import * as chai from 'chai';
 import sinon from 'sinon';
 import crypto from 'crypto';
 import pkg from 'multer-gridfs-storage';
-import config from '../config/config.js';
-import storage from '../config/gridFsStorageConfig.js';
+import config from '../../../config/config.js';
+import storage from '../../../config/gridFsStorageConfig.js';
 
 const { expect, should } = chai;
 should();
