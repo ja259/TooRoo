@@ -17,7 +17,7 @@ describe('Environment Variables', () => {
     });
 
     it('should load the JWT_SECRET environment variable', () => {
-        expect(process.env.JWT_SECRET).to.be.a('string').and.not.be.empty;
+        expect(process.env.JWT_SECRET).to.be.a('string').and not.be.empty;
     });
 
     it('should load the EMAIL environment variable', () => {
@@ -25,28 +25,28 @@ describe('Environment Variables', () => {
     });
 
     it('should load the EMAIL_PASSWORD environment variable', () => {
-        expect(process.env.EMAIL_PASSWORD).to.be.a('string').and.not.be.empty;
+        expect(process.env.EMAIL_PASSWORD).to.be.a('string').and not.be.empty;
     });
 
     it('should load the VAPID_PUBLIC_KEY environment variable', () => {
-        expect(process.env.VAPID_PUBLIC_KEY).to.be.a('string').and.not.be.empty;
+        expect(process.env.VAPID_PUBLIC_KEY).to be.a('string').and not be.empty;
     });
 
     it('should load the VAPID_PRIVATE_KEY environment variable', () => {
-        expect(process.env.VAPID_PRIVATE_KEY).to.be.a('string').and.not.be.empty;
+        expect(process.env.VAPID_PRIVATE_KEY).to be.a('string').and not be.empty;
     });
 
     it('should load the PORT environment variable as a number', () => {
-        expect(parseInt(process.env.PORT)).to.be.a('number');
+        expect(parseInt(process.env.PORT)).to be.a('number');
     });
 
     it('should load the LOG_LEVEL environment variable', () => {
         const validLogLevels = ['error', 'warn', 'info', 'debug'];
-        expect(validLogLevels).to.include(process.env.LOG_LEVEL);
+        expect(validLogLevels).to include(process.env.LOG_LEVEL);
     });
 
     it('should load the NODE_ENV environment variable', () => {
         const validEnvironments = ['development', 'production', 'test'];
-        expect(validEnvironments).to.include(process.env.NODE_ENV);
+        expect(validEnvironments).to include(process.env.NODE_ENV);
     });
 });

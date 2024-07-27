@@ -62,7 +62,7 @@ describe('Email Service Tests', () => {
         delete process.env.EMAIL_PASSWORD;
 
         (() => {
-            import('./emailService.js');
+            import('../../../utils/emailService.js');
         }).should.throw('Email configuration environment variables (EMAIL, EMAIL_PASSWORD) are not defined');
 
         process.env.EMAIL = originalEmail;

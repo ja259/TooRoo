@@ -99,7 +99,7 @@ describe('Post Model Integration Tests', () => {
         await post.save();
         await Post.findByIdAndRemove(post._id);
         const deletedPost = await Post.findById(post._id);
-        should.not.exist(deletedPost);
+        chai.expect(deletedPost).to.be.null;
     });
 
     it('should update the user\'s post count after a post is created', async () => {

@@ -91,7 +91,7 @@ describe('Interaction Model Integration Tests', () => {
 
         await Interaction.findByIdAndRemove(interaction._id);
         const foundInteraction = await Interaction.findById(interaction._id);
-        should.not.exist(foundInteraction);
+        chai.expect(foundInteraction).to.be.null;
     });
 
     it('should not create an interaction with an invalid interactionType', async () => {

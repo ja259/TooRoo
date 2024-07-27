@@ -5,7 +5,6 @@ import { validateRegister, validateLogin, validateForgotPassword, validateResetP
 const { should } = chai;
 should();
 
-// Validation Middleware Test
 describe('Validation Middleware Tests', () => {
     let req, res, next;
 
