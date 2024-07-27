@@ -25,7 +25,11 @@ describe('User Model Integration Tests', () => {
             email: 'testuser@example.com',
             phone: '1234567890',
             password: 'password123',
-            securityQuestions: [{ question: 'Question1', answer: 'Answer1' }, { question: 'Question2', answer: 'Answer2' }, { question: 'Question3', answer: 'Answer3' }]
+            securityQuestions: [
+                { question: 'Question1', answer: 'Answer1' },
+                { question: 'Question2', answer: 'Answer2' },
+                { question: 'Question3', answer: 'Answer3' }
+            ]
         });
         const savedUser = await user.save();
         savedUser.should.have.property('username').eql('testuser');
@@ -37,7 +41,11 @@ describe('User Model Integration Tests', () => {
             email: 'testuser@example.com',
             phone: '1234567890',
             password: 'password123',
-            securityQuestions: [{ question: 'Question1', answer: 'Answer1' }, { question: 'Question2', answer: 'Answer2' }, { question: 'Question3', answer: 'Answer3' }]
+            securityQuestions: [
+                { question: 'Question1', answer: 'Answer1' },
+                { question: 'Question2', answer: 'Answer2' },
+                { question: 'Question3', answer: 'Answer3' }
+            ]
         });
         try {
             await user.save();
@@ -54,7 +62,11 @@ describe('User Model Integration Tests', () => {
             email: 'notanemail',
             phone: '1234567890',
             password: 'password123',
-            securityQuestions: [{ question: 'Question1', answer: 'Answer1' }, { question: 'Question2', answer: 'Answer2' }, { question: 'Question3', answer: 'Answer3' }]
+            securityQuestions: [
+                { question: 'Question1', answer: 'Answer1' },
+                { question: 'Question2', answer: 'Answer2' },
+                { question: 'Question3', answer: 'Answer3' }
+            ]
         });
         try {
             await user.save();
@@ -71,7 +83,11 @@ describe('User Model Integration Tests', () => {
             email: 'testuser@example.com',
             phone: 'invalidphone',
             password: 'password123',
-            securityQuestions: [{ question: 'Question1', answer: 'Answer1' }, { question: 'Question2', answer: 'Answer2' }, { question: 'Question3', answer: 'Answer3' }]
+            securityQuestions: [
+                { question: 'Question1', answer: 'Answer1' },
+                { question: 'Question2', answer: 'Answer2' },
+                { question: 'Question3', answer: 'Answer3' }
+            ]
         });
         try {
             await user.save();
@@ -88,7 +104,11 @@ describe('User Model Integration Tests', () => {
             email: 'testuser1@example.com',
             phone: '1234567890',
             password: 'password123',
-            securityQuestions: [{ question: 'Question1', answer: 'Answer1' }, { question: 'Question2', answer: 'Answer2' }, { question: 'Question3', answer: 'Answer3' }]
+            securityQuestions: [
+                { question: 'Question1', answer: 'Answer1' },
+                { question: 'Question2', answer: 'Answer2' },
+                { question: 'Question3', answer: 'Answer3' }
+            ]
         });
         await user1.save();
 
@@ -97,7 +117,11 @@ describe('User Model Integration Tests', () => {
             email: 'testuser2@example.com',
             phone: '1234567891',
             password: 'password123',
-            securityQuestions: [{ question: 'Question1', answer: 'Answer1' }, { question: 'Question2', answer: 'Answer2' }, { question: 'Question3', answer: 'Answer3' }]
+            securityQuestions: [
+                { question: 'Question1', answer: 'Answer1' },
+                { question: 'Question2', answer: 'Answer2' },
+                { question: 'Question3', answer: 'Answer3' }
+            ]
         });
         await user2.save();
 
@@ -120,7 +144,11 @@ describe('User Model Integration Tests', () => {
             email: 'testuser1@example.com',
             phone: '1234567890',
             password: 'password123',
-            securityQuestions: [{ question: 'Question1', answer: 'Answer1' }, { question: 'Question2', answer: 'Answer2' }, { question: 'Question3', answer: 'Answer3' }]
+            securityQuestions: [
+                { question: 'Question1', answer: 'Answer1' },
+                { question: 'Question2', answer: 'Answer2' },
+                { question: 'Question3', answer: 'Answer3' }
+            ]
         });
         await user1.save();
 
@@ -129,7 +157,11 @@ describe('User Model Integration Tests', () => {
             email: 'testuser2@example.com',
             phone: '1234567891',
             password: 'password123',
-            securityQuestions: [{ question: 'Question1', answer: 'Answer1' }, { question: 'Question2', answer: 'Answer2' }, { question: 'Question3', answer: 'Answer3' }]
+            securityQuestions: [
+                { question: 'Question1', answer: 'Answer1' },
+                { question: 'Question2', answer: 'Answer2' },
+                { question: 'Question3', answer: 'Answer3' }
+            ]
         });
         await user2.save();
 
