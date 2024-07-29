@@ -16,7 +16,7 @@ a:hover {
 
 .App {
   text-align: center;
-  padding-top: 70px; /* Adjust padding to accommodate the fixed navbar */
+  padding-top: 70px;
 }
 
 .main-content {
@@ -46,6 +46,12 @@ form {
   background-color: #333;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+form:hover {
+  background-color: #444;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
 }
 
 input, textarea {
@@ -58,11 +64,13 @@ input, textarea {
   font-size: 16px;
   background-color: #222;
   color: #ffffff;
+  transition: border-color 0.3s, box-shadow 0.3s;
 }
 
 input:focus, textarea:focus {
   outline: none;
   border-color: #00bcd4;
+  box-shadow: 0 0 10px #00bcd4;
 }
 
 button {
@@ -73,11 +81,12 @@ button {
   border-radius: 5px;
   cursor: pointer;
   font-size: 16px;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, transform 0.3s;
 }
 
 button:hover {
   background-color: #e64a19;
+  transform: translateY(-2px);
 }
 
 textarea {
@@ -111,6 +120,7 @@ textarea {
   cursor: pointer;
   font-size: 18px;
   color: #ccc;
+  transition: color 0.3s, border-bottom 0.3s;
 }
 
 .nav-options span.active {
@@ -118,10 +128,20 @@ textarea {
   border-bottom: 2px solid #ff5722;
 }
 
+.nav-options span:hover {
+  color: #ffffff;
+  border-bottom: 2px solid #ffffff;
+}
+
 .nav-search i {
   font-size: 24px;
   cursor: pointer;
   color: #ccc;
+  transition: color 0.3s;
+}
+
+.nav-search i:hover {
+  color: #ffffff;
 }
 
 .feed {
@@ -135,6 +155,12 @@ textarea {
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
   margin-bottom: 20px;
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.post:hover {
+  background-color: #444;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
 }
 
 .post-header {
@@ -176,11 +202,12 @@ textarea {
   padding: 8px 16px;
   border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, transform 0.3s;
 }
 
 .post-actions button:hover {
   background-color: #0097a7;
+  transform: translateY(-2px);
 }
 
 .bottom-nav {
@@ -202,10 +229,15 @@ textarea {
   display: flex;
   flex-direction: column;
   align-items: center;
+  transition: color 0.3s;
 }
 
 .bottom-nav a.active {
   color: #ff5722;
+}
+
+.bottom-nav a:hover {
+  color: #ffffff;
 }
 
 .profile {
@@ -215,6 +247,12 @@ textarea {
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
   text-align: center;
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.profile:hover {
+  background-color: #444;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
 }
 
 .profile img {
@@ -243,10 +281,15 @@ textarea {
   padding: 10px 20px;
   cursor: pointer;
   font-weight: bold;
+  transition: border-bottom 0.3s;
 }
 
 .tab.active {
   border-bottom: 2px solid #ff5722;
+}
+
+.tab:hover {
+  border-bottom: 2px solid #ffffff;
 }
 
 .modal {
@@ -267,6 +310,12 @@ textarea {
   border-radius: 8px;
   width: 300px;
   text-align: center;
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.modal-content:hover {
+  background-color: #444;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
 }
 
 .modal-content input {
@@ -278,6 +327,12 @@ textarea {
   font-size: 16px;
   background-color: #222;
   color: #ffffff;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.modal-content input:focus {
+  border-color: #00bcd4;
+  box-shadow: 0 0 10px #00bcd4;
 }
 
 .modal-content button {
@@ -287,11 +342,12 @@ textarea {
   padding: 12px 24px;
   border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, transform 0.3s;
 }
 
 .modal-content button:hover {
   background-color: #0097a7;
+  transform: translateY(-2px);
 }
 
 .stories {
@@ -302,12 +358,23 @@ textarea {
   margin: 20px 0;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.stories:hover {
+  background-color: #444;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
 }
 
 .story {
   flex: 0 0 100px;
   margin: 0 10px;
   text-align: center;
+  transition: transform 0.3s;
+}
+
+.story:hover {
+  transform: scale(1.05);
 }
 
 .story img {
@@ -318,27 +385,11 @@ textarea {
   margin-bottom: 5px;
 }
 
-.live-page {
+.live-page, .ar-filters, .virtual-events, .wellness, .translation, .polls-qa, .collaboration {
   padding: 20px;
 }
 
-.live-page h2 {
-  margin-bottom: 20px;
-}
-
-.ar-filters {
-  padding: 20px;
-}
-
-.ar-filters h2 {
-  margin-bottom: 20px;
-}
-
-.virtual-events {
-  padding: 20px;
-}
-
-.virtual-events h2 {
+.live-page h2, .ar-filters h2, .virtual-events h2, .wellness h2, .translation h2, .polls-qa h2, .collaboration h2 {
   margin-bottom: 20px;
 }
 
@@ -356,6 +407,12 @@ textarea {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
   margin: 10px;
   text-align: center;
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.achievement:hover {
+  background-color: #444;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
 }
 
 .achievement img {
@@ -364,16 +421,22 @@ textarea {
   margin-bottom: 10px;
 }
 
-.ecommerce {
+.ecommerce, .profile, .modal-content {
   padding: 20px;
 }
 
-.product {
+.product, .poll, .qna {
   background-color: #333;
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
   margin-bottom: 20px;
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.product:hover, .poll:hover, .qna:hover {
+  background-color: #444;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
 }
 
 .product img {
@@ -383,120 +446,29 @@ textarea {
   margin-bottom: 10px;
 }
 
-.product h3 {
+.product h3, .poll h3, .qna h3 {
   font-size: 18px;
   margin-bottom: 10px;
 }
 
-.product p {
+.product p, .poll p, .qna p {
   color: #757575;
   margin-bottom: 10px;
 }
 
-.product button {
+.product button, .poll button, .qna button {
   background-color: #ff5722;
   color: #ffffff;
   border: none;
   padding: 10px 20px;
   border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, transform 0.3s;
 }
 
-.product button:hover {
+.product button:hover, .poll button:hover, .qna button:hover {
   background-color: #e64a19;
-}
-
-.wellness {
-  padding: 20px;
-}
-
-.wellness h2 {
-  margin-bottom: 20px;
-}
-
-.translation {
-  padding: 20px;
-}
-
-.translation h2 {
-  margin-bottom: 20px;
-}
-
-.polls-qa {
-  padding: 20px;
-}
-
-.poll {
-  background-color: #333;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-  margin-bottom: 20px;
-}
-
-.poll h3 {
-  font-size: 18px;
-  margin-bottom: 10px;
-}
-
-.poll p {
-  color: #757575;
-  margin-bottom: 10px;
-}
-
-.poll button {
-  background-color: #00bcd4;
-  color: #ffffff;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.poll button:hover {
-  background-color: #0097a7;
-}
-
-.qna {
-  background-color: #333;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-  margin-bottom: 20px;
-}
-
-.qna h3 {
-  font-size: 18px;
-  margin-bottom: 10px;
-}
-
-.qna p {
-  color: #757575;
-  margin-bottom: 10px;
-}
-
-.qna button {
-  background-color: #00bcd4;
-  color: #ffffff;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.qna button:hover {
-  background-color: #0097a7;
-}
-
-.collaboration {
-  padding: 20px;
-}
-
-.collaboration h2 {
-  margin-bottom: 20px;
+  transform: translateY(-2px);
 }
 
 /* Menu */

@@ -32,11 +32,12 @@ import Settings from './Settings';
 import Marketplace from './Marketplace';
 import Explore from './Explore';
 import UserAnalytics from './UserAnalytics';
-import Menu from './Menu'; // Import Menu component
+import Menu from './Menu';
 import TermsAndPolicies from './TermsAndPolicies';
-import LocationSharing from './LocationSharing'; // Import LocationSharing component
-import QRCodeScanner from './QRCodeScanner'; // Import QRCodeScanner component
-import Translation from './Translation'; // Import Translation component
+import LocationSharing from './LocationSharing';
+import QRCodeScanner from './QRCodeScanner';
+import Translation from './Translation';
+import Salon from './Salon'; // Import Salon component
 
 const App = () => {
     const user = useSelector(state => state.auth.user);
@@ -101,6 +102,7 @@ const App = () => {
                                 <Route path="/qr-code-scanner" element={<QRCodeScanner />} />
                                 <Route path="/translation" element={<Translation />} />
                                 <Route path="/two-factor-auth" element={<TwoFactorAuth />} />
+                                <Route path="/salon" element={<Salon />} /> {/* Add Salon route */}
                                 <Route path="*" element={<Navigate to="/" />} />
                             </>
                         )}

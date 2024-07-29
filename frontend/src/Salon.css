@@ -1,0 +1,41 @@
+.salon-container {
+    padding: 20px;
+    background-color: #f0f2f5;
+}
+
+.booking-form {
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 10px;
+}
+
+.service, .stylist {
+    margin-bottom: 20px;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: #f7f7f7;
+}
+
+.service {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.stylist .avatar {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 10px;
+}
+
+.services, .stylists, .reviews {
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 10px;
+}
+
+.reviews {
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 10px;
+}
