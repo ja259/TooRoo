@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { FaUser, FaComments, FaBell, FaCog, FaSearch, FaSignOutAlt, FaShieldAlt, FaBook, FaLanguage, FaBookOpen, FaHome, FaStore, FaChartLine, FaLocationArrow, FaQrcode, FaCommentAlt, FaCut } from 'react-icons/fa';
+import { FaUser, FaComments, FaBell, FaCog, FaSearch, FaSignOutAlt, FaShieldAlt, FaBook, FaLanguage, FaBookOpen, FaHome, FaStore, FaChartLine, FaLocationArrow, FaQrcode, FaCommentAlt, FaCut, FaWallet } from 'react-icons/fa';
 import './Menu.css';
 
 const Menu = ({ user, onLogout, menuOpen }) => {
@@ -29,6 +29,7 @@ const Menu = ({ user, onLogout, menuOpen }) => {
             <NavLink to="/qr-code-scanner" className="menu-item"><FaQrcode /> QR Code Scanner</NavLink>
             <NavLink to="/translation" className="menu-item"><FaLanguage /> Translation</NavLink>
             <NavLink to="/salon" className="menu-item"><FaCut /> Salon & Barber Shop</NavLink>
+            <NavLink to="/wallet" className="menu-item"><FaWallet /> Wallet</NavLink>
             <button onClick={onLogout} className="menu-item"><FaSignOutAlt /> Logout</button>
         </div>
     );
