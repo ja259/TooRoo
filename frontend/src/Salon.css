@@ -1,25 +1,29 @@
+/* General Styling */
 .salon-container {
-    padding: 20px;
+    padding: 40px 20px;
     background-color: #f0f2f5;
 }
 
-.booking-form {
-    padding: 20px;
+.booking-form, .services, .stylists, .reviews {
+    padding: 30px;
     background-color: #ffffff;
-    border-radius: 10px;
+    border-radius: 15px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.booking-form {
+    margin-bottom: 40px;
 }
 
 .service, .stylist {
     margin-bottom: 20px;
-    padding: 10px;
+    padding: 20px;
     border-radius: 10px;
-    background-color: #f7f7f7;
-}
-
-.service {
+    background-color: #f9f9f9;
     display: flex;
     flex-direction: column;
     gap: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
 .stylist .avatar {
@@ -29,13 +33,19 @@
 }
 
 .services, .stylists, .reviews {
-    padding: 20px;
-    background-color: #ffffff;
-    border-radius: 10px;
+    margin-top: 20px;
 }
 
 .reviews {
     padding: 20px;
     background-color: #ffffff;
     border-radius: 10px;
+}
+
+.reviews .review {
+    margin-bottom: 20px;
+    padding: 15px;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
