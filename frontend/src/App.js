@@ -37,7 +37,8 @@ import TermsAndPolicies from './TermsAndPolicies';
 import LocationSharing from './LocationSharing';
 import QRCodeScanner from './QRCodeScanner';
 import Translation from './Translation';
-import Salon from './Salon'; // Import Salon component
+import Salon from './Salon';
+import Wallet from './Wallet';
 
 const App = () => {
     const user = useSelector(state => state.auth.user);
@@ -102,7 +103,8 @@ const App = () => {
                                 <Route path="/qr-code-scanner" element={<QRCodeScanner />} />
                                 <Route path="/translation" element={<Translation />} />
                                 <Route path="/two-factor-auth" element={<TwoFactorAuth />} />
-                                <Route path="/salon" element={<Salon />} /> {/* Add Salon route */}
+                                <Route path="/salon" element={<Salon />} />
+                                <Route path="/wallet" element={<Wallet />} />
                                 <Route path="*" element={<Navigate to="/" />} />
                             </>
                         )}
