@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Grid, Paper, Typography, Avatar, Button, Select, MenuItem, TextField, IconButton, Rating } from '@mui/material';
-import { FaCalendarAlt, FaUserTie, FaMoneyBillWave, FaStar, FaClock, FaCommentDots, FaMapMarkerAlt } from 'react-icons/fa';
+import {
+    Grid, Paper, Typography, Avatar, Button, Select, MenuItem, TextField, Rating
+} from '@mui/material';
+import { FaMoneyBillWave, FaClock, FaStar } from 'react-icons/fa';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker, TimePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
@@ -16,14 +18,17 @@ const Salon = () => {
     const [selectedDate, setSelectedDate] = useState(null);
     const [selectedTime, setSelectedTime] = useState(null);
     const [error, setError] = useState('');
+    const [reviews, setReviews] = useState([]);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const servicesResponse = await axios.get('http://localhost:5000/api/services');
                 const stylistsResponse = await axios.get('http://localhost:5000/api/stylists');
+                const reviewsResponse = await axios.get('http://localhost:5000/api/reviews');
                 setServices(servicesResponse.data);
                 setStylists(stylistsResponse.data);
+                setReviews(reviewsResponse.data);
             } catch (err) {
                 setError('Failed to fetch data');
             }
@@ -36,7 +41,7 @@ const Salon = () => {
             setError('Please fill in all the fields');
             return;
         }
-        
+
         const newAppointment = {
             service: selectedService,
             stylist: selectedStylist,
@@ -147,7 +152,13 @@ const Salon = () => {
             <Grid item xs={12}>
                 <Paper className="reviews" elevation={3}>
                     <Typography variant="h6" component="h2" gutterBottom>Customer Reviews</Typography>
-                    {/* Render customer reviews */}
+                    {reviews.map(review => (
+                        <div key={review.id} className="review">
+                            <Typography variant="body1">{review.user}</Typography>
+                            <Typography variant="body2">{review.comment}</Typography>
+                            <Rating value={review.rating} readOnly />
+                        </div>
+                    ))}
                 </Paper>
             </Grid>
         </Grid>

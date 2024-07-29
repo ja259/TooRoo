@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {
-    FaSearch, FaShoppingCart, FaHeart, FaStar, FaTag, FaMapMarkerAlt,
-    FaFilter, FaSort, FaTshirt, FaMobileAlt, FaLaptop, FaCouch, FaBook,
-    FaTools, FaBicycle, FaGamepad, FaUtensils, FaBaby, FaMusic
+    FaSearch, FaShoppingCart, FaHeart, FaStar, FaFilter, FaSort, FaMapMarkerAlt
 } from 'react-icons/fa';
 import './Marketplace.css';
 
