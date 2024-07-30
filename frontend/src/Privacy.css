@@ -1,37 +1,42 @@
 .privacy-container {
-    padding: 20px;
-    background-color: #1a1a1a;
+    padding: 24px;
+    background-color: #2a2a2a;
     color: #fff;
-    border-radius: 8px;
-    width: 100%;
-    max-width: 400px;
-    margin: 20px auto;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    border-radius: 12px;
+    max-width: 500px;
+    margin: 40px auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .privacy-item {
-    margin-bottom: 20px;
+    margin-bottom: 24px;
 }
 
 .privacy-item label {
     display: block;
-    margin-bottom: 10px;
-    font-size: 16px;
+    margin-bottom: 8px;
+    font-size: 18px;
 }
 
 .privacy-item select, .privacy-item input[type="checkbox"] {
-    padding: 10px;
-    border-radius: 5px;
+    padding: 12px;
+    border-radius: 6px;
     border: none;
     background-color: #444;
     color: #fff;
+    width: 100%;
 }
 
 .privacy-item button {
-    padding: 10px;
-    border-radius: 5px;
+    padding: 12px;
+    border-radius: 6px;
     border: none;
     background-color: #444;
     color: #fff;
     cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.privacy-item button:hover {
+    background-color: #555;
 }

@@ -1,32 +1,32 @@
 .location-sharing {
-    background-color: #333;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-    margin: 20px auto;
+    background-color: #444;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    margin: 24px auto;
     max-width: 600px;
     text-align: center;
 }
 
 .location-sharing h2 {
     color: #00bcd4;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
     font-size: 24px;
 }
 
 .location-sharing button {
-    padding: 12px 24px;
+    padding: 16px 32px;
     background-color: #00bcd4;
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 18px;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: background-color 0.3s;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
 }
 
 .location-sharing button:hover {
@@ -34,25 +34,26 @@
 }
 
 .location-sharing button svg {
-    margin-right: 8px;
+    margin-right: 12px;
 }
 
 .location-details {
-    background-color: #222;
-    padding: 10px;
-    border-radius: 4px;
-    margin-top: 20px;
+    background-color: #333;
+    padding: 16px;
+    border-radius: 8px;
+    margin-top: 24px;
     text-align: left;
 }
 
 .location-details p {
-    margin: 5px 0;
+    margin: 8px 0;
+    color: #ffffff;
 }
 
 @media (max-width: 600px) {
     .location-sharing {
-        padding: 10px;
-        margin: 10px;
+        padding: 16px;
+        margin: 16px;
     }
 
     .location-sharing h2 {
@@ -60,11 +61,11 @@
     }
 
     .location-sharing button {
-        font-size: 14px;
-        padding: 10px 20px;
+        font-size: 16px;
+        padding: 12px 24px;
     }
 
     .location-details {
-        padding: 8px;
+        padding: 12px;
     }
 }

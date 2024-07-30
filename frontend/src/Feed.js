@@ -3,7 +3,7 @@ import Post from './Post';
 import PropTypes from 'prop-types';
 import './Feed.css';
 
-const Feed = ({ user, onPost, onLike, onComment }) => {
+const Feed = ({ user, onLike, onComment }) => {
     return (
         <div className="feed">
             {user.posts.map(post => (
@@ -27,7 +27,6 @@ Feed.propTypes = {
             })
         ).isRequired
     }).isRequired,
-    onPost: PropTypes.func.isRequired,
     onLike: PropTypes.func.isRequired,
     onComment: PropTypes.func.isRequired
 };

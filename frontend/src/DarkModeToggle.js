@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { FaMoon, FaSun } from 'react-icons/fa';
 import './DarkModeToggle.css';
 
@@ -9,12 +9,13 @@ const DarkModeToggle = ({ darkMode, setDarkMode }) => {
             setDarkMode(savedMode);
             document.body.classList.add('dark-mode');
         }
-    }, []);
+    }, [setDarkMode]);
 
     const toggleDarkMode = () => {
-        setDarkMode(!darkMode);
-        document.body.classList.toggle('dark-mode');
-        localStorage.setItem('darkMode', JSON.stringify(!darkMode));
+        const newMode = !darkMode;
+        setDarkMode(newMode);
+        document.body.classList.toggle('dark-mode', newMode);
+        localStorage.setItem('darkMode', JSON.stringify(newMode));
     };
 
     return (

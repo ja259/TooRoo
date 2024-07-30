@@ -1,34 +1,39 @@
 .settings-container {
     padding: 20px;
-    background-color: #1a1a1a;
+    background-color: #2a2a2a;
     color: #fff;
-    border-radius: 8px;
-    width: 100%;
-    max-width: 400px;
-    margin: 20px auto;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    border-radius: 12px;
+    max-width: 500px;
+    margin: 40px auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .settings-item {
-    margin-bottom: 20px;
+    margin-bottom: 24px;
 }
 
 .settings-item label {
     display: block;
-    margin-bottom: 10px;
-    font-size: 16px;
+    margin-bottom: 8px;
+    font-size: 18px;
 }
 
 .settings-item input[type="checkbox"] {
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
+    accent-color: #00bcd4;
 }
 
 .settings-item button {
-    padding: 10px;
-    border-radius: 5px;
+    padding: 12px;
+    border-radius: 6px;
     border: none;
     background-color: #444;
     color: #fff;
     cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.settings-item button:hover {
+    background-color: #555;
 }
