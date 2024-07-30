@@ -1,18 +1,18 @@
 import * as chai from 'chai';
 import sinon from 'sinon';
 import crypto from 'crypto';
-import pkg from 'multer-gridfs-storage';
+import multerGridfsStorage from 'multer-gridfs-storage';
 import config from '../../../config/config.js';
 import storage from '../../../config/gridFsStorageConfig.js';
 
-const { expect, should } = chai;
-should();
+const { expect } = chai;
+chai.should();
 
 describe('GridFS Storage Config Tests', () => {
     let gridFsStorageStub;
 
     before(() => {
-        gridFsStorageStub = sinon.stub(pkg, 'GridFsStorage').callsFake((options) => {
+        gridFsStorageStub = sinon.stub(multerGridfsStorage, 'GridFsStorage').callsFake((options) => {
             return {
                 url: options.url,
                 file: options.file
