@@ -23,9 +23,6 @@ import config from './config/config.js';
 
 dotenv.config();
 
-console.log("Loading environment variables...");
-console.log("Loaded Environment Variables:", process.env);
-
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -36,7 +33,6 @@ const io = new Server(server, {
 });
 const port = config.port || 5000;
 
-// Security Middleware
 app.use(helmet());
 app.use(xss());
 app.use(hpp());
@@ -47,7 +43,6 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-// CORS configuration
 app.use(cors({
     origin: process.env.CORS_ORIGIN.split(','),
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -56,35 +51,28 @@ app.use(cors({
     optionsSuccessStatus: 200
 }));
 
-// Body parser middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Connect to MongoDB
 connectDB();
 
-// Multer for file uploads
 const upload = multer({ storage: gridFsStorage });
 
-// Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', authenticate, userRoutes);
 app.use('/api/posts', authenticate, postRoutes);
 app.use('/api/media', authenticate, mediaRoutes);
 
-// File upload route
 app.post('/upload', authenticate, upload.single('file'), (req, res) => {
     res.status(200).send({ message: 'File uploaded successfully', fileName: req.file.filename });
 });
 
-// Web Push configuration
 webPush.setVapidDetails(
     'mailto:example@yourdomain.org',
     config.vapidPublicKey,
     config.vapidPrivateKey
 );
 
-// Push notification subscription route
 app.post('/subscribe', (req, res) => {
     const subscription = req.body;
     res.status(201).json({});
@@ -92,11 +80,9 @@ app.post('/subscribe', (req, res) => {
     webPush.sendNotification(subscription, payload).catch(error => console.error(error.stack));
 });
 
-// Error handling middleware
 app.use(notFound);
 app.use(errorHandler);
 
-// Serve static assets in production
 if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.join(path.resolve(), 'frontend', 'build')));
     app.get('*', (req, res) => {
@@ -104,7 +90,6 @@ if (process.env.NODE_ENV === 'production') {
     });
 }
 
-// Socket.io configuration
 io.on('connection', (socket) => {
     console.log('New client connected');
     socket.on('message', (message) => {
@@ -115,10 +100,8 @@ io.on('connection', (socket) => {
     });
 });
 
-// Start the server
 server.listen(port, () => console.log(`Server running on port ${port}`));
 
-// Gracefully disconnect from MongoDB
 process.on('SIGINT', async () => {
     await disconnectDB();
     process.exit(0);
