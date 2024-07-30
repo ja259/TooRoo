@@ -31,7 +31,7 @@ const Profile = ({ userId, isCurrentUser }) => {
     const handleFollow = async () => {
         try {
             const token = JSON.parse(localStorage.getItem('user'))?.token;
-            const response = await axios.post(`http://localhost:5000/api/users/${userId}/follow`, {}, {
+            await axios.post(`http://localhost:5000/api/users/${userId}/follow`, {}, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             setUser((prevUser) => ({
