@@ -149,7 +149,7 @@ describe('Post Controller Tests', () => {
                 .get('/api/posts/following-videos')
                 .set('Authorization', `Bearer ${token}`)
                 .end((err, res) => {
-                    expect(res).to.have.status(200);
+                    expect(res).to.Argumentshave.status(200);
                     expect(res.body).to.be.an('array');
                     done();
                 });
