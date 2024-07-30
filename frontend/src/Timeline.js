@@ -7,6 +7,8 @@ const Timeline = () => {
     const [posts, setPosts] = useState([]);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(true);
+    const [comment, setComment] = useState('');
+    const [sharedPostId, setSharedPostId] = useState(null);
 
     useEffect(() => {
         const fetchPosts = async () => {
@@ -58,12 +60,52 @@ const Timeline = () => {
         }
     };
 
-    const handleComment = (postId) => {
-        // Add functionality to handle commenting
+    const handleComment = async (postId) => {
+        const user = JSON.parse(localStorage.getItem('user'));
+        const token = user?.token;
+
+        if (!token) {
+            setError('User not authenticated');
+            return;
+        }
+
+        if (!comment) {
+            setError('Comment cannot be empty');
+            return;
+        }
+
+        try {
+            const response = await axios.post(`http://localhost:5000/api/posts/${postId}/comment`, { comment }, {
+                headers: { 'Authorization': `Bearer ${token}` },
+            });
+            setPosts((prevPosts) =>
+                prevPosts.map((post) =>
+                    post._id === postId ? { ...post, comments: [...post.comments, response.data] } : post
+                )
+            );
+            setComment('');
+        } catch (error) {
+            console.error('Error adding comment:', error);
+        }
     };
 
-    const handleShare = (postId) => {
-        // Add functionality to handle sharing
+    const handleShare = async (postId) => {
+        const user = JSON.parse(localStorage.getItem('user'));
+        const token = user?.token;
+
+        if (!token) {
+            setError('User not authenticated');
+            return;
+        }
+
+        try {
+            const response = await axios.post(`http://localhost:5000/api/posts/${postId}/share`, {}, {
+                headers: { 'Authorization': `Bearer ${token}` },
+            });
+            setSharedPostId(response.data._id); // assuming the shared post returns a new post ID
+        } catch (error) {
+            console.error('Error sharing post:', error);
+        }
     };
 
     if (loading) {
@@ -97,6 +139,15 @@ const Timeline = () => {
                         <button className="icon-button" onClick={() => handleShare(post._id)}>
                             <FaShare className="icon" title="Share" />
                         </button>
+                        <div className="comment-section">
+                            <input
+                                type="text"
+                                value={comment}
+                                onChange={(e) => setComment(e.target.value)}
+                                placeholder="Add a comment..."
+                            />
+                            <button onClick={() => handleComment(post._id)}>Comment</button>
+                        </div>
                     </div>
                 </div>
             ))}
