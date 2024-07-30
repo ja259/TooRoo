@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import './Notifications.css';
 
 const Notifications = () => {
     const [notifications, setNotifications] = useState([]);
@@ -32,10 +33,10 @@ const Notifications = () => {
     }
 
     return (
-        <div>
+        <div className="notifications-container">
             <h2>Notifications</h2>
             {notifications.map(notification => (
-                <div key={notification._id}>
+                <div key={notification._id} className="notification">
                     <p>{notification.message}</p>
                 </div>
             ))}

@@ -1,0 +1,27 @@
+.create-video {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px;
+    background-color: #1a1a1a;
+    color: #ffffff;
+}
+
+.create-video h2 {
+    font-size: 2.5em;
+    margin-bottom: 16px;
+}
+
+.create-video button {
+    padding: 12px 24px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.create-video button:hover {
+    background-color: #0056b3;
+}

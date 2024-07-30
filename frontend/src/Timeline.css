@@ -1,33 +1,18 @@
-/* General styling for the timeline */
 .timeline {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    padding: 20px;
-    background-color: #f5f5f5;
+    gap: 16px;
+    padding: 24px;
+    background-color: #1a1a1a;
+    color: #ffffff;
 }
 
-/* Loading and error messages */
-.loading,
-.error {
-    margin-top: 20px;
-    font-size: 18px;
-    color: #ff0000;
-}
-
-/* Styling for individual posts */
 .post {
-    background-color: #ffffff;
-    border: 1px solid #ddd;
+    background-color: #333;
+    padding: 16px;
     border-radius: 8px;
-    margin-bottom: 20px;
-    padding: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 600px;
 }
 
-/* Post header styling */
 .post-header {
     display: flex;
     align-items: center;
@@ -38,70 +23,43 @@
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    margin-right: 10px;
+    margin-right: 12px;
 }
 
 .post-author {
     font-weight: bold;
-    font-size: 16px;
-    color: #333;
 }
 
-/* Post content styling */
 .post-content {
-    margin: 16px 0;
-}
-
-.post-image,
-.post-video {
-    width: 100%;
-    border-radius: 8px;
-    margin-top: 10px;
-}
-
-.post-video {
-    max-height: 500px;
-}
-
-/* Post footer styling */
-.post-footer {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    margin-top: 16px;
-}
-
-/* Icon button styling */
-.icon-button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 10px;
-}
-
-.icon {
-    font-size: 24px;
-    color: #007bff;
-    transition: color 0.3s;
-}
-
-.icon:hover {
-    color: #0056b3;
-}
-
-/* Additional utility classes */
-.text-center {
-    text-align: center;
-}
-
-.mb-4 {
     margin-bottom: 16px;
 }
 
-.mt-4 {
+.post-image {
+    width: 100%;
+    border-radius: 8px;
     margin-top: 16px;
 }
 
-.p-4 {
-    padding: 16px;
+.post-video {
+    width: 100%;
+    border-radius: 8px;
+    margin-top: 16px;
+}
+
+.post-footer {
+    display: flex;
+    gap: 16px;
+}
+
+.icon-button {
+    background: none;
+    border: none;
+    color: #ffffff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.icon {
+    margin-right: 8px;
 }

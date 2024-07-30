@@ -1,97 +1,48 @@
 .menu {
-    position: fixed;
-    top: 0;
-    right: -300px;
-    width: 300px;
-    height: 100vh;
-    background-color: #2c3e50;
-    color: #ecf0f1;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    transition: right 0.3s ease;
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 300px;
+    height: 100%;
+    background-color: #333;
+    color: #fff;
+    transition: transform 0.3s;
+    transform: translateX(100%);
     z-index: 1000;
-    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
-    padding-top: 60px; /* Space for the fixed navbar */
 }
 
 .menu.open {
-    right: 0;
+    transform: translateX(0);
 }
 
 .menu-profile {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    margin-bottom: 20px;
-    padding: 20px;
-    background-color: #34495e;
-    width: 100%;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
-    border-bottom: 1px solid #7f8c8d;
+    padding: 16px;
+    background-color: #444;
 }
 
-.menu-profile .profile-picture {
-    width: 100px;
-    height: 100px;
+.profile-picture {
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
-    margin-bottom: 10px;
-    border: 2px solid #ecf0f1;
-}
-
-.menu-profile span {
-    font-size: 18px;
-    font-weight: bold;
-    color: #ecf0f1;
+    margin-right: 16px;
 }
 
 .menu-item {
-    width: 100%;
-    padding: 15px 20px;
-    text-align: left;
-    color: #ecf0f1;
-    text-decoration: none;
     display: flex;
     align-items: center;
-    transition: background 0.3s, transform 0.3s;
-    margin-bottom: 5px;
-    font-size: 1.1em;
+    padding: 16px;
+    transition: background-color 0.3s;
+    cursor: pointer;
 }
 
 .menu-item:hover {
-    background-color: #1abc9c;
-    transform: translateX(10px);
-    color: #ffffff;
+    background-color: #555;
 }
 
 .menu-item svg {
-    margin-right: 10px;
-}
-
-.menu-item button {
-    background: none;
-    border: none;
-    color: inherit;
-    cursor: pointer;
-    font: inherit;
-    width: 100%;
-    text-align: left;
-    padding: 0;
-}
-
-.menu-item button:hover {
-    background-color: #1abc9c;
-    transform: translateX(10px);
-    color: #ffffff;
-}
-
-@media (max-width: 768px) {
-    .menu {
-        width: 100%;
-        right: -100%;
-    }
-
-    .menu.open {
-        right: 0;
-    }
+    margin-right: 16px;
 }

@@ -1,7 +1,9 @@
 .profile-page {
+  display: flex;
+  flex-direction: column;
+  background-color: #1a1a1a;
+  color: #ffffff;
   padding: 24px;
-  max-width: 700px;
-  margin: auto;
 }
 
 .profile-header {
@@ -11,56 +13,75 @@
 }
 
 .profile-avatar {
-  width: 120px;
-  height: 120px;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
   margin-right: 24px;
 }
 
 .profile-info {
-  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .profile-info h2 {
   margin: 0;
-  font-size: 28px;
 }
 
 .profile-info p {
-  margin: 8px 0;
+  margin-top: 8px;
+  color: #cccccc;
+}
+
+.follow, .message {
+  padding: 8px 16px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.follow:hover, .message:hover {
+  background-color: #0056b3;
 }
 
 .profile-stats {
+  margin-top: 16px;
   display: flex;
-  justify-content: space-between;
+  gap: 16px;
 }
 
 .profile-tabs {
   display: flex;
-  justify-content: space-around;
+  gap: 16px;
   margin-bottom: 24px;
 }
 
 .profile-tabs button {
-  padding: 12px 24px;
-  border: none;
+  padding: 8px 16px;
   background: none;
+  border: none;
+  color: #ffffff;
   cursor: pointer;
-  font-size: 18px;
   transition: color 0.3s;
 }
 
-.profile-tabs .active {
-  border-bottom: 2px solid #000;
+.profile-tabs button.active {
+  color: #007bff;
 }
 
 .profile-content {
   display: flex;
   flex-direction: column;
+  gap: 16px;
 }
 
-.post, .video {
-  margin-bottom: 24px;
+.text-content .post {
+  background-color: #333;
+  padding: 16px;
+  border-radius: 8px;
 }
 
 .post-header {
@@ -69,46 +90,90 @@
   margin-bottom: 16px;
 }
 
-.post-header .avatar {
-  width: 48px;
-  height: 48px;
+.avatar {
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   margin-right: 12px;
 }
 
+.username {
+  font-weight: bold;
+}
+
+.timestamp {
+  color: #cccccc;
+  margin-left: 8px;
+}
+
+.post-content {
+  margin-bottom: 16px;
+}
+
 .post-content img {
-  max-width: 100%;
-  height: auto;
-  margin-top: 12px;
-  border-radius: 12px;
+  width: 100%;
+  border-radius: 8px;
+  margin-top: 16px;
 }
 
 .post-actions {
   display: flex;
-  justify-content: space-around;
-  margin-top: 12px;
+  gap: 16px;
+}
+
+.post-actions button {
+  background: none;
+  border: none;
+  color: #ffffff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.post-actions button:hover {
+  color: #007bff;
+}
+
+.video-content .video {
+  background-color: #333;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.video-content video {
+  width: 100%;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.video-content span {
+  display: block;
+  text-align: right;
+  color: #cccccc;
 }
 
 .bottom-nav {
   display: flex;
   justify-content: space-around;
-  padding: 12px 0;
-  background-color: #f8f8f8;
-  position: fixed;
-  width: 100%;
-  bottom: 0;
-  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  background-color: #333;
+  border-radius: 8px;
+  margin-top: 24px;
 }
 
 .bottom-nav a {
+  color: #ffffff;
+  text-decoration: none;
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-decoration: none;
-  color: #000;
-  font-size: 16px;
 }
 
-.bottom-nav .active {
+.bottom-nav a.active {
   color: #007bff;
+}
+
+.bottom-nav a span {
+  margin-top: 4px;
+  font-size: 0.875em;
 }
