@@ -1,0 +1,21 @@
+.notifications-container {
+    padding: 24px;
+    background-color: #1a1a1a;
+    color: #ffffff;
+}
+
+.notifications-container h2 {
+    font-size: 2.5em;
+    margin-bottom: 16px;
+}
+
+.notification {
+    background-color: #333;
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+}
+
+.notification p {
+    margin: 0;
+}

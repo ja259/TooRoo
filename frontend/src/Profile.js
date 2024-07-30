@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FaEdit, FaShare, FaThumbsUp, FaComment, FaHome, FaInbox, FaBell, FaUser, FaVideo } from 'react-icons/fa';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate, useParams } from 'react-router-dom';
 import './Profile.css';
 
-const Profile = ({ userId, isCurrentUser }) => {
+const Profile = () => {
+    const { id } = useParams();
     const [user, setUser] = useState(null);
     const [activeTab, setActiveTab] = useState('text');
     const [loading, setLoading] = useState(true);
@@ -15,7 +16,7 @@ const Profile = ({ userId, isCurrentUser }) => {
         const fetchUser = async () => {
             try {
                 const token = JSON.parse(localStorage.getItem('user'))?.token;
-                const response = await axios.get(`http://localhost:5000/api/users/${userId}`, {
+                const response = await axios.get(`http://localhost:5000/api/users/${id}`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 setUser(response.data);
@@ -26,12 +27,12 @@ const Profile = ({ userId, isCurrentUser }) => {
             }
         };
         fetchUser();
-    }, [userId]);
+    }, [id]);
 
     const handleFollow = async () => {
         try {
             const token = JSON.parse(localStorage.getItem('user'))?.token;
-            await axios.post(`http://localhost:5000/api/users/${userId}/follow`, {}, {
+            await axios.post(`http://localhost:5000/api/users/${id}/follow`, {}, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             setUser((prevUser) => ({
@@ -104,16 +105,10 @@ const Profile = ({ userId, isCurrentUser }) => {
                 <img src={user.avatar} alt="Profile" className="profile-avatar" />
                 <div className="profile-info">
                     <h2>{user.username}</h2>
-                    {isCurrentUser ? (
-                        <button className="edit-profile"><FaEdit /> Edit Profile</button>
-                    ) : (
-                        <>
-                            <button className="follow" onClick={handleFollow}>
-                                {user.isFollowing ? 'Following' : 'Follow'}
-                            </button>
-                            <button className="message" onClick={handleMessage}><FaInbox /> Message</button>
-                        </>
-                    )}
+                    <button className="follow" onClick={handleFollow}>
+                        {user.isFollowing ? 'Following' : 'Follow'}
+                    </button>
+                    <button className="message" onClick={handleMessage}><FaInbox /> Message</button>
                     <p>{user.bio}</p>
                 </div>
                 <div className="profile-stats">

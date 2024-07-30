@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FaPhoneAlt, FaVideo, FaBan, FaPaperPlane, FaUserLock } from 'react-icons/fa';
+import { FaPhoneAlt, FaVideo, FaUserLock, FaPaperPlane } from 'react-icons/fa';
 import io from 'socket.io-client';
 import './Inbox.css';
 
