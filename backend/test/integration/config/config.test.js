@@ -72,16 +72,21 @@ describe('Config Tests', () => {
         }
     });
 
-    it('should validate the JWT_SECRET is strong enough', () => {
+    it('should validate the JWT_SECRET is strong enough', async () => {
+        const originalJwtSecret = process.env.JWT_SECRET;
         process.env.JWT_SECRET = 'short';
+        let error;
+
         try {
-            import('../config/config.js');
-        } catch (error) {
-            expect(error).to.be.an('error');
-            expect(error.message).to.include('JWT_SECRET is not strong enough');
+            await import('../config/config.js');
+        } catch (err) {
+            error = err;
         } finally {
-            process.env.JWT_SECRET = 'be6d6d896749bda35785328067438d2a052e8b8335197c60a234de8af787aa1000357576601c187c74ce8101134404bb60bf0eff22c54eef9ccc30f9a25c57ff';
+            process.env.JWT_SECRET = originalJwtSecret;
         }
+
+        expect(error).to.be.an('error');
+        expect(error.message).to.include('JWT_SECRET is not strong enough');
     });
 
     it('should validate that PORT is a number', () => {

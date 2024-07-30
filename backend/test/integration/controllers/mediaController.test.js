@@ -5,7 +5,6 @@ import User from '../../../models/User.js';
 import Video from '../../../models/Video.js';
 import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
-import fs from 'fs';
 import path from 'path';
 
 chai.use(chaiHttp);

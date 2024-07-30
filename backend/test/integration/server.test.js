@@ -31,7 +31,9 @@ describe('Server and Routes Tests', function () {
             const user = {
                 username: 'testuser',
                 email: 'testuser@example.com',
-                password: 'password123'
+                password: 'password123',
+                phone: '1234567890',
+                securityQuestions: [{ question: 'q1', answer: 'a1' }, { question: 'q2', answer: 'a2' }, { question: 'q3', answer: 'a3' }]
             };
             chai.request(server)
                 .post('/api/auth/register')
@@ -48,13 +50,15 @@ describe('Server and Routes Tests', function () {
             const user = new User({
                 username: 'testuser',
                 email: 'testuser@example.com',
-                password: 'password123'
+                password: 'password123',
+                phone: '1234567890',
+                securityQuestions: [{ question: 'q1', answer: 'a1' }, { question: 'q2', answer: 'a2' }, { question: 'q3', answer: 'a3' }]
             });
             await user.save();
 
             const res = await chai.request(server)
                 .post('/api/auth/login')
-                .send({ email: 'testuser@example.com', password: 'password123' });
+                .send({ emailOrPhone: 'testuser@example.com', password: 'password123' });
 
             expect(res).to.have.status(200);
             expect(res.body).to.be.an('object');
@@ -64,25 +68,26 @@ describe('Server and Routes Tests', function () {
 
     describe('User Routes', () => {
         let token;
+        let user;
 
         before(async () => {
-            const user = new User({
+            user = new User({
                 username: 'testuser',
                 email: 'testuser@example.com',
-                password: 'password123'
+                password: 'password123',
+                phone: '1234567890',
+                securityQuestions: [{ question: 'q1', answer: 'a1' }, { question: 'q2', answer: 'a2' }, { question: 'q3', answer: 'a3' }]
             });
             await user.save();
 
             const res = await chai.request(server)
                 .post('/api/auth/login')
-                .send({ email: 'testuser@example.com', password: 'password123' });
+                .send({ emailOrPhone: 'testuser@example.com', password: 'password123' });
 
             token = res.body.token;
         });
 
         it('should get user details on /api/users/:id GET', async () => {
-            const user = await User.findOne({ email: 'testuser@example.com' });
-
             const res = await chai.request(server)
                 .get(`/api/users/${user._id}`)
                 .set('Authorization', `Bearer ${token}`);
@@ -94,7 +99,6 @@ describe('Server and Routes Tests', function () {
         });
 
         it('should update user profile on /api/users/:id PUT', async () => {
-            const user = await User.findOne({ email: 'testuser@example.com' });
             const updatedData = {
                 username: 'updateduser',
                 bio: 'This is an updated bio',
@@ -123,13 +127,15 @@ describe('Server and Routes Tests', function () {
             user = new User({
                 username: 'testuser',
                 email: 'testuser@example.com',
-                password: 'password123'
+                password: 'password123',
+                phone: '1234567890',
+                securityQuestions: [{ question: 'q1', answer: 'a1' }, { question: 'q2', answer: 'a2' }, { question: 'q3', answer: 'a3' }]
             });
             await user.save();
 
             const res = await chai.request(server)
                 .post('/api/auth/login')
-                .send({ email: 'testuser@example.com', password: 'password123' });
+                .send({ emailOrPhone: 'testuser@example.com', password: 'password123' });
 
             token = res.body.token;
         });
@@ -214,13 +220,15 @@ describe('Server and Routes Tests', function () {
             user = new User({
                 username: 'testuser',
                 email: 'testuser@example.com',
-                password: 'password123'
+                password: 'password123',
+                phone: '1234567890',
+                securityQuestions: [{ question: 'q1', answer: 'a1' }, { question: 'q2', answer: 'a2' }, { question: 'q3', answer: 'a3' }]
             });
             await user.save();
 
             const res = await chai.request(server)
                 .post('/api/auth/login')
-                .send({ email: 'testuser@example.com', password: 'password123' });
+                .send({ emailOrPhone: 'testuser@example.com', password: 'password123' });
 
             token = res.body.token;
         });
