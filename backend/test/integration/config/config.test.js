@@ -15,7 +15,7 @@ describe('Config Tests', () => {
     let config;
 
     before(async () => {
-        const conf = await import('../config/config.js');
+        const conf = await import('../../config/config.js');
         config = conf.default;
     });
 
@@ -63,7 +63,7 @@ describe('Config Tests', () => {
         clearEnvVars();
 
         try {
-            await import('../config/config.js');
+            await import('../../config/config.js');
         } catch (error) {
             expect(error).to.be.an('error');
             expect(error.message).to.include('Missing required environment variable');
@@ -78,7 +78,7 @@ describe('Config Tests', () => {
         let error;
 
         try {
-            await import('../config/config.js');
+            await import('../../config/config.js');
         } catch (err) {
             error = err;
         } finally {
