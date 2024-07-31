@@ -1,7 +1,7 @@
 import * as chai from 'chai';
 import sinon from 'sinon';
 import nodemailer from 'nodemailer';
-import emailService from '../../../services/emailService.js';
+import emailService from '../../../utils/emailService.js';
 
 const { expect } = chai;
 
