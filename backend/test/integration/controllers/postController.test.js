@@ -1,5 +1,5 @@
 import * as chai from 'chai';
-import chaiHttp from 'chai-http';
+import chaiHttp from 'chai-http/index.js';
 import server from '../../../server.js';
 import User from '../../../models/User.js';
 import Post from '../../../models/Post.js';
@@ -149,7 +149,7 @@ describe('Post Controller Tests', () => {
                 .get('/api/posts/following-videos')
                 .set('Authorization', `Bearer ${token}`)
                 .end((err, res) => {
-                    expect(res).to.Argumentshave.status(200);
+                    expect(res).to.have.status(200);
                     expect(res.body).to.be.an('array');
                     done();
                 });

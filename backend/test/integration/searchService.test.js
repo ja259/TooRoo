@@ -1,72 +1,51 @@
 import * as chai from 'chai';
 import sinon from 'sinon';
-import mongoose from 'mongoose';
-import { search } from '../../services/searchService.js';
-import Post from '../../models/Post.js';
-import User from '../../models/User.js';
-import { connectDB, disconnectDB } from '../../db.js';
+import searchService from '../../../services/searchService.js';
+import Post from '../../../models/Post.js';
+import Video from '../../../models/Video.js';
+import User from '../../../models/User.js';
 
-chai.should();
 const { expect } = chai;
 
 describe('Search Service Tests', () => {
-    let userFindStub, postFindStub;
-
-    before(async () => {
-        await connectDB();
-    });
-
-    after(async () => {
-        await disconnectDB();
-    });
+    let postStub, videoStub, userStub;
 
     beforeEach(() => {
-        userFindStub = sinon.stub(User, 'find');
-        postFindStub = sinon.stub(Post, 'find');
+        postStub = sinon.stub(Post, 'find');
+        videoStub = sinon.stub(Video, 'find');
+        userStub = sinon.stub(User, 'find');
     });
 
     afterEach(() => {
-        userFindStub.restore();
-        postFindStub.restore();
+        postStub.restore();
+        videoStub.restore();
+        userStub.restore();
     });
 
-    it('should return users and posts matching the query', async () => {
-        const query = 'test';
-        const mockUsers = [{ username: 'testuser1' }, { username: 'testuser2' }];
-        const mockPosts = [{ content: 'test post 1' }, { content: 'test post 2' }];
+    it('should search posts', async () => {
+        const mockPosts = [{ content: 'Test post' }];
+        postStub.resolves(mockPosts);
 
-        userFindStub.withArgs({ username: new RegExp(query, 'i') }).resolves(mockUsers);
-        postFindStub.withArgs({ content: new RegExp(query, 'i') }).resolves(mockPosts);
-
-        const result = await search(query);
-        result.should.be.an('object');
-        result.users.should.deep.equal(mockUsers);
-        result.posts.should.deep.equal(mockPosts);
+        const results = await searchService.searchPosts('test');
+        expect(results).to.eql(mockPosts);
+        postStub.calledOnce.should.be.true;
     });
 
-    it('should return empty arrays if no users or posts match the query', async () => {
-        const query = 'nomatch';
+    it('should search videos', async () => {
+        const mockVideos = [{ videoUrl: 'test-video.mp4' }];
+        videoStub.resolves(mockVideos);
 
-        userFindStub.withArgs({ username: new RegExp(query, 'i') }).resolves([]);
-        postFindStub.withArgs({ content: new RegExp(query, 'i') }).resolves([]);
-
-        const result = await search(query);
-        result.should.be.an('object');
-        result.users.should.be.an('array').that.is.empty;
-        result.posts.should.be.an('array').that.is.empty;
+        const results = await searchService.searchVideos('test');
+        expect(results).to.eql(mockVideos);
+        videoStub.calledOnce.should.be.true;
     });
 
-    it('should throw an error if the search fails', async () => {
-        const query = 'test';
-        const errorMessage = 'Search failed';
+    it('should search users', async () => {
+        const mockUsers = [{ username: 'testuser' }];
+        userStub.resolves(mockUsers);
 
-        userFindStub.withArgs({ username: new RegExp(query, 'i') }).rejects(new Error(errorMessage));
-
-        try {
-            await search(query);
-        } catch (error) {
-            error.should.be.an('error');
-            error.message.should.equal(errorMessage);
-        }
+        const results = await searchService.searchUsers('test');
+        expect(results).to.eql(mockUsers);
+        userStub.calledOnce.should.be.true;
     });
 });

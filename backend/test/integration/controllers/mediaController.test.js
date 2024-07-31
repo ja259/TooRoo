@@ -1,5 +1,5 @@
 import * as chai from 'chai';
-import chaiHttp from 'chai-http';
+import chaiHttp from 'chai-http/index.js';
 import server from '../../../server.js';
 import User from '../../../models/User.js';
 import Video from '../../../models/Video.js';
@@ -45,7 +45,7 @@ describe('Media Controller Tests', () => {
             chai.request(server)
                 .post('/api/media/upload')
                 .set('Authorization', `Bearer ${token}`)
-                .attach('video', path.resolve(__dirname, '../test-files/test-video.mp4'))
+                .attach('video', path.resolve(__dirname, '../../test-files/test-video.mp4'))
                 .end((err, res) => {
                     expect(res).to.have.status(201);
                     expect(res.body).to.have.property('message', 'Video uploaded successfully');

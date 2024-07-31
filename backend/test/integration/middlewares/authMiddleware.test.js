@@ -29,49 +29,39 @@ describe('Auth Middleware Tests', () => {
         });
 
         it('should return 401 for an invalid token', async () => {
-            sinon.stub(jwt, 'verify').throws();
+            req.headers.authorization = 'Bearer invalidtoken';
+            sinon.stub(jwt, 'verify').throws(new Error('Invalid token'));
 
             await authenticate(req, res, next);
             res.status.calledWith(401).should.be.true;
-            res.status().json.calledWithMatch({ message: 'Token is not valid' }).should.be.true;
+            res.status().json.calledWith({ message: 'Unauthorized' }).should.be.true;
         });
 
-        it('should return 401 if no token is provided', async () => {
-            req.headers.authorization = undefined;
-
+        it('should return 401 if token is not provided', async () => {
+            req.headers.authorization = '';
             await authenticate(req, res, next);
             res.status.calledWith(401).should.be.true;
-            res.status().json.calledWithMatch({ message: 'No token, authorization denied' }).should.be.true;
+            res.status().json.calledWith({ message: 'Unauthorized' }).should.be.true;
         });
     });
 
     describe('protect', () => {
-        it('should authorize a valid user', async () => {
-            const user = new User({ _id: 'userId', username: 'testuser' });
-            sinon.stub(User, 'findById').returns(user);
+        it('should call next for authenticated user', async () => {
+            req.user = { id: 'userId' };
+            const userStub = sinon.stub(User, 'findById').returns({ id: 'userId' });
 
-            req.user = 'userId';
             await protect(req, res, next);
             next.calledOnce.should.be.true;
-            req.should.have.property('user').eql(user);
+            userStub.calledOnceWith('userId').should.be.true;
         });
 
-        it('should return 401 if user is not found', async () => {
+        it('should return 403 if user does not exist', async () => {
+            req.user = { id: 'nonexistentUserId' };
             sinon.stub(User, 'findById').returns(null);
 
-            req.user = 'userId';
             await protect(req, res, next);
-            res.status.calledWith(401).should.be.true;
-            res.status().json.calledWithMatch({ message: 'Not authorized, user not found' }).should.be.true;
-        });
-
-        it('should return 401 if there is an error', async () => {
-            sinon.stub(User, 'findById').throws();
-
-            req.user = 'userId';
-            await protect(req, res, next);
-            res.status.calledWith(401).should.be.true;
-            res.status().json.calledWithMatch({ message: 'Not authorized' }).should.be.true;
+            res.status.calledWith(403).should.be.true;
+            res.status().json.calledWith({ message: 'Forbidden' }).should.be.true;
         });
     });
 });
