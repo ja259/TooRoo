@@ -1,9 +1,9 @@
 import * as chai from 'chai';
 import sinon from 'sinon';
 import searchService from '../../services/searchService.js';
-import Post from '../../../models/Post.js';
-import Video from '../../../models/Video.js';
-import User from '../../../models/User.js';
+import Post from '../../models/Post.js';
+import Video from '../../models/Video.js';
+import User from '../../models/User.js';
 
 const { expect } = chai;
 
