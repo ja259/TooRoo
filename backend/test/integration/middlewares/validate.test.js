@@ -84,7 +84,7 @@ describe('Validation Middleware Tests', () => {
     describe('validateResetPassword', () => {
         it('should validate reset password request', () => {
             req.body = { password: 'newpassword123', securityAnswers: ['Answer1', 'Answer2', 'Answer3'] };
-            sinon.stub(validationResult(req), 'isEmpty').returns(true);
+            sinon.stub(validationResult(req), 'isEmpty').returns.true;
 
             validateResetPassword[validateResetPassword.length - 1](req, res, next);
             next.calledOnce.should.be.true;
