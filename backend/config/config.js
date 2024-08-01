@@ -17,7 +17,7 @@ const config = {
     emailService: process.env.EMAIL_SERVICE,
     vapidPublicKey: process.env.VAPID_PUBLIC_KEY,
     vapidPrivateKey: process.env.VAPID_PRIVATE_KEY,
+    gridFsBucket: process.env.GRIDFS_BUCKET || 'uploads',
 };
 
 export default config;
-

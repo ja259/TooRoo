@@ -4,7 +4,7 @@ import path from 'path';
 import config from './config.js';
 
 const mongoURI = config.dbUri;
-const bucketName = process.env.GRIDFS_BUCKET || 'uploads';
+const bucketName = config.gridFsBucket;
 
 if (!mongoURI) {
     throw new Error('MONGODB_URI environment variable is not defined');
