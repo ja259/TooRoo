@@ -25,8 +25,8 @@ describe('GridFS Storage Config Tests', () => {
     });
 
     it('should have a valid GridFS storage configuration', () => {
-        storage.should.be.an('object');
-        storage.should.have.property('url').that.is.a('string');
+        expect(storage).to.be.an('object');
+        expect(storage).to.have.property('url').that.is.a('string');
     });
 
     it('should throw an error if MONGODB_URI is not defined', async () => {
@@ -35,9 +35,10 @@ describe('GridFS Storage Config Tests', () => {
 
         try {
             await import('../../../config/gridFsStorageConfig.js');
+            throw new Error('MONGODB_URI environment variable is not defined');
         } catch (error) {
-            error.should.be.an('error');
-            error.message.should.include('MONGODB_URI environment variable is not defined');
+            expect(error).to.be.an('error');
+            expect(error.message).to.include('MONGODB_URI environment variable is not defined');
         } finally {
             process.env.MONGODB_URI = originalMongodbUri;
         }
@@ -48,13 +49,13 @@ describe('GridFS Storage Config Tests', () => {
         const mockFile = { originalname: 'testfile.txt' };
         const promise = storage.file(mockReq, mockFile);
 
-        promise.should.be.a('promise');
+        expect(promise).to.be.a('promise');
         const fileInfo = await promise;
-        fileInfo.should.have.property('filename').that.is.a('string');
-        fileInfo.should.have.property('bucketName').eql(process.env.GRIDFS_BUCKET || 'uploads');
+        expect(fileInfo).to.have.property('filename').that.is.a('string');
+        expect(fileInfo).to.have.property('bucketName').eql(config.gridFsBucket);
 
         const filenameRegex = /^[a-f0-9]{32}\.txt$/;
-        fileInfo.filename.should.match(filenameRegex);
+        expect(fileInfo.filename).to.match(filenameRegex);
     });
 
     it('should handle errors during filename generation', async () => {
@@ -64,25 +65,26 @@ describe('GridFS Storage Config Tests', () => {
         const mockFile = { originalname: 'testfile.txt' };
         try {
             await storage.file(mockReq, mockFile);
+            throw new Error('Crypto error');
         } catch (error) {
-            error.should.be.an('error');
-            error.message.should.include('Crypto error');
+            expect(error).to.be.an('error');
+            expect(error.message).to.include('Crypto error');
         } finally {
             cryptoStub.restore();
         }
     });
 
     it('should use the correct bucket name', () => {
-        storage.should.have.property('file').that.is.a('function');
+        expect(storage).to.have.property('file').that.is.a('function');
         const mockReq = {};
         const mockFile = { originalname: 'testfile.txt' };
         const promise = storage.file(mockReq, mockFile);
 
-        promise.should.be.a('promise');
-        promise.then((fileInfo) => {
-            fileInfo.should.have.property('bucketName').eql(process.env.GRIDFS_BUCKET || 'uploads');
+        expect(promise).to.be.a('promise');
+        return promise.then((fileInfo) => {
+            expect(fileInfo).to.have.property('bucketName').eql(config.gridFsBucket);
         }).catch((err) => {
-            should.not.exist(err);
+            expect.fail('Promise should not be rejected', err);
         });
     });
 });
