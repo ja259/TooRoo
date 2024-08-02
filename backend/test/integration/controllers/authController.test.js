@@ -1,5 +1,5 @@
 import * as chai from 'chai';
-import chaiHttp from 'chai-http/index.js';
+import chaiHttp from 'chai-http';
 import server from '../../../server.js';
 import User from '../../../models/User.js';
 import bcrypt from 'bcryptjs';
