@@ -1,10 +1,9 @@
-import * as chai from 'chai';
+import chai from 'chai';
 import chaiHttp from 'chai-http';
 import server from '../../../server.js';
 import User from '../../../models/User.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import crypto from 'crypto';
 import { connectDB, disconnectDB } from '../../../db.js';
 
 chai.use(chaiHttp);
