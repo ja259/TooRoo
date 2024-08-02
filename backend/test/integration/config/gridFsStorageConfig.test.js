@@ -27,6 +27,7 @@ describe('GridFS Storage Config Tests', () => {
     it('should have a valid GridFS storage configuration', () => {
         expect(storage).to.be.an('object');
         expect(storage).to.have.property('url').that.is.a('string');
+        expect(storage.url).to.equal(process.env.MONGODB_URI);
     });
 
     it('should throw an error if MONGODB_URI is not defined', async () => {
@@ -35,7 +36,6 @@ describe('GridFS Storage Config Tests', () => {
 
         try {
             await import('../../../config/gridFsStorageConfig.js');
-            throw new Error('MONGODB_URI environment variable is not defined');
         } catch (error) {
             expect(error).to.be.an('error');
             expect(error.message).to.include('MONGODB_URI environment variable is not defined');

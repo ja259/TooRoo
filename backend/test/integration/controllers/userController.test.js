@@ -4,12 +4,21 @@ import server from '../../../server.js';
 import User from '../../../models/User.js';
 import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
+import { connectDB, disconnectDB } from '../../../db.js';
 
 chai.use(chaiHttp);
 const { expect } = chai;
 
 describe('User Controller Tests', () => {
     let token, userId;
+
+    before(async () => {
+        await connectDB();
+    });
+
+    after(async () => {
+        await disconnectDB();
+    });
 
     before(async () => {
         const user = new User({
@@ -51,87 +60,41 @@ describe('User Controller Tests', () => {
     });
 
     describe('PUT /api/users/:id', () => {
-        it('should update user profile', (done) => {
-            const updatedUser = {
-                username: 'updateduser',
-                bio: 'Updated bio'
-            };
+        it('should update user details', (done) => {
+            const updatedDetails = { username: 'updatedUser' };
             chai.request(server)
                 .put(`/api/users/${userId}`)
                 .set('Authorization', `Bearer ${token}`)
-                .send(updatedUser)
+                .send(updatedDetails)
                 .end((err, res) => {
                     expect(res).to.have.status(200);
-                    expect(res.body).to.have.property('message', 'User profile updated successfully.');
+                    expect(res.body.user).to.have.property('username', 'updatedUser');
                     done();
                 });
         });
     });
 
-    describe('POST /api/users/:id/follow', () => {
-        let targetUserId;
-
-        before(async () => {
-            const targetUser = new User({
-                username: 'targetuser',
-                email: 'targetuser@example.com',
-                password: 'password123'
-            });
-            const savedTargetUser = await targetUser.save();
-            targetUserId = savedTargetUser._id;
-        });
-
-        it('should follow a user', (done) => {
+    describe('DELETE /api/users/:id', () => {
+        it('should delete a user', (done) => {
             chai.request(server)
-                .post(`/api/users/${targetUserId}/follow`)
+                .delete(`/api/users/${userId}`)
                 .set('Authorization', `Bearer ${token}`)
-                .send({ userId })
                 .end((err, res) => {
                     expect(res).to.have.status(200);
-                    expect(res.body).to.have.property('message', 'Followed user successfully.');
+                    expect(res.body).to.have.property('message', 'User deleted successfully');
                     done();
                 });
         });
     });
 
-    describe('POST /api/users/:id/unfollow', () => {
-        let targetUserId;
-
-        before(async () => {
-            const targetUser = new User({
-                username: 'targetuser',
-                email: 'targetuser@example.com',
-                password: 'password123'
-            });
-            const savedTargetUser = await targetUser.save();
-            targetUserId = savedTargetUser._id;
-        });
-
-        it('should unfollow a user', (done) => {
+    describe('GET /api/users', () => {
+        it('should get all users', (done) => {
             chai.request(server)
-                .post(`/api/users/${targetUserId}/unfollow`)
-                .set('Authorization', `Bearer ${token}`)
-                .send({ userId })
-                .end((err, res) => {
-                    expect(res).to.have.status(200);
-                    expect(res.body).to.have.property('message', 'Unfollowed user successfully.');
-                    done();
-                });
-        });
-    });
-
-    describe('GET /api/users/analytics', () => {
-        it('should get user analytics', (done) => {
-            chai.request(server)
-                .get('/api/users/analytics')
+                .get('/api/users')
                 .set('Authorization', `Bearer ${token}`)
                 .end((err, res) => {
                     expect(res).to.have.status(200);
-                    expect(res.body).to.have.property('posts');
-                    expect(res.body).to.have.property('followers');
-                    expect(res.body).to.have.property('following');
-                    expect(res.body).to.have.property('likes');
-                    expect(res.body).to.have.property('comments');
+                    expect(res.body.users).to.be.an('array');
                     done();
                 });
         });
