@@ -1,7 +1,7 @@
-import chai from 'chai';
+import * as chai from 'chai';
 import sinon from 'sinon';
 import jwt from 'jsonwebtoken';
-import { authenticate, protect } from '../../../middlewares/authMiddleware.js';
+import { authenticate, protect } from '../../../middlewares/authMiddleware.js'; // Import named exports
 import User from '../../../models/User.js';
 
 const { expect } = chai;
