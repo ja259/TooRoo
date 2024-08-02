@@ -1,21 +1,19 @@
 import * as chai from 'chai';
 import sinon from 'sinon';
 import { validateRegister, validateLogin, validateForgotPassword, validateResetPassword } from '../../../middlewares/validate.js';
-import { validationResult } from 'express-validator';
 
-chai.should();
+const { expect } = chai;
 
 describe('Validation Middleware Tests', () => {
     let req, res, next;
 
     beforeEach(() => {
         req = { body: {} };
-        res = { status: sinon.stub().returns({ json: sinon.stub() }) };
+        res = {
+            status: sinon.stub().returnsThis(),
+            json: sinon.stub().returnsThis()
+        };
         next = sinon.stub();
-    });
-
-    afterEach(() => {
-        sinon.restore();
     });
 
     describe('validateRegister', () => {
@@ -25,78 +23,115 @@ describe('Validation Middleware Tests', () => {
                 email: 'testuser@example.com',
                 phone: '1234567890',
                 password: 'password123',
-                securityQuestions: ['Question 1', 'Question 2', 'Question 3']
+                securityQuestions: [
+                    { question: 'What is your pet’s name?', answer: 'Fluffy' },
+                    { question: 'What is your mother’s maiden name?', answer: 'Smith' },
+                    { question: 'What is your favorite color?', answer: 'Blue' }
+                ]
             };
-            sinon.stub(validationResult(req), 'isEmpty').returns(true);
 
-            validateRegister[validateRegister.length - 1](req, res, next);
-            next.calledOnce.should.be.true;
+            validateRegister(req, res, next);
+
+            expect(next.calledOnce).to.be.true;
         });
 
         it('should return validation error for invalid register request', () => {
-            req.body = { email: 'invalidemail', password: 'short', securityQuestions: ['Question 1'] };
-            sinon.stub(validationResult(req), 'isEmpty').returns(false);
-            sinon.stub(validationResult(req), 'array').returns([{ msg: 'Validation error' }]);
+            req.body = {
+                email: 'testuser@example.com'
+            };
 
-            validateRegister[validateRegister.length - 1](req, res, next);
-            res.status.calledWith(400).should.be.true;
+            validateRegister(req, res, next);
+
+            expect(res.status.calledWith(422)).to.be.true;
+            expect(res.json.calledWith({
+                errors: [
+                    { param: 'username', msg: 'Username is required' },
+                    { param: 'phone', msg: 'Phone number is required' },
+                    { param: 'password', msg: 'Password is required' },
+                    { param: 'securityQuestions', msg: 'Security questions are required' }
+                ]
+            })).to.be.true;
         });
     });
 
     describe('validateLogin', () => {
         it('should validate login request', () => {
-            req.body = { emailOrPhone: 'testuser@example.com', password: 'password123' };
-            sinon.stub(validationResult(req), 'isEmpty').returns(true);
+            req.body = {
+                emailOrPhone: 'testuser@example.com',
+                password: 'password123'
+            };
 
-            validateLogin[validateLogin.length - 1](req, res, next);
-            next.calledOnce.should.be.true;
+            validateLogin(req, res, next);
+
+            expect(next.calledOnce).to.be.true;
         });
 
         it('should return validation error for invalid login request', () => {
-            req.body = { emailOrPhone: 'invalidemail' };
-            sinon.stub(validationResult(req), 'isEmpty').returns(false);
-            sinon.stub(validationResult(req), 'array').returns([{ msg: 'Validation error' }]);
+            req.body = {};
 
-            validateLogin[validateLogin.length - 1](req, res, next);
-            res.status.calledWith(400).should.be.true;
+            validateLogin(req, res, next);
+
+            expect(res.status.calledWith(422)).to.be.true;
+            expect(res.json.calledWith({
+                errors: [
+                    { param: 'emailOrPhone', msg: 'Email or phone number is required' },
+                    { param: 'password', msg: 'Password is required' }
+                ]
+            })).to.be.true;
         });
     });
 
     describe('validateForgotPassword', () => {
         it('should validate forgot password request', () => {
-            req.body = { email: 'testuser@example.com', securityAnswers: ['Answer1', 'Answer2', 'Answer3'] };
-            sinon.stub(validationResult(req), 'isEmpty').returns(true);
+            req.body = {
+                email: 'testuser@example.com'
+            };
 
-            validateForgotPassword[validateForgotPassword.length - 1](req, res, next);
-            next.calledOnce.should.be.true;
+            validateForgotPassword(req, res, next);
+
+            expect(next.calledOnce).to.be.true;
         });
 
         it('should return validation error for invalid forgot password request', () => {
-            req.body = { email: 'invalidemail' };
-            sinon.stub(validationResult(req), 'isEmpty').returns(false);
-            sinon.stub(validationResult(req), 'array').returns([{ msg: 'Validation error' }]);
+            req.body = {};
 
-            validateForgotPassword[validateForgotPassword.length - 1](req, res, next);
-            res.status.calledWith(400).should.be.true;
+            validateForgotPassword(req, res, next);
+
+            expect(res.status.calledWith(422)).to.be.true;
+            expect(res.json.calledWith({
+                errors: [
+                    { param: 'email', msg: 'Email is required' }
+                ]
+            })).to.be.true;
         });
     });
 
     describe('validateResetPassword', () => {
         it('should validate reset password request', () => {
-            req.body = { password: 'newpassword123', securityAnswers: ['Answer1', 'Answer2', 'Answer3'] };
-            sinon.stub(validationResult(req), 'isEmpty').returns(true);
+            req.body = {
+                token: 'testtoken',
+                password: 'newpassword123',
+                securityAnswers: ['Fluffy', 'Smith', 'Blue']
+            };
 
-            validateResetPassword[validateResetPassword.length - 1](req, res, next);
-            next.calledOnce.should.be.true;
+            validateResetPassword(req, res, next);
+
+            expect(next.calledOnce).to.be.true;
         });
 
         it('should return validation error for invalid reset password request', () => {
-            req.body = { password: 'short', securityAnswers: ['Wrong1', 'Wrong2', 'Wrong3'] };
-            sinon.stub(validationResult(req), 'isEmpty').returns(false);
-            sinon.stub(validationResult(req), 'array').returns([{ msg: 'Validation error' }]);
+            req.body = {};
 
-            validateResetPassword[validateResetPassword.length - 1](req, res, next);
-            res.status.calledWith(400).should.be.true;
+            validateResetPassword(req, res, next);
+
+            expect(res.status.calledWith(422)).to.be.true;
+            expect(res.json.calledWith({
+                errors: [
+                    { param: 'token', msg: 'Token is required' },
+                    { param: 'password', msg: 'Password is required' },
+                    { param: 'securityAnswers', msg: 'Security answers are required' }
+                ]
+            })).to.be.true;
         });
     });
 });

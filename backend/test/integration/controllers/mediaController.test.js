@@ -6,6 +6,7 @@ import Video from '../../../models/Video.js';
 import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
 import path from 'path';
+import { connectDB, disconnectDB } from '../../../db.js';
 
 chai.use(chaiHttp);
 const { expect } = chai;
@@ -14,6 +15,14 @@ describe('Media Controller Tests', () => {
     let token, userId, videoId;
 
     before(async () => {
+        await connectDB();
+    });
+
+    after(async () => {
+        await disconnectDB();
+    });
+
+    beforeEach(async () => {
         await User.deleteMany({});
         await Video.deleteMany({});
 
@@ -35,7 +44,7 @@ describe('Media Controller Tests', () => {
         videoId = savedVideo._id;
     });
 
-    after(async () => {
+    afterEach(async () => {
         await User.deleteMany({});
         await Video.deleteMany({});
     });

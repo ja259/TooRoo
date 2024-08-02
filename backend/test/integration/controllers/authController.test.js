@@ -4,11 +4,20 @@ import server from '../../../server.js';
 import User from '../../../models/User.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { connectDB, disconnectDB } from '../../../db.js';
 
 chai.use(chaiHttp);
 const { expect } = chai;
 
 describe('Auth Controller Tests', () => {
+    before(async () => {
+        await connectDB();
+    });
+
+    after(async () => {
+        await disconnectDB();
+    });
+
     beforeEach(async () => {
         await User.deleteMany({});
     });

@@ -5,6 +5,7 @@ import User from '../../../models/User.js';
 import Post from '../../../models/Post.js';
 import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
+import { connectDB, disconnectDB } from '../../../db.js';
 
 chai.use(chaiHttp);
 const { expect } = chai;
@@ -13,6 +14,14 @@ describe('Post Controller Tests', () => {
     let token, userId, postId;
 
     before(async () => {
+        await connectDB();
+    });
+
+    after(async () => {
+        await disconnectDB();
+    });
+
+    beforeEach(async () => {
         await User.deleteMany({});
         await Post.deleteMany({});
 
@@ -33,7 +42,7 @@ describe('Post Controller Tests', () => {
         postId = savedPost._id;
     });
 
-    after(async () => {
+    afterEach(async () => {
         await User.deleteMany({});
         await Post.deleteMany({});
     });
