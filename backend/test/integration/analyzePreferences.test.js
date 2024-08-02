@@ -21,7 +21,23 @@ describe('Analyze Preferences Service Tests', () => {
 
     beforeEach(() => {
         interactionStub = sinon.stub(Interaction, 'find');
-        postStub = sinon.stub(Post, 'find');
+        postStub = sinon.stub(Post, 'find').returns({
+            populate: sinon.stub().returnsThis(),
+            exec: sinon.stub().resolves([
+                {
+                    _id: 'postId1',
+                    likes: ['userId'],
+                    comments: [{ author: 'userId' }],
+                    author: { _id: 'authorId1', username: 'author1', email: 'author1@example.com' }
+                },
+                {
+                    _id: 'postId2',
+                    likes: [],
+                    comments: [{ author: 'anotherUserId' }],
+                    author: { _id: 'authorId2', username: 'author2', email: 'author2@example.com' }
+                }
+            ])
+        });
     });
 
     afterEach(() => {
