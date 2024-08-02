@@ -1,10 +1,10 @@
 import * as chai from 'chai';
 import sinon from 'sinon';
 import mongoose from 'mongoose';
-import Interaction from '../../models/Interaction.js';
-import Post from '../../models/Post.js';
-import analyzePreferences from '../../analyzePreferences.js';
-import { connectDB, disconnectDB } from '../../db.js';
+import Interaction from '../../../models/Interaction.js';
+import Post from '../../../models/Post.js';
+import analyzePreferences from '../../../analyzePreferences.js';
+import { connectDB, disconnectDB } from '../../../db.js';
 
 const { expect } = chai;
 
