@@ -1,6 +1,5 @@
 import * as chai from 'chai';
 import { config as dotenvConfig } from 'dotenv';
-import sinon from 'sinon';
 import { fileURLToPath } from 'url';
 import path from 'path';
 

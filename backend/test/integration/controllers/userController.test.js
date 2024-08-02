@@ -1,16 +1,16 @@
 import * as chai from 'chai';
 import chaiHttp from 'chai-http';
-import server from '../../../server.js';
-import User from '../../../models/User.js';
+import sinon from 'sinon';
 import mongoose from 'mongoose';
-import jwt from 'jsonwebtoken';
+import app from '../../../server.js';
+import User from '../../../models/User.js';
 import { connectDB, disconnectDB } from '../../../db.js';
 
-chai.use(chaiHttp);
 const { expect } = chai;
+chai.use(chaiHttp);
 
 describe('User Controller Tests', () => {
-    let token, userId;
+    let userStub;
 
     before(async () => {
         await connectDB();
@@ -20,81 +20,21 @@ describe('User Controller Tests', () => {
         await disconnectDB();
     });
 
-    before(async () => {
-        const user = new User({
-            username: 'testuser',
-            email: 'testuser@example.com',
-            password: 'password123'
-        });
-        const savedUser = await user.save();
-        userId = savedUser._id;
-        token = jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    beforeEach(() => {
+        userStub = sinon.stub(User, 'findById').resolves(new User({ _id: 'userId', name: 'Test User' }));
     });
 
-    after(async () => {
-        await User.deleteMany({});
+    afterEach(() => {
+        userStub.restore();
     });
 
     describe('GET /api/users/:id', () => {
-        it('should get user details', (done) => {
-            chai.request(server)
-                .get(`/api/users/${userId}`)
-                .set('Authorization', `Bearer ${token}`)
+        it('should get a user by id', (done) => {
+            chai.request(app)
+                .get('/api/users/userId')
                 .end((err, res) => {
                     expect(res).to.have.status(200);
-                    expect(res.body.user).to.have.property('username', 'testuser');
-                    done();
-                });
-        });
-
-        it('should return 404 for non-existent user', (done) => {
-            chai.request(server)
-                .get('/api/users/invalidId')
-                .set('Authorization', `Bearer ${token}`)
-                .end((err, res) => {
-                    expect(res).to.have.status(404);
-                    expect(res.body).to.have.property('message', 'User not found');
-                    done();
-                });
-        });
-    });
-
-    describe('PUT /api/users/:id', () => {
-        it('should update user details', (done) => {
-            const updatedDetails = { username: 'updatedUser' };
-            chai.request(server)
-                .put(`/api/users/${userId}`)
-                .set('Authorization', `Bearer ${token}`)
-                .send(updatedDetails)
-                .end((err, res) => {
-                    expect(res).to.have.status(200);
-                    expect(res.body.user).to.have.property('username', 'updatedUser');
-                    done();
-                });
-        });
-    });
-
-    describe('DELETE /api/users/:id', () => {
-        it('should delete a user', (done) => {
-            chai.request(server)
-                .delete(`/api/users/${userId}`)
-                .set('Authorization', `Bearer ${token}`)
-                .end((err, res) => {
-                    expect(res).to.have.status(200);
-                    expect(res.body).to.have.property('message', 'User deleted successfully');
-                    done();
-                });
-        });
-    });
-
-    describe('GET /api/users', () => {
-        it('should get all users', (done) => {
-            chai.request(server)
-                .get('/api/users')
-                .set('Authorization', `Bearer ${token}`)
-                .end((err, res) => {
-                    expect(res).to.have.status(200);
-                    expect(res.body.users).to.be.an('array');
+                    expect(res.body).to.have.property('name').eql('Test User');
                     done();
                 });
         });

@@ -1,10 +1,10 @@
 import * as chai from 'chai';
 import sinon from 'sinon';
 import mongoose from 'mongoose';
-import Interaction from '../../models/Interaction.js';
-import Post from '../../models/Post.js';
-import analyzePreferences from '../../analyzePreferences.js';
-import { connectDB, disconnectDB } from '../../db.js';
+import Interaction from '../../../models/Interaction.js';
+import Post from '../../../models/Post.js';
+import analyzePreferences from '../../../analyzePreferences.js';
+import { connectDB, disconnectDB } from '../../../db.js';
 
 const { expect } = chai;
 
@@ -21,23 +21,7 @@ describe('Analyze Preferences Service Tests', () => {
 
     beforeEach(() => {
         interactionStub = sinon.stub(Interaction, 'find');
-        postStub = sinon.stub(Post, 'find').returns({
-            populate: sinon.stub().returnsThis(),
-            exec: sinon.stub().resolves([
-                {
-                    _id: 'postId1',
-                    likes: ['userId'],
-                    comments: [{ author: 'userId' }],
-                    author: { _id: 'authorId1', username: 'author1', email: 'author1@example.com' }
-                },
-                {
-                    _id: 'postId2',
-                    likes: [],
-                    comments: [{ author: 'anotherUserId' }],
-                    author: { _id: 'authorId2', username: 'author2', email: 'author2@example.com' }
-                }
-            ])
-        });
+        postStub = sinon.stub(Post, 'find');
     });
 
     afterEach(() => {
