@@ -1,6 +1,6 @@
 import * as chai from 'chai';
 import sinon from 'sinon';
-import { notFound, errorHandler } from '../../../middlewares/errorHandler.js'; // Import named exports
+import { notFound, errorHandler } from '../../../middlewares/errorHandler.js';
 
 const { expect } = chai;
 

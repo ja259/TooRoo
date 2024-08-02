@@ -2,9 +2,8 @@ import * as chai from 'chai';
 import chaiHttp from 'chai-http';
 import server from '../../../server.js';
 import User from '../../../models/User.js';
-import bcrypt from 'bcryptjs';
+import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
-import crypto from 'crypto';
 import { connectDB, disconnectDB } from '../../../db.js';
 
 chai.use(chaiHttp);
@@ -87,7 +86,7 @@ describe('Auth Controller Tests', () => {
                 username: 'testuser',
                 email: 'testuser@example.com',
                 phone: '1234567890',
-                password: bcrypt.hashSync('password123', 10),
+                password: 'password123',
                 securityQuestions: [
                     { question: 'What is your pet’s name?', answer: 'Fluffy' },
                     { question: 'What is your mother’s maiden name?', answer: 'Smith' },
@@ -111,7 +110,7 @@ describe('Auth Controller Tests', () => {
                 username: 'testuser',
                 email: 'testuser@example.com',
                 phone: '1234567890',
-                password: bcrypt.hashSync('password123', 10),
+                password: 'password123',
                 securityQuestions: [
                     { question: 'What is your pet’s name?', answer: 'Fluffy' },
                     { question: 'What is your mother’s maiden name?', answer: 'Smith' },
