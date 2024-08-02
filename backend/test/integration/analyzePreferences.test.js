@@ -1,4 +1,4 @@
-import * as chai from 'chai';
+import chai from 'chai';
 import sinon from 'sinon';
 import mongoose from 'mongoose';
 import Interaction from '../../models/Interaction.js';

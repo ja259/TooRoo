@@ -1,4 +1,4 @@
-import * as chai from 'chai';
+import chai from 'chai';
 import sinon from 'sinon';
 import { notFound, errorHandler } from '../../../middlewares/errorHandler.js';
 
