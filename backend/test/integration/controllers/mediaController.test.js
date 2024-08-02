@@ -1,17 +1,18 @@
 import * as chai from 'chai';
 import chaiHttp from 'chai-http';
-import sinon from 'sinon';
-import mongoose from 'mongoose';
-import app from '../../../server.js';
+import server from '../../../server.js';
 import User from '../../../models/User.js';
-import Media from '../../../models/Media.js';
+import Video from '../../../models/Video.js';
+import mongoose from 'mongoose';
+import jwt from 'jsonwebtoken';
+import path from 'path';
 import { connectDB, disconnectDB } from '../../../db.js';
 
-const { expect } = chai;
 chai.use(chaiHttp);
+const { expect } = chai;
 
 describe('Media Controller Tests', () => {
-    let mediaStub, userStub;
+    let token, userId, videoId;
 
     before(async () => {
         await connectDB();
@@ -21,30 +22,83 @@ describe('Media Controller Tests', () => {
         await disconnectDB();
     });
 
-    beforeEach(() => {
-        mediaStub = sinon.stub(Media.prototype, 'save').resolves();
-        userStub = sinon.stub(User, 'findById').resolves(new User({ _id: 'userId', name: 'Test User' }));
+    beforeEach(async () => {
+        await User.deleteMany({});
+        await Video.deleteMany({});
+
+        const user = new User({
+            username: 'testuser',
+            email: 'testuser@example.com',
+            password: 'password123'
+        });
+        const savedUser = await user.save();
+        userId = savedUser._id;
+        token = jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+        const video = new Video({
+            videoUrl: 'testfile.mp4',
+            description: 'Test video',
+            author: userId
+        });
+        const savedVideo = await video.save();
+        videoId = savedVideo._id;
     });
 
-    afterEach(() => {
-        mediaStub.restore();
-        userStub.restore();
+    afterEach(async () => {
+        await User.deleteMany({});
+        await Video.deleteMany({});
     });
 
     describe('POST /api/media/upload', () => {
         it('should upload a media file', (done) => {
-            const media = {
-                title: 'Test Media',
-                description: 'Media description',
-                file: 'testfile.png'
-            };
-
-            chai.request(app)
+            chai.request(server)
                 .post('/api/media/upload')
-                .send(media)
+                .set('Authorization', `Bearer ${token}`)
+                .attach('video', path.resolve(__dirname, '../../test-files/test-video.mp4'))
                 .end((err, res) => {
                     expect(res).to.have.status(201);
-                    expect(res.body).to.have.property('message').eql('Media uploaded successfully');
+                    expect(res.body).to.have.property('message', 'Video uploaded successfully');
+                    done();
+                });
+        });
+    });
+
+    describe('GET /api/media', () => {
+        it('should retrieve all videos', (done) => {
+            chai.request(server)
+                .get('/api/media')
+                .set('Authorization', `Bearer ${token}`)
+                .end((err, res) => {
+                    expect(res).to.have.status(200);
+                    expect(res.body.videos).to.be.an('array');
+                    done();
+                });
+        });
+    });
+
+    describe('DELETE /api/media/:id', () => {
+        it('should delete a video', (done) => {
+            chai.request(server)
+                .delete(`/api/media/${videoId}`)
+                .set('Authorization', `Bearer ${token}`)
+                .end((err, res) => {
+                    expect(res).to.have.status(200);
+                    expect(res.body).to.have.property('message', 'Video deleted successfully');
+                    done();
+                });
+        });
+    });
+
+    describe('PUT /api/media/:id', () => {
+        it('should update a video description', (done) => {
+            const updatedDescription = { description: 'Updated description' };
+            chai.request(server)
+                .put(`/api/media/${videoId}`)
+                .set('Authorization', `Bearer ${token}`)
+                .send(updatedDescription)
+                .end((err, res) => {
+                    expect(res).to.have.status(200);
+                    expect(res.body.video).to.have.property('description', 'Updated description');
                     done();
                 });
         });

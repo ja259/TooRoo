@@ -1,4 +1,5 @@
 import * as chai from 'chai';
+import sinon from 'sinon';
 import { notFound, errorHandler } from '../../../middlewares/errorHandler.js';
 
 const { expect } = chai;
@@ -10,7 +11,7 @@ describe('Error Handler Middleware Tests', () => {
         req = {};
         res = {
             status: sinon.stub().returnsThis(),
-            json: sinon.stub()
+            json: sinon.stub().returnsThis()
         };
         next = sinon.stub();
     });
@@ -20,26 +21,25 @@ describe('Error Handler Middleware Tests', () => {
             notFound(req, res, next);
 
             expect(res.status.calledWith(404)).to.be.true;
-            expect(res.json.calledWith({ message: 'Not Found' })).to.be.true;
+            expect(res.json.calledWith({ message: 'Route not found' })).to.be.true;
         });
     });
 
     describe('errorHandler', () => {
         it('should handle an error', () => {
-            const err = new Error('Test Error');
-            errorHandler(err, req, res, next);
+            const error = new Error('Test error');
+            errorHandler(error, req, res, next);
 
             expect(res.status.calledWith(500)).to.be.true;
-            expect(res.json.calledWith({ message: 'Test Error' })).to.be.true;
+            expect(res.json.calledWith({ message: 'Test error' })).to.be.true;
         });
 
         it('should handle an error without status', () => {
-            const err = new Error('Test Error');
-            delete err.status;
-            errorHandler(err, req, res, next);
+            const error = { message: 'Test error' };
+            errorHandler(error, req, res, next);
 
             expect(res.status.calledWith(500)).to.be.true;
-            expect(res.json.calledWith({ message: 'Test Error' })).to.be.true;
+            expect(res.json.calledWith({ message: 'Test error' })).to.be.true;
         });
     });
 });
