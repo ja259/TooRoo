@@ -20,19 +20,23 @@ describe('User Controller Tests', () => {
         await disconnectDB();
     });
 
-    before(async () => {
+    beforeEach(async () => {
+        await User.deleteMany({});
+
         const user = new User({
             username: 'testuser',
             email: 'testuser@example.com',
-            password: 'password123'
+            password: 'password123',
+            phone: '1234567890',
+            securityQuestions: [
+                { question: 'What is your pet’s name?', answer: 'Fluffy' },
+                { question: 'What is your mother’s maiden name?', answer: 'Smith' },
+                { question: 'What is your favorite color?', answer: 'Blue' }
+            ]
         });
         const savedUser = await user.save();
         userId = savedUser._id;
         token = jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    });
-
-    after(async () => {
-        await User.deleteMany({});
     });
 
     describe('GET /api/users/:id', () => {
