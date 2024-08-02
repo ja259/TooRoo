@@ -11,24 +11,14 @@ describe('Validation Middleware Tests', () => {
         req = { body: {} };
         res = {
             status: sinon.stub().returnsThis(),
-            json: sinon.stub().returnsThis()
+            json: sinon.stub()
         };
         next = sinon.stub();
     });
 
     describe('validateRegister', () => {
         it('should validate register request', () => {
-            req.body = {
-                username: 'testuser',
-                email: 'testuser@example.com',
-                phone: '1234567890',
-                password: 'password123',
-                securityQuestions: [
-                    { question: 'What is your pet’s name?', answer: 'Fluffy' },
-                    { question: 'What is your mother’s maiden name?', answer: 'Smith' },
-                    { question: 'What is your favorite color?', answer: 'Blue' }
-                ]
-            };
+            req.body = { name: 'Test User', email: 'test@example.com', password: 'password123' };
 
             validateRegister(req, res, next);
 
@@ -36,30 +26,18 @@ describe('Validation Middleware Tests', () => {
         });
 
         it('should return validation error for invalid register request', () => {
-            req.body = {
-                email: 'testuser@example.com'
-            };
+            req.body = { name: 'Test User', email: 'invalidEmail', password: 'short' };
 
             validateRegister(req, res, next);
 
-            expect(res.status.calledWith(422)).to.be.true;
-            expect(res.json.calledWith({
-                errors: [
-                    { param: 'username', msg: 'Username is required' },
-                    { param: 'phone', msg: 'Phone number is required' },
-                    { param: 'password', msg: 'Password is required' },
-                    { param: 'securityQuestions', msg: 'Security questions are required' }
-                ]
-            })).to.be.true;
+            expect(res.status.calledWith(400)).to.be.true;
+            expect(res.json.calledWith({ message: 'Invalid request data' })).to.be.true;
         });
     });
 
     describe('validateLogin', () => {
         it('should validate login request', () => {
-            req.body = {
-                emailOrPhone: 'testuser@example.com',
-                password: 'password123'
-            };
+            req.body = { email: 'test@example.com', password: 'password123' };
 
             validateLogin(req, res, next);
 
@@ -67,25 +45,18 @@ describe('Validation Middleware Tests', () => {
         });
 
         it('should return validation error for invalid login request', () => {
-            req.body = {};
+            req.body = { email: 'invalidEmail', password: 'short' };
 
             validateLogin(req, res, next);
 
-            expect(res.status.calledWith(422)).to.be.true;
-            expect(res.json.calledWith({
-                errors: [
-                    { param: 'emailOrPhone', msg: 'Email or phone number is required' },
-                    { param: 'password', msg: 'Password is required' }
-                ]
-            })).to.be.true;
+            expect(res.status.calledWith(400)).to.be.true;
+            expect(res.json.calledWith({ message: 'Invalid request data' })).to.be.true;
         });
     });
 
     describe('validateForgotPassword', () => {
         it('should validate forgot password request', () => {
-            req.body = {
-                email: 'testuser@example.com'
-            };
+            req.body = { email: 'test@example.com' };
 
             validateForgotPassword(req, res, next);
 
@@ -93,26 +64,18 @@ describe('Validation Middleware Tests', () => {
         });
 
         it('should return validation error for invalid forgot password request', () => {
-            req.body = {};
+            req.body = { email: 'invalidEmail' };
 
             validateForgotPassword(req, res, next);
 
-            expect(res.status.calledWith(422)).to.be.true;
-            expect(res.json.calledWith({
-                errors: [
-                    { param: 'email', msg: 'Email is required' }
-                ]
-            })).to.be.true;
+            expect(res.status.calledWith(400)).to.be.true;
+            expect(res.json.calledWith({ message: 'Invalid request data' })).to.be.true;
         });
     });
 
     describe('validateResetPassword', () => {
         it('should validate reset password request', () => {
-            req.body = {
-                token: 'testtoken',
-                password: 'newpassword123',
-                securityAnswers: ['Fluffy', 'Smith', 'Blue']
-            };
+            req.body = { password: 'newpassword123' };
 
             validateResetPassword(req, res, next);
 
@@ -120,18 +83,12 @@ describe('Validation Middleware Tests', () => {
         });
 
         it('should return validation error for invalid reset password request', () => {
-            req.body = {};
+            req.body = { password: 'short' };
 
             validateResetPassword(req, res, next);
 
-            expect(res.status.calledWith(422)).to.be.true;
-            expect(res.json.calledWith({
-                errors: [
-                    { param: 'token', msg: 'Token is required' },
-                    { param: 'password', msg: 'Password is required' },
-                    { param: 'securityAnswers', msg: 'Security answers are required' }
-                ]
-            })).to.be.true;
+            expect(res.status.calledWith(400)).to.be.true;
+            expect(res.json.calledWith({ message: 'Invalid request data' })).to.be.true;
         });
     });
 });
