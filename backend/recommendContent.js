@@ -19,4 +19,3 @@ const recommendContent = async (userId) => {
 };
 
 export default recommendContent;
-

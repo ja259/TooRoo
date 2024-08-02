@@ -18,6 +18,9 @@ const config = {
     vapidPublicKey: process.env.VAPID_PUBLIC_KEY,
     vapidPrivateKey: process.env.VAPID_PRIVATE_KEY,
     gridFsBucket: process.env.GRIDFS_BUCKET || 'uploads',
+    googleApiKey: process.env.GOOGLE_API_KEY,
+    stripeApiKey: process.env.STRIPE_API_KEY,
+    corsOrigins: process.env.CORS_ORIGIN.split(','),
 };
 
 export default config;
