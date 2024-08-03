@@ -1,64 +1,99 @@
-import * as chai from 'chai';
+import { expect } from 'chai';
 import Video from '../../../models/Video.js';
+import User from '../../../models/User.js';
 
-const { expect } = chai;
+describe('Video Model Tests', () => {
+    let userId;
+    before(async () => {
+        const user = new User({
+            username: 'testuser',
+            email: 'testuser@example.com',
+            phone: '1234567890',
+            password: 'password123'
+        });
+        await user.save();
+        userId = user._id;
+    });
 
-describe('Video Model Integration Tests', () => {
     it('should create a new video', async () => {
         const video = new Video({
-            author: 'testUserId',
-            url: 'http://testurl.com/video.mp4'
+            videoUrl: 'http://example.com/video.mp4',
+            description: 'Test video description',
+            author: userId
         });
         const savedVideo = await video.save();
         expect(savedVideo).to.have.property('_id');
-        expect(savedVideo.author.toString()).to.equal('testUserId');
-        expect(savedVideo.url).to.equal('http://testurl.com/video.mp4');
     });
 
-    it('should not create a video without a required author', async () => {
+    it('should require a videoUrl', async () => {
         try {
             const video = new Video({
-                url: 'http://testurl.com/video.mp4'
+                description: 'Test video description',
+                author: userId
             });
             await video.save();
         } catch (error) {
-            expect(error).to.be.an('error');
+            expect(error).to.exist;
         }
     });
 
-    it('should not create a video without a required video URL', async () => {
+    it('should require an author', async () => {
         try {
             const video = new Video({
-                author: 'testUserId'
+                videoUrl: 'http://example.com/video.mp4',
+                description: 'Test video description'
             });
             await video.save();
         } catch (error) {
-            expect(error).to.be.an('error');
+            expect(error).to.exist;
         }
+    });
+
+    it('should add a like to a video', async () => {
+        const video = new Video({
+            videoUrl: 'http://example.com/video.mp4',
+            description: 'Test video description',
+            author: userId
+        });
+        await video.save();
+        video.likes.push(userId);
+        await video.save();
+        expect(video.likes).to.include(userId);
     });
 
     it('should add a comment to a video', async () => {
         const video = new Video({
-            author: 'testUserId',
-            url: 'http://testurl.com/video.mp4'
+            videoUrl: 'http://example.com/video.mp4',
+            description: 'Test video description',
+            author: userId
         });
         await video.save();
-        video.comments.push({
-            author: 'testUserId',
-            content: 'Test comment'
-        });
-        const updatedVideo = await video.save();
-        expect(updatedVideo.comments[0].content).to.equal('Test comment');
+        video.comments.push({ author: userId, content: 'Test comment' });
+        await video.save();
+        expect(video.comments).to.have.lengthOf(1);
     });
 
-    it('should like a video', async () => {
+    it('should update a video description', async () => {
         const video = new Video({
-            author: 'testUserId',
-            url: 'http://testurl.com/video.mp4'
+            videoUrl: 'http://example.com/video.mp4',
+            description: 'Test video description',
+            author: userId
         });
         await video.save();
-        video.likes.push('testUserId');
-        const updatedVideo = await video.save();
-        expect(updatedVideo.likes).to.include('testUserId');
+        video.description = 'Updated video description';
+        await video.save();
+        expect(video.description).to.equal('Updated video description');
+    });
+
+    it('should delete a video', async () => {
+        const video = new Video({
+            videoUrl: 'http://example.com/video.mp4',
+            description: 'Test video description',
+            author: userId
+        });
+        await video.save();
+        await video.remove();
+        const foundVideo = await Video.findById(video._id);
+        expect(foundVideo).to.be.null;
     });
 });

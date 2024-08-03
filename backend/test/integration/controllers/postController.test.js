@@ -8,72 +8,95 @@ chai.use(chaiHttp);
 const { expect } = chai;
 
 describe('Post Controller Tests', () => {
-    let token;
-    let user;
+    let userToken;
+    let userId;
+    let postId;
 
     before(async () => {
-        user = new User({
+        await User.deleteMany();
+        await Post.deleteMany();
+
+        const user = new User({
             username: 'testuser',
             email: 'testuser@example.com',
-            password: 'password123',
             phone: '1234567890',
-            securityQuestions: [{ question: 'q1', answer: 'a1' }, { question: 'q2', answer: 'a2' }, { question: 'q3', answer: 'a3' }]
+            password: 'password123',
+            securityQuestions: [
+                { question: 'First pet?', answer: 'Fluffy' },
+                { question: 'Mother\'s maiden name?', answer: 'Smith' },
+                { question: 'Favorite color?', answer: 'Blue' }
+            ]
         });
         await user.save();
-
-        const res = await chai.request(server)
-            .post('/api/auth/login')
-            .send({ emailOrPhone: 'testuser@example.com', password: 'password123' });
-
-        token = res.body.token;
+        userToken = user.generateAuthToken();
+        userId = user._id;
     });
 
-    it('should create a new post', (done) => {
-        chai.request(server)
-            .post('/api/posts')
-            .set('Authorization', `Bearer ${token}`)
-            .send({ content: 'This is a test post' })
-            .end((err, res) => {
-                expect(res).to.have.status(201);
-                expect(res.body).to.have.property('message', 'Post created successfully');
-                done();
-            });
+    describe('POST /api/posts', () => {
+        it('should create a new post', (done) => {
+            chai.request(server)
+                .post('/api/posts')
+                .set('Authorization', `Bearer ${userToken}`)
+                .send({ content: 'Test Post', authorId: userId })
+                .end((err, res) => {
+                    expect(res).to.have.status(201);
+                    expect(res.body).to.have.property('message', 'Post created successfully');
+                    postId = res.body.post._id;
+                    done();
+                });
+        });
     });
 
-    it('should add a like to a post', async () => {
-        const post = new Post({ content: 'Test post', author: user._id });
-        await post.save();
-
-        const res = await chai.request(server)
-            .put(`/api/posts/${post._id}/like`)
-            .set('Authorization', `Bearer ${token}`);
-
-        expect(res).to.have.status(200);
-        expect(res.body).to.have.property('message', 'Post liked successfully');
+    describe('GET /api/posts', () => {
+        it('should get all posts', (done) => {
+            chai.request(server)
+                .get('/api/posts')
+                .end((err, res) => {
+                    expect(res).to.have.status(200);
+                    expect(res.body).to.have.property('message', 'Posts retrieved successfully');
+                    done();
+                });
+        });
     });
 
-    it('should add a comment to a post', async () => {
-        const post = new Post({ content: 'Test post', author: user._id });
-        await post.save();
-
-        const res = await chai.request(server)
-            .post(`/api/posts/${post._id}/comment`)
-            .set('Authorization', `Bearer ${token}`)
-            .send({ content: 'Test comment' });
-
-        expect(res).to.have.status(200);
-        expect(res.body).to.have.property('message', 'Comment added successfully');
+    describe('PUT /api/posts/:id/like', () => {
+        it('should like a post', (done) => {
+            chai.request(server)
+                .put(`/api/posts/${postId}/like`)
+                .set('Authorization', `Bearer ${userToken}`)
+                .send({ userId })
+                .end((err, res) => {
+                    expect(res).to.have.status(200);
+                    expect(res.body).to.have.property('message', 'Like status updated successfully');
+                    done();
+                });
+        });
     });
 
-    it('should delete a post', async () => {
-        const post = new Post({ content: 'Test post', author: user._id });
-        await post.save();
+    describe('POST /api/posts/:id/comment', () => {
+        it('should comment on a post', (done) => {
+            chai.request(server)
+                .post(`/api/posts/${postId}/comment`)
+                .set('Authorization', `Bearer ${userToken}`)
+                .send({ userId, content: 'Test Comment' })
+                .end((err, res) => {
+                    expect(res).to.have.status(200);
+                    expect(res.body).to.have.property('message', 'Comment added successfully');
+                    done();
+                });
+        });
+    });
 
-        const res = await chai.request(server)
-            .delete(`/api/posts/${post._id}`)
-            .set('Authorization', `Bearer ${token}`);
-
-        expect(res).to.have.status(200);
-        expect(res.body).to.have.property('message', 'Post deleted successfully');
+    describe('DELETE /api/posts/:id', () => {
+        it('should delete a post', (done) => {
+            chai.request(server)
+                .delete(`/api/posts/${postId}`)
+                .set('Authorization', `Bearer ${userToken}`)
+                .end((err, res) => {
+                    expect(res).to.have.status(200);
+                    expect(res.body).to.have.property('message', 'Post deleted successfully');
+                    done();
+                });
+        });
     });
 });
