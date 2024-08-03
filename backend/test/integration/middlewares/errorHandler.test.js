@@ -5,41 +5,49 @@ import { notFound, errorHandler } from '../../../middlewares/errorHandler.js';
 const { expect } = chai;
 
 describe('Error Handler Middleware Tests', () => {
-    let req, res, next;
-
-    beforeEach(() => {
-        req = {};
-        res = {
+    it('should return 404 for not found route', (done) => {
+        const req = {};
+        const res = {
             status: sinon.stub().returnsThis(),
             json: sinon.stub().returnsThis()
         };
-        next = sinon.stub();
+
+        notFound(req, res);
+
+        expect(res.status.calledWith(404)).to.be.true;
+        expect(res.json.calledWith({ message: 'Not Found' })).to.be.true;
+        done();
     });
 
-    describe('notFound', () => {
-        it('should return 404 for not found route', () => {
-            notFound(req, res, next);
+    it('should handle an error', (done) => {
+        const err = new Error('Test error');
+        const req = {};
+        const res = {
+            status: sinon.stub().returnsThis(),
+            json: sinon.stub().returnsThis()
+        };
+        const next = sinon.spy();
 
-            expect(res.status.calledWith(404)).to.be.true;
-            expect(res.json.calledWith({ message: 'Route not found' })).to.be.true;
-        });
+        errorHandler(err, req, res, next);
+
+        expect(res.status.calledWith(500)).to.be.true;
+        expect(res.json.calledWith({ message: 'Server Error' })).to.be.true;
+        done();
     });
 
-    describe('errorHandler', () => {
-        it('should handle an error', () => {
-            const error = new Error('Test error');
-            errorHandler(error, req, res, next);
+    it('should handle an error without status', (done) => {
+        const err = {};
+        const req = {};
+        const res = {
+            status: sinon.stub().returnsThis(),
+            json: sinon.stub().returnsThis()
+        };
+        const next = sinon.spy();
 
-            expect(res.status.calledWith(500)).to.be.true;
-            expect(res.json.calledWith({ message: 'Test error' })).to.be.true;
-        });
+        errorHandler(err, req, res, next);
 
-        it('should handle an error without status', () => {
-            const error = { message: 'Test error' };
-            errorHandler(error, req, res, next);
-
-            expect(res.status.calledWith(500)).to.be.true;
-            expect(res.json.calledWith({ message: 'Test error' })).to.be.true;
-        });
+        expect(res.status.calledWith(500)).to.be.true;
+        expect(res.json.calledWith({ message: 'Server Error' })).to.be.true;
+        done();
     });
 });

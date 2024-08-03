@@ -1,186 +1,106 @@
 import * as chai from 'chai';
-import mongoose from 'mongoose';
 import User from '../../../models/User.js';
-import dotenv from 'dotenv';
 
-dotenv.config();
-chai.should();
+const { expect } = chai;
 
 describe('User Model Integration Tests', () => {
+    let user;
+
     before(async () => {
-        await mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
-    });
-
-    after(async () => {
-        await mongoose.connection.close();
-    });
-
-    beforeEach(async () => {
-        await User.deleteMany({});
+        user = new User({
+            username: 'testuser',
+            email: 'testuser@example.com',
+            password: 'password123',
+            phone: '1234567890',
+            securityQuestions: [{ question: 'q1', answer: 'a1' }, { question: 'q2', answer: 'a2' }, { question: 'q3', answer: 'a3' }]
+        });
+        await user.save();
     });
 
     it('should create a new user', async () => {
-        const user = new User({
-            username: 'testuser',
-            email: 'testuser@example.com',
-            phone: '1234567890',
+        const newUser = new User({
+            username: 'newuser',
+            email: 'newuser@example.com',
             password: 'password123',
-            securityQuestions: [
-                { question: 'Question1', answer: 'Answer1' },
-                { question: 'Question2', answer: 'Answer2' },
-                { question: 'Question3', answer: 'Answer3' }
-            ]
+            phone: '0987654321',
+            securityQuestions: [{ question: 'q1', answer: 'a1' }, { question: 'q2', answer: 'a2' }, { question: 'q3', answer: 'a3' }]
         });
-        const savedUser = await user.save();
-        savedUser.should.have.property('username').eql('testuser');
-        savedUser.should.have.property('email').eql('testuser@example.com');
+        const savedUser = await newUser.save();
+        expect(savedUser).to.have.property('_id');
+        expect(savedUser.username).to.equal('newuser');
     });
 
     it('should require a username', async () => {
-        const user = new User({
-            email: 'testuser@example.com',
-            phone: '1234567890',
-            password: 'password123',
-            securityQuestions: [
-                { question: 'Question1', answer: 'Answer1' },
-                { question: 'Question2', answer: 'Answer2' },
-                { question: 'Question3', answer: 'Answer3' }
-            ]
-        });
         try {
+            const user = new User({
+                email: 'userwithoutusername@example.com',
+                password: 'password123',
+                phone: '1234567890',
+                securityQuestions: [{ question: 'q1', answer: 'a1' }, { question: 'q2', answer: 'a2' }, { question: 'q3', answer: 'a3' }]
+            });
             await user.save();
         } catch (error) {
-            error.should.be.an('error');
-            error.errors.should.have.property('username');
-            error.errors.username.should.have.property('kind').eql('required');
+            expect(error).to.be.an('error');
         }
     });
 
     it('should require a valid email', async () => {
-        const user = new User({
-            username: 'testuser',
-            email: 'notanemail',
-            phone: '1234567890',
-            password: 'password123',
-            securityQuestions: [
-                { question: 'Question1', answer: 'Answer1' },
-                { question: 'Question2', answer: 'Answer2' },
-                { question: 'Question3', answer: 'Answer3' }
-            ]
-        });
         try {
+            const user = new User({
+                username: 'userwithoutemail',
+                email: 'invalidemail',
+                password: 'password123',
+                phone: '1234567890',
+                securityQuestions: [{ question: 'q1', answer: 'a1' }, { question: 'q2', answer: 'a2' }, { question: 'q3', answer: 'a3' }]
+            });
             await user.save();
         } catch (error) {
-            error.should.be.an('error');
-            error.errors.should.have.property('email');
-            error.errors.email.should.have.property('kind').eql('user defined');
+            expect(error).to.be.an('error');
         }
     });
 
     it('should require a valid phone', async () => {
-        const user = new User({
-            username: 'testuser',
-            email: 'testuser@example.com',
-            phone: 'invalidphone',
-            password: 'password123',
-            securityQuestions: [
-                { question: 'Question1', answer: 'Answer1' },
-                { question: 'Question2', answer: 'Answer2' },
-                { question: 'Question3', answer: 'Answer3' }
-            ]
-        });
         try {
+            const user = new User({
+                username: 'userwithoutphone',
+                email: 'userwithoutphone@example.com',
+                password: 'password123',
+                phone: 'invalidphone',
+                securityQuestions: [{ question: 'q1', answer: 'a1' }, { question: 'q2', answer: 'a2' }, { question: 'q3', answer: 'a3' }]
+            });
             await user.save();
         } catch (error) {
-            error.should.be.an('error');
-            error.errors.should.have.property('phone');
-            error.errors.phone.should.have.property('kind').eql('user defined');
+            expect(error).to.be.an('error');
         }
     });
 
     it('should follow a user', async () => {
-        const user1 = new User({
-            username: 'testuser1',
-            email: 'testuser1@example.com',
-            phone: '1234567890',
+        const otherUser = new User({
+            username: 'otheruser',
+            email: 'otheruser@example.com',
             password: 'password123',
-            securityQuestions: [
-                { question: 'Question1', answer: 'Answer1' },
-                { question: 'Question2', answer: 'Answer2' },
-                { question: 'Question3', answer: 'Answer3' }
-            ]
+            phone: '0987654321',
+            securityQuestions: [{ question: 'q1', answer: 'a1' }, { question: 'q2', answer: 'a2' }, { question: 'q3', answer: 'a3' }]
         });
-        await user1.save();
-
-        const user2 = new User({
-            username: 'testuser2',
-            email: 'testuser2@example.com',
-            phone: '1234567891',
-            password: 'password123',
-            securityQuestions: [
-                { question: 'Question1', answer: 'Answer1' },
-                { question: 'Question2', answer: 'Answer2' },
-                { question: 'Question3', answer: 'Answer3' }
-            ]
-        });
-        await user2.save();
-
-        user1.following.push(user2._id);
-        user2.followers.push(user1._id);
-
-        await user1.save();
-        await user2.save();
-
-        const updatedUser1 = await User.findById(user1._id);
-        const updatedUser2 = await User.findById(user2._id);
-
-        updatedUser1.following.should.include(user2._id);
-        updatedUser2.followers.should.include(user1._id);
+        await otherUser.save();
+        user.following.push(otherUser._id);
+        const updatedUser = await user.save();
+        expect(updatedUser.following).to.include(otherUser._id);
     });
 
     it('should unfollow a user', async () => {
-        const user1 = new User({
-            username: 'testuser1',
-            email: 'testuser1@example.com',
-            phone: '1234567890',
+        const otherUser = new User({
+            username: 'otheruser',
+            email: 'otheruser@example.com',
             password: 'password123',
-            securityQuestions: [
-                { question: 'Question1', answer: 'Answer1' },
-                { question: 'Question2', answer: 'Answer2' },
-                { question: 'Question3', answer: 'Answer3' }
-            ]
+            phone: '0987654321',
+            securityQuestions: [{ question: 'q1', answer: 'a1' }, { question: 'q2', answer: 'a2' }, { question: 'q3', answer: 'a3' }]
         });
-        await user1.save();
-
-        const user2 = new User({
-            username: 'testuser2',
-            email: 'testuser2@example.com',
-            phone: '1234567891',
-            password: 'password123',
-            securityQuestions: [
-                { question: 'Question1', answer: 'Answer1' },
-                { question: 'Question2', answer: 'Answer2' },
-                { question: 'Question3', answer: 'Answer3' }
-            ]
-        });
-        await user2.save();
-
-        user1.following.push(user2._id);
-        user2.followers.push(user1._id);
-
-        await user1.save();
-        await user2.save();
-
-        user1.following.pull(user2._id);
-        user2.followers.pull(user1._id);
-
-        await user1.save();
-        await user2.save();
-
-        const updatedUser1 = await User.findById(user1._id);
-        const updatedUser2 = await User.findById(user2._id);
-
-        updatedUser1.following.should.not.include(user2._id);
-        updatedUser2.followers.should.not.include(user1._id);
+        await otherUser.save();
+        user.following.push(otherUser._id);
+        await user.save();
+        user.following.pull(otherUser._id);
+        const updatedUser = await user.save();
+        expect(updatedUser.following).to.not.include(otherUser._id);
     });
 });

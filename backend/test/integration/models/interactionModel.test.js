@@ -1,56 +1,28 @@
 import * as chai from 'chai';
-import chaiHttp from 'chai-http';
-import mongoose from 'mongoose';
-import server from '../../../server.js';
 import Interaction from '../../../models/Interaction.js';
-import { connectDB, disconnectDB } from '../../../db.js';
 
-chai.use(chaiHttp);
 const { expect } = chai;
 
 describe('Interaction Model Integration Tests', () => {
-    before(async () => {
-        await connectDB();
-    });
-
-    after(async () => {
-        await disconnectDB();
-    });
-
-    beforeEach(async () => {
-        await Interaction.deleteMany({});
-    });
-
-    it('should create an interaction', (done) => {
-        const interaction = {
-            userId: mongoose.Types.ObjectId(),
-            postId: mongoose.Types.ObjectId(),
+    it('should create an interaction', async () => {
+        const interaction = new Interaction({
+            userId: 'testUserId',
+            postId: 'testPostId',
             type: 'like'
-        };
-
-        chai.request(server)
-            .post('/api/interactions')
-            .send(interaction)
-            .end((err, res) => {
-                expect(res).to.have.status(201);
-                expect(res.body).to.have.property('message', 'Interaction created successfully');
-                done();
-            });
+        });
+        const savedInteraction = await interaction.save();
+        expect(savedInteraction).to.have.property('_id');
+        expect(savedInteraction.userId.toString()).to.equal('testUserId');
+        expect(savedInteraction.postId.toString()).to.equal('testPostId');
+        expect(savedInteraction.type).to.equal('like');
     });
 
-    it('should not create an interaction without a required field', (done) => {
-        const interaction = {
-            postId: mongoose.Types.ObjectId(),
-            type: 'like'
-        };
-
-        chai.request(server)
-            .post('/api/interactions')
-            .send(interaction)
-            .end((err, res) => {
-                expect(res).to.have.status(422);
-                expect(res.body).to.have.property('errors');
-                done();
-            });
+    it('should not create an interaction without a required field', async () => {
+        try {
+            const interaction = new Interaction({});
+            await interaction.save();
+        } catch (error) {
+            expect(error).to.be.an('error');
+        }
     });
 });

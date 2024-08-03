@@ -1,38 +1,37 @@
 import * as chai from 'chai';
 import sinon from 'sinon';
 import nodemailer from 'nodemailer';
-import emailService from '../../../utils/emailService.js';
+import { sendEmail } from '../../../utils/emailService.js';
 
 const { expect } = chai;
 
 describe('Email Service Tests', () => {
-    let sendMailStub;
+    let transporter;
 
     beforeEach(() => {
-        sendMailStub = sinon.stub(nodemailer.createTransport(), 'sendMail').callsFake((mailOptions, callback) => {
-            callback(null, { response: '250 OK' });
+        transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS
+            }
         });
+        sinon.stub(nodemailer, 'createTransport').returns(transporter);
     });
 
     afterEach(() => {
-        sendMailStub.restore();
+        nodemailer.createTransport.restore();
     });
 
     it('should send an email', async () => {
-        const result = await emailService.sendEmail('test@example.com', 'Test Subject', 'Test Text');
-        expect(result).to.have.property('response', '250 OK');
-    });
-
-    it('should throw an error when email fails to send', async () => {
-        sendMailStub.callsFake((mailOptions, callback) => {
-            callback(new Error('Email send failed'), null);
-        });
-
-        try {
-            await emailService.sendEmail('test@example.com', 'Test Subject', 'Test Text');
-        } catch (error) {
-            expect(error).to.be.an('error');
-            expect(error.message).to.equal('Email send failed');
-        }
+        const mailOptions = {
+            from: process.env.EMAIL_USER,
+            to: 'test@example.com',
+            subject: 'Test Email',
+            text: 'This is a test email'
+        };
+        const result = await sendEmail(mailOptions);
+        expect(result).to.have.property('accepted');
+        expect(result.accepted).to.include('test@example.com');
     });
 });

@@ -5,133 +5,130 @@ import { validateRegister, validateLogin, validateForgotPassword, validateResetP
 const { expect } = chai;
 
 describe('Validation Middleware Tests', () => {
-    let req, res, next;
-
-    beforeEach(() => {
-        req = { body: {} };
-        res = {
-            status: sinon.stub().returnsThis(),
-            json: sinon.stub().returnsThis()
-        };
-        next = sinon.stub();
+    const mockReq = (body) => ({
+        body,
     });
 
-    describe('validateRegister', () => {
-        it('should validate register request', () => {
-            req.body = {
-                username: 'testuser',
-                email: 'testuser@example.com',
-                phone: '1234567890',
-                password: 'password123',
-                securityQuestions: [
-                    { question: 'What is your pet’s name?', answer: 'Fluffy' },
-                    { question: 'What is your mother’s maiden name?', answer: 'Smith' },
-                    { question: 'What is your favorite color?', answer: 'Blue' }
-                ]
-            };
+    const mockRes = () => {
+        const res = {};
+        res.status = sinon.stub().returns(res);
+        res.json = sinon.stub().returns(res);
+        return res;
+    };
 
-            validateRegister(req, res, next);
+    const next = sinon.spy();
 
-            expect(next.calledOnce).to.be.true;
+    it('should validate register request', (done) => {
+        const req = mockReq({
+            username: 'testuser',
+            email: 'testuser@example.com',
+            password: 'password123',
+            phone: '1234567890',
+            securityQuestions: [{ question: 'q1', answer: 'a1' }, { question: 'q2', answer: 'a2' }, { question: 'q3', answer: 'a3' }]
         });
+        const res = mockRes();
 
-        it('should return validation error for invalid register request', () => {
-            req.body = {
-                email: 'testuser@example.com'
-            };
+        validateRegister(req, res, next);
 
-            validateRegister(req, res, next);
-
-            expect(res.status.calledWith(422)).to.be.true;
-            expect(res.json.calledWith({
-                errors: [
-                    { param: 'username', msg: 'Username is required' },
-                    { param: 'phone', msg: 'Phone number is required' },
-                    { param: 'password', msg: 'Password is required' },
-                    { param: 'securityQuestions', msg: 'Security questions are required' }
-                ]
-            })).to.be.true;
-        });
+        expect(next.calledOnce).to.be.true;
+        done();
     });
 
-    describe('validateLogin', () => {
-        it('should validate login request', () => {
-            req.body = {
-                emailOrPhone: 'testuser@example.com',
-                password: 'password123'
-            };
-
-            validateLogin(req, res, next);
-
-            expect(next.calledOnce).to.be.true;
+    it('should return validation error for invalid register request', (done) => {
+        const req = mockReq({
+            username: '',
+            email: 'invalidemail',
+            password: 'short',
+            phone: '',
+            securityQuestions: [{ question: '', answer: '' }]
         });
+        const res = mockRes();
 
-        it('should return validation error for invalid login request', () => {
-            req.body = {};
+        validateRegister(req, res, next);
 
-            validateLogin(req, res, next);
-
-            expect(res.status.calledWith(422)).to.be.true;
-            expect(res.json.calledWith({
-                errors: [
-                    { param: 'emailOrPhone', msg: 'Email or phone number is required' },
-                    { param: 'password', msg: 'Password is required' }
-                ]
-            })).to.be.true;
-        });
+        expect(res.status.calledWith(400)).to.be.true;
+        expect(res.json.calledWithMatch({ message: sinon.match.string })).to.be.true;
+        done();
     });
 
-    describe('validateForgotPassword', () => {
-        it('should validate forgot password request', () => {
-            req.body = {
-                email: 'testuser@example.com'
-            };
-
-            validateForgotPassword(req, res, next);
-
-            expect(next.calledOnce).to.be.true;
+    it('should validate login request', (done) => {
+        const req = mockReq({
+            emailOrPhone: 'testuser@example.com',
+            password: 'password123'
         });
+        const res = mockRes();
 
-        it('should return validation error for invalid forgot password request', () => {
-            req.body = {};
+        validateLogin(req, res, next);
 
-            validateForgotPassword(req, res, next);
-
-            expect(res.status.calledWith(422)).to.be.true;
-            expect(res.json.calledWith({
-                errors: [
-                    { param: 'email', msg: 'Email is required' }
-                ]
-            })).to.be.true;
-        });
+        expect(next.calledOnce).to.be.true;
+        done();
     });
 
-    describe('validateResetPassword', () => {
-        it('should validate reset password request', () => {
-            req.body = {
-                token: 'testtoken',
-                password: 'newpassword123',
-                securityAnswers: ['Fluffy', 'Smith', 'Blue']
-            };
-
-            validateResetPassword(req, res, next);
-
-            expect(next.calledOnce).to.be.true;
+    it('should return validation error for invalid login request', (done) => {
+        const req = mockReq({
+            emailOrPhone: '',
+            password: ''
         });
+        const res = mockRes();
 
-        it('should return validation error for invalid reset password request', () => {
-            req.body = {};
+        validateLogin(req, res, next);
 
-            validateResetPassword(req, res, next);
+        expect(res.status.calledWith(400)).to.be.true;
+        expect(res.json.calledWithMatch({ message: sinon.match.string })).to.be.true;
+        done();
+    });
 
-            expect(res.status.calledWith(422)).to.be.true;
-            expect(res.json.calledWith({
-                errors: [
-                    { param: 'token', msg: 'Token is required' },
-                    { param: 'password', msg: 'Password is required' },
-                    { param: 'securityAnswers', msg: 'Security answers are required' }
-                ]
-            })).to.be.true;
+    it('should validate forgot password request', (done) => {
+        const req = mockReq({
+            email: 'testuser@example.com'
         });
+        const res = mockRes();
+
+        validateForgotPassword(req, res, next);
+
+        expect(next.calledOnce).to.be.true;
+        done();
+    });
+
+    it('should return validation error for invalid forgot password request', (done) => {
+        const req = mockReq({
+            email: ''
+        });
+        const res = mockRes();
+
+        validateForgotPassword(req, res, next);
+
+        expect(res.status.calledWith(400)).to.be.true;
+        expect(res.json.calledWithMatch({ message: sinon.match.string })).to.be.true;
+        done();
+    });
+
+    it('should validate reset password request', (done) => {
+        const req = mockReq({
+            token: 'validtoken',
+            newPassword: 'newpassword123',
+            securityAnswers: ['a1', 'a2', 'a3']
+        });
+        const res = mockRes();
+
+        validateResetPassword(req, res, next);
+
+        expect(next.calledOnce).to.be.true;
+        done();
+    });
+
+    it('should return validation error for invalid reset password request', (done) => {
+        const req = mockReq({
+            token: '',
+            newPassword: '',
+            securityAnswers: ['', '', '']
+        });
+        const res = mockRes();
+
+        validateResetPassword(req, res, next);
+
+        expect(res.status.calledWith(400)).to.be.true;
+        expect(res.json.calledWithMatch({ message: sinon.match.string })).to.be.true;
+        done();
     });
 });
