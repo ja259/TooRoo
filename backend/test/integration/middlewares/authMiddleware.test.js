@@ -1,4 +1,4 @@
-import * as chai from 'chai';
+import chai from 'chai';
 import chaiHttp from 'chai-http';
 import jwt from 'jsonwebtoken';
 import config from '../../../config/config.js';

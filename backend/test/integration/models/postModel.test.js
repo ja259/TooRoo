@@ -87,7 +87,7 @@ describe('Post Model Tests', () => {
             author: userId
         });
         await post.save();
-        await post.remove();
+        await post.deleteOne();
         const foundPost = await Post.findById(post._id);
         expect(foundPost).to.be.null;
     });
