@@ -2,6 +2,10 @@ import { expect } from 'chai';
 import User from '../../../models/User.js';
 
 describe('User Model Tests', () => {
+    beforeEach(async () => {
+        await User.deleteMany();
+    });
+
     it('should create a new user', async () => {
         const user = new User({
             username: 'testuser',

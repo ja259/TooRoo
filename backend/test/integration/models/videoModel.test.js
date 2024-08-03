@@ -94,7 +94,7 @@ describe('Video Model Tests', () => {
             author: userId
         });
         await video.save();
-        await video.remove();
+        await video.deleteOne();
         const foundVideo = await Video.findById(video._id);
         expect(foundVideo).to.be.null;
     });

@@ -1,4 +1,4 @@
-import * as chai from 'chai';
+import chai from 'chai';
 import chaiHttp from 'chai-http';
 import server from '../../../server.js';
 import User from '../../../models/User.js';
@@ -10,6 +10,7 @@ const { expect } = chai;
 describe('Media Controller Tests', () => {
     let userToken;
     let userId;
+    let videoId;
 
     before(async () => {
         await User.deleteMany();
@@ -42,6 +43,7 @@ describe('Media Controller Tests', () => {
                 .end((err, res) => {
                     expect(res).to.have.status(201);
                     expect(res.body).to.have.property('message', 'Video uploaded successfully');
+                    videoId = res.body.video._id;
                     done();
                 });
         });
