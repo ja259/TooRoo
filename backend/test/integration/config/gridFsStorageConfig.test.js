@@ -4,9 +4,21 @@ import crypto from 'crypto';
 import path from 'path';
 import config from '../../../config/config.js';
 import { Request } from 'express';
-import { File as MulterFile } from 'multer';
 
 const { expect } = chai;
+
+// Define the MulterFile interface
+interface MulterFile {
+    fieldname: string;
+    originalname: string;
+    encoding: string;
+    mimetype: string;
+    size: number;
+    destination: string;
+    filename: string;
+    path: string;
+    buffer: Buffer;
+}
 
 describe('GridFS Storage Config Tests', () => {
     it('should have a valid GridFS storage configuration', () => {
@@ -35,7 +47,7 @@ describe('GridFS Storage Config Tests', () => {
 
         // Mocking request and file objects for testing _handleFile method
         const reqMock = {} as Request;
-        const fileMock = { originalname: 'testfile.txt' } as MulterFile;
+        const fileMock = { originalname: 'testfile.txt' } as Partial<MulterFile> as MulterFile;
 
         storage._handleFile(reqMock, fileMock, (err, fileInfo) => {
             if (err) return done(err);
