@@ -24,12 +24,20 @@ describe('Config Tests', () => {
     });
 
     it('should contain required environment variables', () => {
-        expect(config).to.have.property('dbUri');
-        expect(config).to.have.property('jwtSecret');
-        expect(config).to.have.property('email');
-        expect(config).to.have.property('emailPassword');
-        expect(config).to.have.property('vapidPublicKey');
-        expect(config).to.have.property('vapidPrivateKey');
+        const requiredEnvVars = [
+            'dbUri',
+            'jwtSecret',
+            'email',
+            'emailPassword',
+            'vapidPublicKey',
+            'vapidPrivateKey',
+            'port',
+            'logLevel',
+            'nodeEnv'
+        ];
+        requiredEnvVars.forEach((envVar) => {
+            expect(config).to.have.property(envVar);
+        });
     });
 
     it('should throw an error if a required environment variable is missing', async () => {
