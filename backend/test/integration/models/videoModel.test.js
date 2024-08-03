@@ -128,6 +128,4 @@ describe('Video Model Integration Tests', () => {
         const updatedVideo = await Video.findById(video._id);
         updatedVideo.likes.should.include(user._id);
     });
-
-    // Add more tests for validation, methods, and hooks
 });

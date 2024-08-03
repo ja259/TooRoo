@@ -183,6 +183,4 @@ describe('User Model Integration Tests', () => {
         updatedUser1.following.should.not.include(user2._id);
         updatedUser2.followers.should.not.include(user1._id);
     });
-
-    // Add more tests for validation, methods, and hooks
 });
