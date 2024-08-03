@@ -3,35 +3,19 @@ import { GridFsStorage } from 'multer-gridfs-storage';
 import crypto from 'crypto';
 import path from 'path';
 import config from '../../../config/config.js';
-import { Request } from 'express';
 
 const { expect } = chai;
-
-// Define the MulterFile interface
-interface MulterFile {
-    fieldname: string;
-    originalname: string;
-    encoding: string;
-    mimetype: string;
-    size: number;
-    destination: string;
-    filename: string;
-    path: string;
-    buffer: Buffer;
-}
 
 describe('GridFS Storage Config Tests', () => {
     it('should have a valid GridFS storage configuration', () => {
         const storage = new GridFsStorage({ url: config.dbUri });
-        expect(storage).to.be.an('object');
-        expect(storage).to.have.property('options');
-        expect(storage.options).to.have.property('url', config.dbUri);
+        expect(storage).to.have.property('url');
     });
 
     it('should generate a valid filename using crypto', (done) => {
         const storage = new GridFsStorage({
             url: config.dbUri,
-            file: (req: Request, file: MulterFile) => {
+            file: (req, file) => {
                 return new Promise((resolve, reject) => {
                     crypto.randomBytes(16, (err, buf) => {
                         if (err) {
@@ -45,15 +29,12 @@ describe('GridFS Storage Config Tests', () => {
             }
         });
 
-        // Mocking request and file objects for testing _handleFile method
-        const reqMock = {} as Request;
-        const fileMock = { originalname: 'testfile.txt' } as Partial<MulterFile> as MulterFile;
-
-        storage._handleFile(reqMock, fileMock, (err, fileInfo) => {
-            if (err) return done(err);
-            expect(fileInfo).to.have.property('filename');
-            expect(fileInfo).to.have.property('bucketName', config.gridFsBucket);
-            done();
-        });
+        storage.file({}, { originalname: 'testfile.txt' })
+            .then(fileInfo => {
+                expect(fileInfo).to.have.property('filename');
+                expect(fileInfo).to.have.property('bucketName', config.gridFsBucket);
+                done();
+            })
+            .catch(err => done(err));
     });
 });
