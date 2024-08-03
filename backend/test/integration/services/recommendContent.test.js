@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 import Post from '../../../models/Post.js';
 import recommendContent from '../../../recommendContent.js';
+import mongoose from 'mongoose';
 
 describe('Recommend Content Service Tests', () => {
     let userId;
@@ -8,10 +9,10 @@ describe('Recommend Content Service Tests', () => {
     before(async () => {
         const post = new Post({
             content: 'Test post content',
-            author: 'author_id'
+            author: new mongoose.Types.ObjectId()
         });
         await post.save();
-        userId = 'user_id';
+        userId = new mongoose.Types.ObjectId();
     });
 
     it('should recommend content for a user', async () => {

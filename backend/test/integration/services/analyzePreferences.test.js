@@ -2,6 +2,7 @@ import { expect } from 'chai';
 import Interaction from '../../../models/Interaction.js';
 import Post from '../../../models/Post.js';
 import analyzePreferences from '../../../analyzePreferences.js';
+import mongoose from 'mongoose';
 
 describe('Analyze Preferences Service Tests', () => {
     let userId;
@@ -10,13 +11,13 @@ describe('Analyze Preferences Service Tests', () => {
     before(async () => {
         const post = new Post({
             content: 'Test post content',
-            author: 'author_id'
+            author: new mongoose.Types.ObjectId()
         });
         await post.save();
         postId = post._id;
 
         const interaction = new Interaction({
-            userId: 'user_id',
+            userId: new mongoose.Types.ObjectId(),
             postId: postId,
             interactionType: 'like'
         });
@@ -31,7 +32,7 @@ describe('Analyze Preferences Service Tests', () => {
     });
 
     it('should handle no interactions found', async () => {
-        const preferences = await analyzePreferences('non_existent_user_id');
+        const preferences = await analyzePreferences(new mongoose.Types.ObjectId());
         expect(preferences.likes).to.be.empty;
         expect(preferences.comments).to.be.empty;
     });

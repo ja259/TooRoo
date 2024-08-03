@@ -1,10 +1,12 @@
 import { expect } from 'chai';
 import Video from '../../../models/Video.js';
 import User from '../../../models/User.js';
+import mongoose from 'mongoose';
 
 describe('Video Model Tests', () => {
     let userId;
     before(async () => {
+        await User.deleteMany();
         const user = new User({
             username: 'testuser',
             email: 'testuser@example.com',

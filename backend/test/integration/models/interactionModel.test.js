@@ -1,11 +1,12 @@
 import { expect } from 'chai';
 import Interaction from '../../../models/Interaction.js';
+import mongoose from 'mongoose';
 
 describe('Interaction Model Tests', () => {
     it('should create an interaction', async () => {
         const interaction = new Interaction({
-            userId: 'user_id',
-            postId: 'post_id',
+            userId: new mongoose.Types.ObjectId(),
+            postId: new mongoose.Types.ObjectId(),
             interactionType: 'like'
         });
         const savedInteraction = await interaction.save();
@@ -15,8 +16,8 @@ describe('Interaction Model Tests', () => {
     it('should not create an interaction without a required field', async () => {
         try {
             const interaction = new Interaction({
-                userId: 'user_id',
-                postId: 'post_id'
+                userId: new mongoose.Types.ObjectId(),
+                postId: new mongoose.Types.ObjectId()
             });
             await interaction.save();
         } catch (error) {

@@ -3,7 +3,6 @@ import chaiHttp from 'chai-http';
 import server from '../../../server.js';
 import User from '../../../models/User.js';
 import Video from '../../../models/Video.js';
-import mongoose from 'mongoose';
 
 chai.use(chaiHttp);
 const { expect } = chai;
