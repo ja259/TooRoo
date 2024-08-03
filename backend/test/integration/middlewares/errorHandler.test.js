@@ -1,53 +1,56 @@
 import * as chai from 'chai';
-import sinon from 'sinon';
-import { notFound, errorHandler } from '../../../middlewares/errorHandler.js';
+import chaiHttp from 'chai-http';
+import express from 'express';
+import { errorHandler, notFound } from '../../../middlewares/errorHandler.js';
 
+chai.use(chaiHttp);
 const { expect } = chai;
 
 describe('Error Handler Middleware Tests', () => {
+    let app;
+
+    before(() => {
+        app = express();
+
+        app.get('/test/not-found', (req, res, next) => {
+            notFound(req, res, next);
+        });
+
+        app.get('/test/error', (req, res, next) => {
+            const error = new Error('Test error');
+            next(error);
+        });
+
+        app.use(errorHandler);
+    });
+
     it('should return 404 for not found route', (done) => {
-        const req = {};
-        const res = {
-            status: sinon.stub().returnsThis(),
-            json: sinon.stub().returnsThis()
-        };
-
-        notFound(req, res);
-
-        expect(res.status.calledWith(404)).to.be.true;
-        expect(res.json.calledWith({ message: 'Not Found' })).to.be.true;
-        done();
+        chai.request(app)
+            .get('/test/not-found')
+            .end((err, res) => {
+                expect(res).to.have.status(404);
+                expect(res.body).to.have.property('message').that.includes('Not Found');
+                done();
+            });
     });
 
     it('should handle an error', (done) => {
-        const err = new Error('Test error');
-        const req = {};
-        const res = {
-            status: sinon.stub().returnsThis(),
-            json: sinon.stub().returnsThis()
-        };
-        const next = sinon.spy();
-
-        errorHandler(err, req, res, next);
-
-        expect(res.status.calledWith(500)).to.be.true;
-        expect(res.json.calledWith({ message: 'Server Error' })).to.be.true;
-        done();
+        chai.request(app)
+            .get('/test/error')
+            .end((err, res) => {
+                expect(res).to.have.status(500);
+                expect(res.body).to.have.property('message', 'Test error');
+                done();
+            });
     });
 
     it('should handle an error without status', (done) => {
-        const err = {};
-        const req = {};
-        const res = {
-            status: sinon.stub().returnsThis(),
-            json: sinon.stub().returnsThis()
-        };
-        const next = sinon.spy();
-
-        errorHandler(err, req, res, next);
-
-        expect(res.status.calledWith(500)).to.be.true;
-        expect(res.json.calledWith({ message: 'Server Error' })).to.be.true;
-        done();
+        chai.request(app)
+            .get('/test/error')
+            .end((err, res) => {
+                expect(res).to.have.status(500);
+                expect(res.body).to.have.property('message', 'Test error');
+                done();
+            });
     });
 });

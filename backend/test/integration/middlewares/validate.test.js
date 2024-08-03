@@ -1,134 +1,158 @@
 import * as chai from 'chai';
-import sinon from 'sinon';
+import chaiHttp from 'chai-http';
+import express from 'express';
+import bodyParser from 'body-parser';
 import { validateRegister, validateLogin, validateForgotPassword, validateResetPassword } from '../../../middlewares/validate.js';
 
+chai.use(chaiHttp);
 const { expect } = chai;
 
 describe('Validation Middleware Tests', () => {
-    const mockReq = (body) => ({
-        body,
+    let app;
+
+    before(() => {
+        app = express();
+        app.use(bodyParser.json());
+
+        app.post('/test/register', validateRegister, (req, res) => {
+            res.status(200).send('Valid');
+        });
+
+        app.post('/test/login', validateLogin, (req, res) => {
+            res.status(200).send('Valid');
+        });
+
+        app.post('/test/forgot-password', validateForgotPassword, (req, res) => {
+            res.status(200).send('Valid');
+        });
+
+        app.put('/test/reset-password', validateResetPassword, (req, res) => {
+            res.status(200).send('Valid');
+        });
     });
 
-    const mockRes = () => {
-        const res = {};
-        res.status = sinon.stub().returns(res);
-        res.json = sinon.stub().returns(res);
-        return res;
-    };
-
-    const next = sinon.spy();
-
     it('should validate register request', (done) => {
-        const req = mockReq({
-            username: 'testuser',
-            email: 'testuser@example.com',
-            password: 'password123',
-            phone: '1234567890',
-            securityQuestions: [{ question: 'q1', answer: 'a1' }, { question: 'q2', answer: 'a2' }, { question: 'q3', answer: 'a3' }]
-        });
-        const res = mockRes();
-
-        validateRegister(req, res, next);
-
-        expect(next.calledOnce).to.be.true;
-        done();
+        chai.request(app)
+            .post('/test/register')
+            .send({
+                username: 'testuser',
+                email: 'testuser@example.com',
+                phone: '1234567890',
+                password: 'password123',
+                securityQuestions: [
+                    { question: 'First pet?', answer: 'Fluffy' },
+                    { question: 'Mother\'s maiden name?', answer: 'Smith' },
+                    { question: 'Favorite color?', answer: 'Blue' }
+                ]
+            })
+            .end((err, res) => {
+                expect(res).to.have.status(200);
+                expect(res.text).to.equal('Valid');
+                done();
+            });
     });
 
     it('should return validation error for invalid register request', (done) => {
-        const req = mockReq({
-            username: '',
-            email: 'invalidemail',
-            password: 'short',
-            phone: '',
-            securityQuestions: [{ question: '', answer: '' }]
-        });
-        const res = mockRes();
-
-        validateRegister(req, res, next);
-
-        expect(res.status.calledWith(400)).to.be.true;
-        expect(res.json.calledWithMatch({ message: sinon.match.string })).to.be.true;
-        done();
+        chai.request(app)
+            .post('/test/register')
+            .send({
+                username: '',
+                email: 'invalidemail',
+                phone: '123',
+                password: '123',
+                securityQuestions: [
+                    { question: '', answer: '' },
+                    { question: '', answer: '' }
+                ]
+            })
+            .end((err, res) => {
+                expect(res).to.have.status(400);
+                expect(res.body.errors).to.be.an('array');
+                done();
+            });
     });
 
     it('should validate login request', (done) => {
-        const req = mockReq({
-            emailOrPhone: 'testuser@example.com',
-            password: 'password123'
-        });
-        const res = mockRes();
-
-        validateLogin(req, res, next);
-
-        expect(next.calledOnce).to.be.true;
-        done();
+        chai.request(app)
+            .post('/test/login')
+            .send({
+                emailOrPhone: 'testuser@example.com',
+                password: 'password123'
+            })
+            .end((err, res) => {
+                expect(res).to.have.status(200);
+                expect(res.text).to.equal('Valid');
+                done();
+            });
     });
 
     it('should return validation error for invalid login request', (done) => {
-        const req = mockReq({
-            emailOrPhone: '',
-            password: ''
-        });
-        const res = mockRes();
-
-        validateLogin(req, res, next);
-
-        expect(res.status.calledWith(400)).to.be.true;
-        expect(res.json.calledWithMatch({ message: sinon.match.string })).to.be.true;
-        done();
+        chai.request(app)
+            .post('/test/login')
+            .send({
+                emailOrPhone: '',
+                password: ''
+            })
+            .end((err, res) => {
+                expect(res).to.have.status(400);
+                expect(res.body.errors).to.be.an('array');
+                done();
+            });
     });
 
     it('should validate forgot password request', (done) => {
-        const req = mockReq({
-            email: 'testuser@example.com'
-        });
-        const res = mockRes();
-
-        validateForgotPassword(req, res, next);
-
-        expect(next.calledOnce).to.be.true;
-        done();
+        chai.request(app)
+            .post('/test/forgot-password')
+            .send({
+                email: 'testuser@example.com',
+                securityAnswers: ['Fluffy', 'Smith', 'Blue']
+            })
+            .end((err, res) => {
+                expect(res).to.have.status(200);
+                expect(res.text).to.equal('Valid');
+                done();
+            });
     });
 
     it('should return validation error for invalid forgot password request', (done) => {
-        const req = mockReq({
-            email: ''
-        });
-        const res = mockRes();
-
-        validateForgotPassword(req, res, next);
-
-        expect(res.status.calledWith(400)).to.be.true;
-        expect(res.json.calledWithMatch({ message: sinon.match.string })).to.be.true;
-        done();
+        chai.request(app)
+            .post('/test/forgot-password')
+            .send({
+                email: 'invalidemail',
+                securityAnswers: ['']
+            })
+            .end((err, res) => {
+                expect(res).to.have.status(400);
+                expect(res.body.errors).to.be.an('array');
+                done();
+            });
     });
 
     it('should validate reset password request', (done) => {
-        const req = mockReq({
-            token: 'validtoken',
-            newPassword: 'newpassword123',
-            securityAnswers: ['a1', 'a2', 'a3']
-        });
-        const res = mockRes();
-
-        validateResetPassword(req, res, next);
-
-        expect(next.calledOnce).to.be.true;
-        done();
+        chai.request(app)
+            .put('/test/reset-password')
+            .send({
+                password: 'newpassword123',
+                securityAnswers: ['Fluffy', 'Smith', 'Blue']
+            })
+            .end((err, res) => {
+                expect(res).to.have.status(200);
+                expect(res.text).to.equal('Valid');
+                done();
+            });
     });
 
     it('should return validation error for invalid reset password request', (done) => {
-        const req = mockReq({
-            token: '',
-            newPassword: '',
-            securityAnswers: ['', '', '']
-        });
-        const res = mockRes();
-
-        validateResetPassword(req, res, next);
-
-        expect(res.status.calledWith(400)).to.be.true;
-        expect(res.json.calledWithMatch({ message: sinon.match.string })).to.be.true;
-        done();
+        chai.request(app)
+            .put('/test/reset-password')
+            .send({
+                password: '123',
+                securityAnswers: ['']
+            })
+            .end((err, res) => {
+                expect(res).to.have.status(400);
+                expect(res.body.errors).to.be.an('array');
+                done();
+            });
     });
 });
