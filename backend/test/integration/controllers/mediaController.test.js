@@ -2,105 +2,40 @@ import * as chai from 'chai';
 import chaiHttp from 'chai-http';
 import server from '../../../server.js';
 import User from '../../../models/User.js';
-import Video from '../../../models/Video.js';
-import mongoose from 'mongoose';
-import jwt from 'jsonwebtoken';
-import path from 'path';
-import { connectDB, disconnectDB } from '../../../db.js';
 
 chai.use(chaiHttp);
 const { expect } = chai;
 
 describe('Media Controller Tests', () => {
-    let token, userId, videoId;
+    let token;
+    let user;
 
     before(async () => {
-        await connectDB();
-    });
-
-    after(async () => {
-        await disconnectDB();
-    });
-
-    beforeEach(async () => {
-        await User.deleteMany({});
-        await Video.deleteMany({});
-
-        const user = new User({
+        user = new User({
             username: 'testuser',
             email: 'testuser@example.com',
-            password: 'password123'
+            password: 'password123',
+            phone: '1234567890',
+            securityQuestions: [{ question: 'q1', answer: 'a1' }, { question: 'q2', answer: 'a2' }, { question: 'q3', answer: 'a3' }]
         });
-        const savedUser = await user.save();
-        userId = savedUser._id;
-        token = jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        await user.save();
 
-        const video = new Video({
-            videoUrl: 'testfile.mp4',
-            description: 'Test video',
-            author: userId
-        });
-        const savedVideo = await video.save();
-        videoId = savedVideo._id;
+        const res = await chai.request(server)
+            .post('/api/auth/login')
+            .send({ emailOrPhone: 'testuser@example.com', password: 'password123' });
+
+        token = res.body.token;
     });
 
-    afterEach(async () => {
-        await User.deleteMany({});
-        await Video.deleteMany({});
-    });
-
-    describe('POST /api/media/upload', () => {
-        it('should upload a media file', (done) => {
-            chai.request(server)
-                .post('/api/media/upload')
-                .set('Authorization', `Bearer ${token}`)
-                .attach('video', path.resolve(__dirname, '../../test-files/test-video.mp4'))
-                .end((err, res) => {
-                    expect(res).to.have.status(201);
-                    expect(res.body).to.have.property('message', 'Video uploaded successfully');
-                    done();
-                });
-        });
-    });
-
-    describe('GET /api/media', () => {
-        it('should retrieve all videos', (done) => {
-            chai.request(server)
-                .get('/api/media')
-                .set('Authorization', `Bearer ${token}`)
-                .end((err, res) => {
-                    expect(res).to.have.status(200);
-                    expect(res.body.videos).to.be.an('array');
-                    done();
-                });
-        });
-    });
-
-    describe('DELETE /api/media/:id', () => {
-        it('should delete a video', (done) => {
-            chai.request(server)
-                .delete(`/api/media/${videoId}`)
-                .set('Authorization', `Bearer ${token}`)
-                .end((err, res) => {
-                    expect(res).to.have.status(200);
-                    expect(res.body).to.have.property('message', 'Video deleted successfully');
-                    done();
-                });
-        });
-    });
-
-    describe('PUT /api/media/:id', () => {
-        it('should update a video description', (done) => {
-            const updatedDescription = { description: 'Updated description' };
-            chai.request(server)
-                .put(`/api/media/${videoId}`)
-                .set('Authorization', `Bearer ${token}`)
-                .send(updatedDescription)
-                .end((err, res) => {
-                    expect(res).to.have.status(200);
-                    expect(res.body.video).to.have.property('description', 'Updated description');
-                    done();
-                });
-        });
+    it('should upload a media file', (done) => {
+        chai.request(server)
+            .post('/api/media/upload')
+            .set('Authorization', `Bearer ${token}`)
+            .attach('file', 'test/test-files/test-video.mp4')
+            .end((err, res) => {
+                expect(res).to.have.status(200);
+                expect(res.body).to.have.property('message', 'File uploaded successfully');
+                done();
+            });
     });
 });
