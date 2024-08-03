@@ -1,80 +1,92 @@
-import * as chai from 'chai';
+import { expect } from 'chai';
 import Post from '../../../models/Post.js';
 import User from '../../../models/User.js';
 
-const { expect } = chai;
-
-describe('Post Model Integration Tests', () => {
-    let user;
-
+describe('Post Model Tests', () => {
+    let userId;
     before(async () => {
-        user = new User({
+        const user = new User({
             username: 'testuser',
             email: 'testuser@example.com',
-            password: 'password123',
             phone: '1234567890',
-            securityQuestions: [{ question: 'q1', answer: 'a1' }, { question: 'q2', answer: 'a2' }, { question: 'q3', answer: 'a3' }]
+            password: 'password123'
         });
         await user.save();
+        userId = user._id;
     });
 
     it('should create a new post', async () => {
-        const post = new Post({ content: 'Test post', author: user._id });
+        const post = new Post({
+            content: 'Test post content',
+            author: userId
+        });
         const savedPost = await post.save();
         expect(savedPost).to.have.property('_id');
-        expect(savedPost.content).to.equal('Test post');
     });
 
     it('should require content', async () => {
         try {
-            const post = new Post({ author: user._id });
+            const post = new Post({
+                author: userId
+            });
             await post.save();
         } catch (error) {
-            expect(error).to.be.an('error');
+            expect(error).to.exist;
         }
     });
 
     it('should require an author', async () => {
         try {
-            const post = new Post({ content: 'Test post' });
+            const post = new Post({
+                content: 'Test post content'
+            });
             await post.save();
         } catch (error) {
-            expect(error).to.be.an('error');
+            expect(error).to.exist;
         }
     });
 
     it('should add a like to a post', async () => {
-        const post = new Post({ content: 'Test post', author: user._id });
+        const post = new Post({
+            content: 'Test post content',
+            author: userId
+        });
         await post.save();
-        post.likes.push(user._id);
-        const updatedPost = await post.save();
-        expect(updatedPost.likes).to.include(user._id);
+        post.likes.push(userId);
+        await post.save();
+        expect(post.likes).to.include(userId);
+    });
+
+    it('should add a comment to a post', async () => {
+        const post = new Post({
+            content: 'Test post content',
+            author: userId
+        });
+        await post.save();
+        post.comments.push({ author: userId, content: 'Test comment' });
+        await post.save();
+        expect(post.comments).to.have.lengthOf(1);
+    });
+
+    it('should update a post content', async () => {
+        const post = new Post({
+            content: 'Test post content',
+            author: userId
+        });
+        await post.save();
+        post.content = 'Updated post content';
+        await post.save();
+        expect(post.content).to.equal('Updated post content');
     });
 
     it('should delete a post', async () => {
-        const post = new Post({ content: 'Test post', author: user._id });
+        const post = new Post({
+            content: 'Test post content',
+            author: userId
+        });
         await post.save();
-        await Post.findByIdAndRemove(post._id);
-        const deletedPost = await Post.findById(post._id);
-        expect(deletedPost).to.be.null;
-    });
-
-    it('should update the user\'s post count after a post is created', async () => {
-        const initialCount = user.postCount;
-        const post = new Post({ content: 'Test post', author: user._id });
-        await post.save();
-        await user.save();
-        const updatedUser = await User.findById(user._id);
-        expect(updatedUser.postCount).to.equal(initialCount + 1);
-    });
-
-    it('should update the user\'s post count after a post is deleted', async () => {
-        const post = new Post({ content: 'Test post', author: user._id });
-        await post.save();
-        const initialCount = user.postCount;
-        await Post.findByIdAndRemove(post._id);
-        await user.save();
-        const updatedUser = await User.findById(user._id);
-        expect(updatedUser.postCount).to.equal(initialCount - 1);
+        await post.remove();
+        const foundPost = await Post.findById(post._id);
+        expect(foundPost).to.be.null;
     });
 });

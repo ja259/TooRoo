@@ -2,40 +2,88 @@ import * as chai from 'chai';
 import chaiHttp from 'chai-http';
 import server from '../../../server.js';
 import User from '../../../models/User.js';
+import Video from '../../../models/Video.js';
+import mongoose from 'mongoose';
 
 chai.use(chaiHttp);
 const { expect } = chai;
 
 describe('Media Controller Tests', () => {
-    let token;
-    let user;
+    let userToken;
+    let userId;
 
     before(async () => {
-        user = new User({
+        await User.deleteMany();
+        await Video.deleteMany();
+
+        const user = new User({
             username: 'testuser',
             email: 'testuser@example.com',
-            password: 'password123',
             phone: '1234567890',
-            securityQuestions: [{ question: 'q1', answer: 'a1' }, { question: 'q2', answer: 'a2' }, { question: 'q3', answer: 'a3' }]
+            password: 'password123',
+            securityQuestions: [
+                { question: 'First pet?', answer: 'Fluffy' },
+                { question: 'Mother\'s maiden name?', answer: 'Smith' },
+                { question: 'Favorite color?', answer: 'Blue' }
+            ]
         });
         await user.save();
-
-        const res = await chai.request(server)
-            .post('/api/auth/login')
-            .send({ emailOrPhone: 'testuser@example.com', password: 'password123' });
-
-        token = res.body.token;
+        userToken = user.generateAuthToken();
+        userId = user._id;
     });
 
-    it('should upload a media file', (done) => {
-        chai.request(server)
-            .post('/api/media/upload')
-            .set('Authorization', `Bearer ${token}`)
-            .attach('file', 'test/test-files/test-video.mp4')
-            .end((err, res) => {
-                expect(res).to.have.status(200);
-                expect(res.body).to.have.property('message', 'File uploaded successfully');
-                done();
-            });
+    describe('POST /api/media/upload', () => {
+        it('should upload a media file', (done) => {
+            chai.request(server)
+                .post('/api/media/upload')
+                .set('Authorization', `Bearer ${userToken}`)
+                .field('authorId', userId.toString())
+                .field('description', 'Test Video')
+                .attach('video', 'test/test-files/testvideo.mp4', 'testvideo.mp4')
+                .end((err, res) => {
+                    expect(res).to.have.status(201);
+                    expect(res.body).to.have.property('message', 'Video uploaded successfully');
+                    done();
+                });
+        });
+    });
+
+    describe('GET /api/media/videos', () => {
+        it('should get all videos', (done) => {
+            chai.request(server)
+                .get('/api/media/videos')
+                .end((err, res) => {
+                    expect(res).to.have.status(200);
+                    expect(res.body).to.have.property('message', 'Videos retrieved successfully');
+                    done();
+                });
+        });
+    });
+
+    describe('DELETE /api/media/videos/:id', () => {
+        it('should delete a video', (done) => {
+            chai.request(server)
+                .delete(`/api/media/videos/${videoId}`)
+                .set('Authorization', `Bearer ${userToken}`)
+                .end((err, res) => {
+                    expect(res).to.have.status(200);
+                    expect(res.body).to.have.property('message', 'Video deleted successfully');
+                    done();
+                });
+        });
+    });
+
+    describe('PUT /api/media/videos/:id', () => {
+        it('should update a video', (done) => {
+            chai.request(server)
+                .put(`/api/media/videos/${videoId}`)
+                .set('Authorization', `Bearer ${userToken}`)
+                .send({ description: 'Updated Test Video' })
+                .end((err, res) => {
+                    expect(res).to.have.status(200);
+                    expect(res.body).to.have.property('message', 'Video updated successfully');
+                    done();
+                });
+        });
     });
 });

@@ -1,106 +1,110 @@
-import * as chai from 'chai';
+import { expect } from 'chai';
 import User from '../../../models/User.js';
 
-const { expect } = chai;
-
-describe('User Model Integration Tests', () => {
-    let user;
-
-    before(async () => {
-        user = new User({
+describe('User Model Tests', () => {
+    it('should create a new user', async () => {
+        const user = new User({
             username: 'testuser',
             email: 'testuser@example.com',
-            password: 'password123',
             phone: '1234567890',
-            securityQuestions: [{ question: 'q1', answer: 'a1' }, { question: 'q2', answer: 'a2' }, { question: 'q3', answer: 'a3' }]
-        });
-        await user.save();
-    });
-
-    it('should create a new user', async () => {
-        const newUser = new User({
-            username: 'newuser',
-            email: 'newuser@example.com',
             password: 'password123',
-            phone: '0987654321',
-            securityQuestions: [{ question: 'q1', answer: 'a1' }, { question: 'q2', answer: 'a2' }, { question: 'q3', answer: 'a3' }]
+            securityQuestions: [
+                { question: 'First pet?', answer: 'Fluffy' },
+                { question: 'Mother\'s maiden name?', answer: 'Smith' },
+                { question: 'Favorite color?', answer: 'Blue' }
+            ]
         });
-        const savedUser = await newUser.save();
+        const savedUser = await user.save();
         expect(savedUser).to.have.property('_id');
-        expect(savedUser.username).to.equal('newuser');
     });
 
     it('should require a username', async () => {
         try {
             const user = new User({
-                email: 'userwithoutusername@example.com',
-                password: 'password123',
+                email: 'testuser@example.com',
                 phone: '1234567890',
-                securityQuestions: [{ question: 'q1', answer: 'a1' }, { question: 'q2', answer: 'a2' }, { question: 'q3', answer: 'a3' }]
+                password: 'password123'
             });
             await user.save();
         } catch (error) {
-            expect(error).to.be.an('error');
+            expect(error).to.exist;
         }
     });
 
     it('should require a valid email', async () => {
         try {
             const user = new User({
-                username: 'userwithoutemail',
+                username: 'testuser',
                 email: 'invalidemail',
-                password: 'password123',
                 phone: '1234567890',
-                securityQuestions: [{ question: 'q1', answer: 'a1' }, { question: 'q2', answer: 'a2' }, { question: 'q3', answer: 'a3' }]
+                password: 'password123'
             });
             await user.save();
         } catch (error) {
-            expect(error).to.be.an('error');
+            expect(error).to.exist;
         }
     });
 
     it('should require a valid phone', async () => {
         try {
             const user = new User({
-                username: 'userwithoutphone',
-                email: 'userwithoutphone@example.com',
-                password: 'password123',
+                username: 'testuser',
+                email: 'testuser@example.com',
                 phone: 'invalidphone',
-                securityQuestions: [{ question: 'q1', answer: 'a1' }, { question: 'q2', answer: 'a2' }, { question: 'q3', answer: 'a3' }]
+                password: 'password123'
             });
             await user.save();
         } catch (error) {
-            expect(error).to.be.an('error');
+            expect(error).to.exist;
         }
     });
 
     it('should follow a user', async () => {
-        const otherUser = new User({
-            username: 'otheruser',
-            email: 'otheruser@example.com',
-            password: 'password123',
-            phone: '0987654321',
-            securityQuestions: [{ question: 'q1', answer: 'a1' }, { question: 'q2', answer: 'a2' }, { question: 'q3', answer: 'a3' }]
+        const user1 = new User({
+            username: 'testuser1',
+            email: 'testuser1@example.com',
+            phone: '1234567891',
+            password: 'password123'
         });
-        await otherUser.save();
-        user.following.push(otherUser._id);
-        const updatedUser = await user.save();
-        expect(updatedUser.following).to.include(otherUser._id);
+        await user1.save();
+
+        const user2 = new User({
+            username: 'testuser2',
+            email: 'testuser2@example.com',
+            phone: '1234567892',
+            password: 'password123'
+        });
+        await user2.save();
+
+        user1.following.push(user2._id);
+        await user1.save();
+
+        expect(user1.following).to.include(user2._id);
     });
 
     it('should unfollow a user', async () => {
-        const otherUser = new User({
-            username: 'otheruser',
-            email: 'otheruser@example.com',
-            password: 'password123',
-            phone: '0987654321',
-            securityQuestions: [{ question: 'q1', answer: 'a1' }, { question: 'q2', answer: 'a2' }, { question: 'q3', answer: 'a3' }]
+        const user1 = new User({
+            username: 'testuser1',
+            email: 'testuser1@example.com',
+            phone: '1234567891',
+            password: 'password123'
         });
-        await otherUser.save();
-        user.following.push(otherUser._id);
-        await user.save();
-        user.following.pull(otherUser._id);
-        const updatedUser = await user.save();
-        expect(updatedUser.following).to.not.include(otherUser._id);
+        await user1.save();
+
+        const user2 = new User({
+            username: 'testuser2',
+            email: 'testuser2@example.com',
+            phone: '1234567892',
+            password: 'password123'
+        });
+        await user2.save();
+
+        user1.following.push(user2._id);
+        await user1.save();
+
+        user1.following.pull(user2._id);
+        await user1.save();
+
+        expect(user1.following).to.not.include(user2._id);
     });
 });

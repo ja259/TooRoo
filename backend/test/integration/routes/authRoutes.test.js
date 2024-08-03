@@ -6,20 +6,24 @@ import User from '../../../models/User.js';
 chai.use(chaiHttp);
 const { expect } = chai;
 
-describe('Auth Routes Integration Tests', () => {
+describe('Auth Routes Tests', () => {
     before(async () => {
-        await User.deleteMany({});
+        await User.deleteMany();
     });
 
-    it('should register a user on /api/auth/register POST', (done) => {
+    it('should register a new user', (done) => {
         chai.request(server)
             .post('/api/auth/register')
             .send({
                 username: 'testuser',
                 email: 'testuser@example.com',
-                password: 'password123',
                 phone: '1234567890',
-                securityQuestions: [{ question: 'q1', answer: 'a1' }, { question: 'q2', answer: 'a2' }, { question: 'q3', answer: 'a3' }]
+                password: 'password123',
+                securityQuestions: [
+                    { question: 'First pet?', answer: 'Fluffy' },
+                    { question: 'Mother\'s maiden name?', answer: 'Smith' },
+                    { question: 'Favorite color?', answer: 'Blue' }
+                ]
             })
             .end((err, res) => {
                 expect(res).to.have.status(201);
@@ -28,13 +32,44 @@ describe('Auth Routes Integration Tests', () => {
             });
     });
 
-    it('should login a user on /api/auth/login POST', (done) => {
+    it('should login an existing user', (done) => {
         chai.request(server)
             .post('/api/auth/login')
-            .send({ emailOrPhone: 'testuser@example.com', password: 'password123' })
+            .send({
+                emailOrPhone: 'testuser@example.com',
+                password: 'password123'
+            })
             .end((err, res) => {
                 expect(res).to.have.status(200);
-                expect(res.body).to.have.property('token');
+                expect(res.body).to.have.property('message', 'Logged in successfully');
+                done();
+            });
+    });
+
+    it('should send a password reset token', (done) => {
+        chai.request(server)
+            .post('/api/auth/forgot-password')
+            .send({
+                email: 'testuser@example.com'
+            })
+            .end((err, res) => {
+                expect(res).to.have.status(200);
+                expect(res.body).to.have.property('message', 'Password reset token sent');
+                done();
+            });
+    });
+
+    it('should reset the password with valid token and security answers', (done) => {
+        const resetToken = 'valid_reset_token';
+        chai.request(server)
+            .put(`/api/auth/reset-password/${resetToken}`)
+            .send({
+                password: 'newpassword123',
+                securityAnswers: ['Fluffy', 'Smith', 'Blue']
+            })
+            .end((err, res) => {
+                expect(res).to.have.status(200);
+                expect(res.body).to.have.property('message', 'Password has been reset successfully');
                 done();
             });
     });

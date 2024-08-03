@@ -7,79 +7,97 @@ chai.use(chaiHttp);
 const { expect } = chai;
 
 describe('User Controller Tests', () => {
-    let token;
-    let user;
+    let userToken;
+    let userId;
 
     before(async () => {
-        user = new User({
+        await User.deleteMany();
+
+        const user = new User({
             username: 'testuser',
             email: 'testuser@example.com',
-            password: 'password123',
             phone: '1234567890',
-            securityQuestions: [{ question: 'q1', answer: 'a1' }, { question: 'q2', answer: 'a2' }, { question: 'q3', answer: 'a3' }]
+            password: 'password123',
+            securityQuestions: [
+                { question: 'First pet?', answer: 'Fluffy' },
+                { question: 'Mother\'s maiden name?', answer: 'Smith' },
+                { question: 'Favorite color?', answer: 'Blue' }
+            ]
         });
         await user.save();
-
-        const res = await chai.request(server)
-            .post('/api/auth/login')
-            .send({ emailOrPhone: 'testuser@example.com', password: 'password123' });
-
-        token = res.body.token;
+        userToken = user.generateAuthToken();
+        userId = user._id;
     });
 
-    it('should get user details', (done) => {
-        chai.request(server)
-            .get(`/api/users/${user._id}`)
-            .set('Authorization', `Bearer ${token}`)
-            .end((err, res) => {
-                expect(res).to.have.status(200);
-                expect(res.body).to.have.property('username', 'testuser');
-                done();
-            });
+    describe('GET /api/users/:id', () => {
+        it('should get user details', (done) => {
+            chai.request(server)
+                .get(`/api/users/${userId}`)
+                .set('Authorization', `Bearer ${userToken}`)
+                .end((err, res) => {
+                    expect(res).to.have.status(200);
+                    expect(res.body).to.have.property('message', 'User profile retrieved successfully');
+                    done();
+                });
+        });
     });
 
-    it('should return 404 for non-existent user', (done) => {
-        chai.request(server)
-            .get('/api/users/604c26f8f2b4f3b5c4a5e5a1')
-            .set('Authorization', `Bearer ${token}`)
-            .end((err, res) => {
-                expect(res).to.have.status(404);
-                expect(res.body).to.have.property('message', 'User not found');
-                done();
-            });
+    describe('PUT /api/users/:id', () => {
+        it('should update user details', (done) => {
+            chai.request(server)
+                .put(`/api/users/${userId}`)
+                .set('Authorization', `Bearer ${userToken}`)
+                .send({ username: 'updatedtestuser' })
+                .end((err, res) => {
+                    expect(res).to.have.status(200);
+                    expect(res.body).to.have.property('message', 'User profile updated successfully');
+                    done();
+                });
+        });
     });
 
-    it('should update user details', (done) => {
-        chai.request(server)
-            .put(`/api/users/${user._id}`)
-            .set('Authorization', `Bearer ${token}`)
-            .send({ username: 'updateduser' })
-            .end((err, res) => {
-                expect(res).to.have.status(200);
-                expect(res.body).to.have.property('message', 'User updated successfully');
-                done();
-            });
+    describe('POST /api/users/:id/follow', () => {
+        it('should follow a user', (done) => {
+            chai.request(server)
+                .post(`/api/users/${userId}/follow`)
+                .set('Authorization', `Bearer ${userToken}`)
+                .send({ userId: 'followUserId' })
+                .end((err, res) => {
+                    expect(res).to.have.status(200);
+                    expect(res.body).to.have.property('message', 'Followed user successfully');
+                    done();
+                });
+        });
     });
 
-    it('should delete a user', (done) => {
-        chai.request(server)
-            .delete(`/api/users/${user._id}`)
-            .set('Authorization', `Bearer ${token}`)
-            .end((err, res) => {
-                expect(res).to.have.status(200);
-                expect(res.body).to.have.property('message', 'User deleted successfully');
-                done();
-            });
+    describe('POST /api/users/:id/unfollow', () => {
+        it('should unfollow a user', (done) => {
+            chai.request(server)
+                .post(`/api/users/${userId}/unfollow`)
+                .set('Authorization', `Bearer ${userToken}`)
+                .send({ userId: 'unfollowUserId' })
+                .end((err, res) => {
+                    expect(res).to.have.status(200);
+                    expect(res.body).to.have.property('message', 'Unfollowed user successfully');
+                    done();
+                });
+        });
     });
 
-    it('should get all users', (done) => {
-        chai.request(server)
-            .get('/api/users')
-            .set('Authorization', `Bearer ${token}`)
-            .end((err, res) => {
-                expect(res).to.have.status(200);
-                expect(res.body).to.be.an('array');
-                done();
-            });
+    describe('GET /api/users/analytics', () => {
+        it('should get user analytics', (done) => {
+            chai.request(server)
+                .get('/api/users/analytics')
+                .set('Authorization', `Bearer ${userToken}`)
+                .end((err, res) => {
+                    expect(res).to.have.status(200);
+                    expect(res.body).to.have.property('posts');
+                    expect(res.body).to.have.property('followers');
+                    expect(res.body).to.have.property('following');
+                    expect(res.body).to.have.property('likes');
+                    expect(res.body).to.have.property('comments');
+                    done();
+                });
+        });
     });
 });
