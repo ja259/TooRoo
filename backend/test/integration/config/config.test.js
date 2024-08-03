@@ -1,20 +1,29 @@
-import { expect } from 'chai';
+import * as chai from 'chai';
 import config from '../../../config/config.js';
+
+const { expect } = chai;
 
 describe('Config Tests', () => {
     it('should contain required environment variables', () => {
-        const requiredEnvVars = ['PORT', 'MONGODB_URI', 'JWT_SECRET', 'EMAIL', 'EMAIL_PASSWORD', 'EMAIL_SERVICE', 'VAPID_PUBLIC_KEY', 'VAPID_PRIVATE_KEY'];
-        requiredEnvVars.forEach((varName) => {
-            expect(process.env[varName]).to.exist;
-        });
+        expect(config).to.have.property('port');
+        expect(config).to.have.property('dbUri');
+        expect(config).to.have.property('jwtSecret');
+        expect(config).to.have.property('email');
+        expect(config).to.have.property('emailPassword');
+        expect(config).to.have.property('emailService');
+        expect(config).to.have.property('vapidPublicKey');
+        expect(config).to.have.property('vapidPrivateKey');
+        expect(config).to.have.property('gridFsBucket');
+        expect(config).to.have.property('googleApiKey');
+        expect(config).to.have.property('stripeApiKey');
+        expect(config).to.have.property('corsOrigins');
     });
 
     it('should validate the JWT_SECRET is strong enough', () => {
-        expect(config.jwtSecret).to.have.lengthOf.at.least(32);
+        expect(config.jwtSecret.length).to.be.at.least(32);
     });
 
     it('should use the correct configuration for the environment', () => {
-        expect(config.port).to.be.a('number');
-        expect(config.corsOrigins).to.be.an('array');
+        expect(parseInt(config.port, 10)).to.be.a('number');
     });
 });

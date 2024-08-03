@@ -1,10 +1,12 @@
 import { expect } from 'chai';
 import Post from '../../../models/Post.js';
 import User from '../../../models/User.js';
+import mongoose from 'mongoose';
 
 describe('Post Model Tests', () => {
     let userId;
     before(async () => {
+        await User.deleteMany();
         const user = new User({
             username: 'testuser',
             email: 'testuser@example.com',
