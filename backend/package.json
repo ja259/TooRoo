@@ -6,7 +6,7 @@
   "scripts": {
     "start": "NODE_OPTIONS=--max_old_space_size=8192 node server.js",
     "dev": "NODE_OPTIONS=--max_old_space_size=8192 nodemon server.js",
-    "test": "NODE_OPTIONS=--max_old_space_size=8192 mocha --require ts-node/register --recursive --timeout 10000",
+    "test": "NODE_OPTIONS=--max_old_space_size=8192 mocha --require ts-node/register --recursive --timeout 10000 'test/**/*.test.{js,ts}'",
     "test:integration": "NODE_OPTIONS=--max_old_space_size=8192 mocha --require ts-node/register --recursive --timeout 10000 'test/integration/**/*.test.{js,ts}'"
   },
   "dependencies": {
