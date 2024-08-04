@@ -1,5 +1,4 @@
-// test/integration/utils/emailService.test.js
-import chai from 'chai';
+import * as chai from 'chai';
 import chaiHttp from 'chai-http';
 import emailService from '../../../utils/emailService.js';
 import dotenv from 'dotenv';

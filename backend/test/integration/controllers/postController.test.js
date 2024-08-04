@@ -1,5 +1,4 @@
-// test/integration/controllers/postController.test.js
-import chai from 'chai';
+import * as chai from 'chai';
 import chaiHttp from 'chai-http';
 import app from '../../../server.js';
 import User from '../../../models/User.js';
