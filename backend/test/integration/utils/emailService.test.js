@@ -2,32 +2,34 @@ import * as chai from 'chai';
 import chaiHttp from 'chai-http';
 import sinon from 'sinon';
 import nodemailer from 'nodemailer';
-import { sendEmail } from '../../../utils/emailService.js';
+import emailService from '../../../utils/emailService.js'; // Adjust the path as needed
 
 chai.use(chaiHttp);
 const { expect } = chai;
 
-describe('Email Service Tests', () => {
+describe('Email Service Integration Tests', () => {
     let transportStub;
 
     before(() => {
+        // Stub nodemailer createTransport method
         transportStub = sinon.stub(nodemailer, 'createTransport').returns({
-            sendMail: (options, callback) => {
-                if (!options.to) {
-                    return callback(new Error('No recipients defined'));
+            sendMail: (mailOptions) => {
+                if (!mailOptions.to) {
+                    throw new Error('No recipients defined');
                 }
-                callback(null, { response: 'Email sent successfully' });
+                return { response: 'Email sent successfully' };
             }
         });
     });
 
     after(() => {
+        // Restore the original method
         transportStub.restore();
     });
 
     it('should send an email successfully', async () => {
         try {
-            const result = await sendEmail('test@example.com', 'Test Email', 'This is a test email');
+            const result = await emailService.sendEmail('test@example.com', 'Test Email', 'This is a test email');
             expect(result.response).to.equal('Email sent successfully');
         } catch (error) {
             throw new Error('Test failed');
@@ -36,10 +38,19 @@ describe('Email Service Tests', () => {
 
     it('should handle errors during email sending', async () => {
         try {
-            await sendEmail('', 'Test Email', 'This is a test email');
+            await emailService.sendEmail('', 'Test Email', 'This is a test email');
         } catch (error) {
             expect(error).to.exist;
             expect(error.message).to.equal('Failed to send email');
+        }
+    });
+
+    it('should throw an error if no recipient is provided', async () => {
+        try {
+            await emailService.sendEmail('', 'Test Email', 'This is a test email');
+        } catch (error) {
+            expect(error).to.exist;
+            expect(error.message).to.equal('No recipients defined');
         }
     });
 });
