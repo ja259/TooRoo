@@ -1,4 +1,4 @@
-import * as chai from 'chai';
+import chai from 'chai';
 import sinon from 'sinon';
 import nodemailer from 'nodemailer';
 import { sendEmail } from '../../../utils/emailService.js';
@@ -14,7 +14,7 @@ describe('Email Service Tests', () => {
                 if (!options.to) {
                     return callback(new Error('No recipients defined'));
                 }
-                callback(null, 'Email sent successfully');
+                callback(null, { response: 'Email sent successfully' });
             }
         });
     });
@@ -29,7 +29,8 @@ describe('Email Service Tests', () => {
             subject: 'Test Email',
             text: 'This is a test email'
         }, (error, info) => {
-            expect(info).to.equal('Email sent successfully');
+            expect(error).to.be.null;
+            expect(info.response).to.equal('Email sent successfully');
             done();
         });
     });
