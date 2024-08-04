@@ -1,4 +1,5 @@
 import * as chai from 'chai';
+import chaiHttp from 'chai-http';
 import Interaction from '../../../models/Interaction.js';
 import mongoose from 'mongoose';
 
