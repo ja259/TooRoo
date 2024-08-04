@@ -1,6 +1,7 @@
-import * as chai from 'chai';
+// test/integration/controllers/mediaController.test.js
+import chai from 'chai';
 import chaiHttp from 'chai-http';
-import app from '../../../server.js'; // Updated import
+import app from '../../../server.js';
 import User from '../../../models/User.js';
 import Video from '../../../models/Video.js';
 
