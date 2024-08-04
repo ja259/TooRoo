@@ -1,6 +1,8 @@
-import { expect } from 'chai';
+import * as chai from 'chai';
 import Interaction from '../../../models/Interaction.js';
 import mongoose from 'mongoose';
+
+const { expect } = chai;
 
 describe('Interaction Model Tests', () => {
     it('should create an interaction', async () => {

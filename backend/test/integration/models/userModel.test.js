@@ -1,5 +1,7 @@
-import { expect } from 'chai';
+import * as chai from 'chai';
 import User from '../../../models/User.js';
+
+const { expect } = chai;
 
 describe('User Model Tests', () => {
     beforeEach(async () => {

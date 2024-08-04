@@ -1,8 +1,10 @@
-import { expect } from 'chai';
+import * as chai from 'chai';
 import Interaction from '../../../models/Interaction.js';
 import Post from '../../../models/Post.js';
 import analyzePreferences from '../../../analyzePreferences.js';
 import mongoose from 'mongoose';
+
+const { expect } = chai;
 
 describe('Analyze Preferences Service Tests', () => {
     let userId;

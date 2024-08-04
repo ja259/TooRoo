@@ -1,7 +1,9 @@
-import { expect } from 'chai';
+import * as chai from 'chai';
 import Video from '../../../models/Video.js';
 import User from '../../../models/User.js';
 import mongoose from 'mongoose';
+
+const { expect } = chai;
 
 describe('Video Model Tests', () => {
     let userId;
