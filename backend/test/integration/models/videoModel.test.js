@@ -3,6 +3,7 @@ import Video from '../../../models/Video.js';
 import User from '../../../models/User.js';
 import mongoose from 'mongoose';
 
+chai.use(chaiHttp);
 const { expect } = chai;
 
 describe('Video Model Tests', () => {

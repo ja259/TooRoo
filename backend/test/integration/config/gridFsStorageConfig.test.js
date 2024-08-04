@@ -4,6 +4,7 @@ import crypto from 'crypto';
 import path from 'path';
 import config from '../../../config/config.js';
 
+chai.use(chaiHttp);
 const { expect } = chai;
 
 describe('GridFS Storage Config Tests', () => {

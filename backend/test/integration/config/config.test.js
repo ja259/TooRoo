@@ -1,6 +1,7 @@
 import * as chai from 'chai';
 import config from '../../../config/config.js';
 
+chai.use(chaiHttp);
 const { expect } = chai;
 
 describe('Config Tests', () => {

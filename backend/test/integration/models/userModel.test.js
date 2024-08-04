@@ -1,6 +1,7 @@
 import * as chai from 'chai';
 import User from '../../../models/User.js';
 
+chai.use(chaiHttp);
 const { expect } = chai;
 
 describe('User Model Tests', () => {

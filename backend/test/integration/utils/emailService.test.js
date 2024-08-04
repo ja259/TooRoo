@@ -1,8 +1,9 @@
-import chai from 'chai';
+import * as chai from 'chai';
 import sinon from 'sinon';
 import nodemailer from 'nodemailer';
 import { sendEmail } from '../../../utils/emailService.js';
 
+chai.use(chaiHttp);
 const { expect } = chai;
 
 describe('Email Service Tests', () => {

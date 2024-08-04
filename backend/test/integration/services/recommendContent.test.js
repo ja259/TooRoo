@@ -3,6 +3,7 @@ import Post from '../../../models/Post.js';
 import recommendContent from '../../../recommendContent.js';
 import mongoose from 'mongoose';
 
+chai.use(chaiHttp);
 const { expect } = chai;
 
 describe('Recommend Content Service Tests', () => {
