@@ -1,4 +1,4 @@
-import chai from 'chai';
+import * as chai from 'chai';
 import chaiHttp from 'chai-http';
 import express from 'express';
 import bodyParser from 'body-parser';

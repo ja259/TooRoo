@@ -1,7 +1,7 @@
-const chai = require('chai');
-const chaiHttp = require('chai-http');
-const server = require('../../../server.js');
-const User = require('../../../models/User.js');
+import * as chai from 'chai';
+import chaiHttp from 'chai-http';
+import server from '../../../server.js';
+import User from '../../../models/User.js';
 
 chai.use(chaiHttp);
 const { expect } = chai;
