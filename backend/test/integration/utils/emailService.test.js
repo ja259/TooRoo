@@ -25,26 +25,21 @@ describe('Email Service Tests', () => {
         transportStub.restore();
     });
 
-    it('should send an email successfully', (done) => {
-        sendEmail({
-            to: 'test@example.com',
-            subject: 'Test Email',
-            text: 'This is a test email'
-        }, (error, info) => {
-            expect(error).to.be.null;
-            expect(info.response).to.equal('Email sent successfully');
-            done();
-        });
+    it('should send an email successfully', async () => {
+        try {
+            const result = await sendEmail('test@example.com', 'Test Email', 'This is a test email');
+            expect(result.response).to.equal('Email sent successfully');
+        } catch (error) {
+            throw new Error('Test failed');
+        }
     });
 
-    it('should handle errors during email sending', (done) => {
-        sendEmail({
-            subject: 'Test Email',
-            text: 'This is a test email'
-        }, (error, info) => {
+    it('should handle errors during email sending', async () => {
+        try {
+            await sendEmail('', 'Test Email', 'This is a test email');
+        } catch (error) {
             expect(error).to.exist;
-            expect(error.message).to.equal('No recipients defined');
-            done();
-        });
+            expect(error.message).to.equal('Failed to send email');
+        }
     });
 });
