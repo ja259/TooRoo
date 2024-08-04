@@ -1,4 +1,5 @@
 import * as chai from 'chai';
+import chaiHttp from 'chai-http';
 import Post from '../../../models/Post.js';
 import recommendContent from '../../../recommendContent.js';
 import mongoose from 'mongoose';

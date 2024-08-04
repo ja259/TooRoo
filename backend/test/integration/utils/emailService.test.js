@@ -1,4 +1,5 @@
 import * as chai from 'chai';
+import chaiHttp from 'chai-http';
 import sinon from 'sinon';
 import nodemailer from 'nodemailer';
 import { sendEmail } from '../../../utils/emailService.js';

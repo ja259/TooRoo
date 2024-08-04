@@ -1,4 +1,5 @@
 import * as chai from 'chai';
+import chaiHttp from 'chai-http';
 import Interaction from '../../../models/Interaction.js';
 import Post from '../../../models/Post.js';
 import analyzePreferences from '../../../analyzePreferences.js';

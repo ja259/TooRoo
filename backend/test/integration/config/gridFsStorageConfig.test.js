@@ -1,5 +1,5 @@
 import * as chai from 'chai';
-import chaiHttp from 'chai-http'; // Ensure chai-http is imported
+import chaiHttp from 'chai-http';
 import { GridFsStorage } from 'multer-gridfs-storage';
 import crypto from 'crypto';
 import path from 'path';
