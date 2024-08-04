@@ -9,7 +9,7 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-export const sendEmail = async (to, subject, text) => {
+const sendEmail = async (to, subject, text) => {
     const mailOptions = {
         from: config.email,
         to,
@@ -26,3 +26,5 @@ export const sendEmail = async (to, subject, text) => {
         throw new Error('Failed to send email');
     }
 };
+
+export default { sendEmail };
