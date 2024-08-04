@@ -3,6 +3,7 @@ import Post from '../../../models/Post.js';
 import User from '../../../models/User.js';
 import mongoose from 'mongoose';
 
+chai.use(chaiHttp);
 const { expect } = chai;
 
 describe('Post Model Tests', () => {

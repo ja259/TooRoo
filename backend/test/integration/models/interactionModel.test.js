@@ -2,6 +2,7 @@ import * as chai from 'chai';
 import Interaction from '../../../models/Interaction.js';
 import mongoose from 'mongoose';
 
+chai.use(chaiHttp);
 const { expect } = chai;
 
 describe('Interaction Model Tests', () => {

@@ -4,6 +4,7 @@ import Post from '../../../models/Post.js';
 import analyzePreferences from '../../../analyzePreferences.js';
 import mongoose from 'mongoose';
 
+chai.use(chaiHttp);
 const { expect } = chai;
 
 describe('Analyze Preferences Service Tests', () => {
