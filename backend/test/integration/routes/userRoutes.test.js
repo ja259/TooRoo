@@ -1,6 +1,6 @@
 import * as chai from 'chai';
 import chaiHttp from 'chai-http';
-import server from '../../../server.js';
+import app from '../../../server.js';
 import User from '../../../models/User.js';
 
 chai.use(chaiHttp);
@@ -30,7 +30,7 @@ describe('User Routes Tests', () => {
     });
 
     it('should get user details', (done) => {
-        chai.request(server)
+        chai.request(app)
             .get(`/api/users/${userId}`)
             .set('Authorization', `Bearer ${userToken}`)
             .end((err, res) => {
@@ -41,7 +41,7 @@ describe('User Routes Tests', () => {
     });
 
     it('should update user details', (done) => {
-        chai.request(server)
+        chai.request(app)
             .put(`/api/users/${userId}`)
             .set('Authorization', `Bearer ${userToken}`)
             .send({ username: 'updatedtestuser' })
@@ -53,7 +53,7 @@ describe('User Routes Tests', () => {
     });
 
     it('should follow a user', (done) => {
-        chai.request(server)
+        chai.request(app)
             .post(`/api/users/${userId}/follow`)
             .set('Authorization', `Bearer ${userToken}`)
             .send({ userId: 'followUserId' })
@@ -65,7 +65,7 @@ describe('User Routes Tests', () => {
     });
 
     it('should unfollow a user', (done) => {
-        chai.request(server)
+        chai.request(app)
             .post(`/api/users/${userId}/unfollow`)
             .set('Authorization', `Bearer ${userToken}`)
             .send({ userId: 'unfollowUserId' })
@@ -77,7 +77,7 @@ describe('User Routes Tests', () => {
     });
 
     it('should get user analytics', (done) => {
-        chai.request(server)
+        chai.request(app)
             .get('/api/users/analytics')
             .set('Authorization', `Bearer ${userToken}`)
             .end((err, res) => {

@@ -1,6 +1,6 @@
 import * as chai from 'chai';
 import chaiHttp from 'chai-http';
-import server from '../../../server.js';
+import app from '../../../server.js';
 import User from '../../../models/User.js';
 import Post from '../../../models/Post.js';
 
@@ -33,7 +33,7 @@ describe('Post Routes Tests', () => {
     });
 
     it('should create a new post', (done) => {
-        chai.request(server)
+        chai.request(app)
             .post('/api/posts')
             .set('Authorization', `Bearer ${userToken}`)
             .send({ content: 'Test Post', authorId: userId })
@@ -46,7 +46,7 @@ describe('Post Routes Tests', () => {
     });
 
     it('should get all posts', (done) => {
-        chai.request(server)
+        chai.request(app)
             .get('/api/posts')
             .end((err, res) => {
                 expect(res).to.have.status(200);
@@ -56,7 +56,7 @@ describe('Post Routes Tests', () => {
     });
 
     it('should like a post', (done) => {
-        chai.request(server)
+        chai.request(app)
             .put(`/api/posts/${postId}/like`)
             .set('Authorization', `Bearer ${userToken}`)
             .send({ userId })
@@ -68,7 +68,7 @@ describe('Post Routes Tests', () => {
     });
 
     it('should comment on a post', (done) => {
-        chai.request(server)
+        chai.request(app)
             .post(`/api/posts/${postId}/comment`)
             .set('Authorization', `Bearer ${userToken}`)
             .send({ userId, content: 'Test Comment' })
@@ -80,7 +80,7 @@ describe('Post Routes Tests', () => {
     });
 
     it('should delete a post', (done) => {
-        chai.request(server)
+        chai.request(app)
             .delete(`/api/posts/${postId}`)
             .set('Authorization', `Bearer ${userToken}`)
             .end((err, res) => {

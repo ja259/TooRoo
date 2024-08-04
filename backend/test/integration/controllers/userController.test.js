@@ -1,6 +1,6 @@
 import * as chai from 'chai';
 import chaiHttp from 'chai-http';
-import server from '../../../server.js';
+import app from '../../../server.js'; // Updated import
 import User from '../../../models/User.js';
 
 chai.use(chaiHttp);
@@ -31,7 +31,7 @@ describe('User Controller Tests', () => {
 
     describe('GET /api/users/:id', () => {
         it('should get user details', (done) => {
-            chai.request(server)
+            chai.request(app)
                 .get(`/api/users/${userId}`)
                 .set('Authorization', `Bearer ${userToken}`)
                 .end((err, res) => {
@@ -44,7 +44,7 @@ describe('User Controller Tests', () => {
 
     describe('PUT /api/users/:id', () => {
         it('should update user details', (done) => {
-            chai.request(server)
+            chai.request(app)
                 .put(`/api/users/${userId}`)
                 .set('Authorization', `Bearer ${userToken}`)
                 .send({ username: 'updatedtestuser' })
@@ -58,7 +58,7 @@ describe('User Controller Tests', () => {
 
     describe('POST /api/users/:id/follow', () => {
         it('should follow a user', (done) => {
-            chai.request(server)
+            chai.request(app)
                 .post(`/api/users/${userId}/follow`)
                 .set('Authorization', `Bearer ${userToken}`)
                 .send({ userId: 'followUserId' })
@@ -72,7 +72,7 @@ describe('User Controller Tests', () => {
 
     describe('POST /api/users/:id/unfollow', () => {
         it('should unfollow a user', (done) => {
-            chai.request(server)
+            chai.request(app)
                 .post(`/api/users/${userId}/unfollow`)
                 .set('Authorization', `Bearer ${userToken}`)
                 .send({ userId: 'unfollowUserId' })
@@ -86,7 +86,7 @@ describe('User Controller Tests', () => {
 
     describe('GET /api/users/analytics', () => {
         it('should get user analytics', (done) => {
-            chai.request(server)
+            chai.request(app)
                 .get('/api/users/analytics')
                 .set('Authorization', `Bearer ${userToken}`)
                 .end((err, res) => {
