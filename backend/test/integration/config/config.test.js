@@ -1,4 +1,5 @@
 import * as chai from 'chai';
+import chaiHttp from 'chai-http'; // Ensure chai-http is imported
 import config from '../../../config/config.js';
 
 chai.use(chaiHttp);
