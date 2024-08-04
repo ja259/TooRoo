@@ -11,7 +11,7 @@ const { expect } = chai;
 describe('GridFS Storage Config Tests', () => {
     it('should have a valid GridFS storage configuration', () => {
         const storage = new GridFsStorage({ url: config.dbUri });
-        expect(storage).to.have.property('url');
+        expect(storage).to.have.property('db');
     });
 
     it('should generate a valid filename using crypto', (done) => {

@@ -74,7 +74,7 @@ describe('Video Model Tests', () => {
             author: userId
         });
         await video.save();
-        video.comments.push({ author: userId, content: 'Test comment' });
+        video.comments.push({ author: new mongoose.Types.ObjectId(userId), content: 'Test comment' });
         await video.save();
         expect(video.comments).to.have.lengthOf(1);
     });

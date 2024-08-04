@@ -28,7 +28,7 @@ describe('Recommend Content Service Tests', () => {
         try {
             await recommendContent(null);
         } catch (error) {
-            expect(error).to.exist;
+            expect(error.message).to.equal('User ID is required');
         }
     });
 });
