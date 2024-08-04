@@ -1,6 +1,6 @@
 import * as chai from 'chai';
 import chaiHttp from 'chai-http';
-import server from '../../../server.js';
+import app from '../../../server.js'; // Updated import
 import User from '../../../models/User.js';
 import Video from '../../../models/Video.js';
 
@@ -34,7 +34,7 @@ describe('Media Controller Tests', () => {
 
     describe('POST /api/media/upload', () => {
         it('should upload a media file', (done) => {
-            chai.request(server)
+            chai.request(app)
                 .post('/api/media/upload')
                 .set('Authorization', `Bearer ${userToken}`)
                 .field('authorId', userId.toString())
@@ -51,7 +51,7 @@ describe('Media Controller Tests', () => {
 
     describe('GET /api/media/videos', () => {
         it('should get all videos', (done) => {
-            chai.request(server)
+            chai.request(app)
                 .get('/api/media/videos')
                 .end((err, res) => {
                     expect(res).to.have.status(200);
@@ -63,7 +63,7 @@ describe('Media Controller Tests', () => {
 
     describe('DELETE /api/media/videos/:id', () => {
         it('should delete a video', (done) => {
-            chai.request(server)
+            chai.request(app)
                 .delete(`/api/media/videos/${videoId}`)
                 .set('Authorization', `Bearer ${userToken}`)
                 .end((err, res) => {
@@ -76,7 +76,7 @@ describe('Media Controller Tests', () => {
 
     describe('PUT /api/media/videos/:id', () => {
         it('should update a video', (done) => {
-            chai.request(server)
+            chai.request(app)
                 .put(`/api/media/videos/${videoId}`)
                 .set('Authorization', `Bearer ${userToken}`)
                 .send({ description: 'Updated Test Video' })
