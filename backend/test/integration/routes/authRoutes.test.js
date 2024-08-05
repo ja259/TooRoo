@@ -1,16 +1,14 @@
+import '../../setup.js';
+import '../../teardown.js';
 import * as chai from 'chai';
-import chaiHttp from 'chai-http';
-import app from '../../../server.js'; // Update the import to use app
+import chaiHttp from 'chai-http/index.js';
+import app from '../../../server.js';
 import User from '../../../models/User.js';
 
 chai.use(chaiHttp);
 const { expect } = chai;
 
 describe('Auth Routes Tests', () => {
-    before(async () => {
-        await User.deleteMany();
-    });
-
     it('should register a new user', (done) => {
         chai.request(app)
             .post('/api/auth/register')

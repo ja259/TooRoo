@@ -1,3 +1,5 @@
+import '../../setup.js';
+import '../../teardown.js';
 import * as chai from 'chai';
 import mongoose from 'mongoose';
 import Video from '../../../models/Video.js';
@@ -5,18 +7,6 @@ import Video from '../../../models/Video.js';
 const { expect } = chai;
 
 describe('Video Model Tests', () => {
-    before(async () => {
-        await mongoose.connect('mongodb://localhost/testDB', {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-        });
-        await Video.deleteMany();
-    });
-
-    after(async () => {
-        await mongoose.connection.close();
-    });
-
     it('should create a new video', async () => {
         const video = new Video({
             videoUrl: 'http://testurl.com/video.mp4',
