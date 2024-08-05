@@ -1,31 +1,17 @@
 import * as chai from 'chai';
-import chaiHttp from 'chai-http';
-import emailService from '../../../utils/emailService.js';
-import dotenv from 'dotenv';
+import { sendEmail } from '../../../emailService.js';
 
-chai.use(chaiHttp);
 const { expect } = chai;
-
-// Load environment variables from .env file
-dotenv.config();
 
 describe('Email Service Integration Tests', () => {
     it('should send an email successfully', async () => {
-        const result = await emailService.sendEmail({
-            to: process.env.TEST_EMAIL_RECIPIENT,
-            subject: 'Test Email',
-            text: 'This is a test email'
-        });
-        expect(result).to.have.property('accepted').that.includes(process.env.TEST_EMAIL_RECIPIENT);
+        const result = await sendEmail('test@example.com', 'Test Subject', 'Test Body');
+        expect(result).to.equal('Email sent');
     });
 
     it('should handle errors during email sending', async () => {
         try {
-            await emailService.sendEmail({
-                to: '',
-                subject: 'Test Email',
-                text: 'This is a test email'
-            });
+            await sendEmail(null, 'Test Subject', 'Test Body');
         } catch (error) {
             expect(error.message).to.equal('No recipients defined');
         }
@@ -33,10 +19,7 @@ describe('Email Service Integration Tests', () => {
 
     it('should throw an error if no recipient is provided', async () => {
         try {
-            await emailService.sendEmail({
-                subject: 'Test Email',
-                text: 'This is a test email'
-            });
+            await sendEmail('', 'Test Subject', 'Test Body');
         } catch (error) {
             expect(error.message).to.equal('No recipients defined');
         }

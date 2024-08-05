@@ -1,16 +1,13 @@
 import * as chai from 'chai';
 import chaiHttp from 'chai-http';
-import jwt from 'jsonwebtoken';
-import config from '../../../config/config.js';
+import app from '../../../server.js';
 import User from '../../../models/User.js';
-import app from '../../../server.js'; // Update the import to use app
 
 chai.use(chaiHttp);
 const { expect } = chai;
 
 describe('Auth Middleware Tests', () => {
     let userToken;
-    let userId;
 
     before(async () => {
         await User.deleteMany();
@@ -27,61 +24,56 @@ describe('Auth Middleware Tests', () => {
             ]
         });
         await user.save();
-        userToken = jwt.sign({ userId: user._id }, config.jwtSecret, { expiresIn: '1h' });
-        userId = user._id;
+        userToken = user.generateAuthToken();
     });
 
-    describe('authenticate', () => {
-        it('should authenticate a valid token', (done) => {
-            chai.request(app)
-                .get('/api/protected')
-                .set('Authorization', `Bearer ${userToken}`)
-                .end((err, res) => {
-                    expect(res).to.have.status(200);
-                    done();
-                });
-        });
-
-        it('should return 401 for an invalid token', (done) => {
-            chai.request(app)
-                .get('/api/protected')
-                .set('Authorization', 'Bearer invalid_token')
-                .end((err, res) => {
-                    expect(res).to.have.status(401);
-                    done();
-                });
-        });
-
-        it('should return 401 if token is not provided', (done) => {
-            chai.request(app)
-                .get('/api/protected')
-                .end((err, res) => {
-                    expect(res).to.have.status(401);
-                    done();
-                });
-        });
+    it('should authenticate a valid token', (done) => {
+        chai.request(app)
+            .get('/api/protected-route')
+            .set('Authorization', `Bearer ${userToken}`)
+            .end((err, res) => {
+                expect(res).to.have.status(200);
+                done();
+            });
     });
 
-    describe('protect', () => {
-        it('should call next for authenticated user', (done) => {
-            chai.request(app)
-                .get('/api/protected')
-                .set('Authorization', `Bearer ${userToken}`)
-                .end((err, res) => {
-                    expect(res).to.have.status(200);
-                    done();
-                });
-        });
+    it('should return 401 for an invalid token', (done) => {
+        chai.request(app)
+            .get('/api/protected-route')
+            .set('Authorization', 'Bearer invalidtoken')
+            .end((err, res) => {
+                expect(res).to.have.status(401);
+                done();
+            });
+    });
 
-        it('should return 403 if user does not exist', (done) => {
-            const invalidUserToken = jwt.sign({ userId: 'invalid_user_id' }, config.jwtSecret, { expiresIn: '1h' });
-            chai.request(app)
-                .get('/api/protected')
-                .set('Authorization', `Bearer ${invalidUserToken}`)
-                .end((err, res) => {
-                    expect(res).to.have.status(403);
-                    done();
-                });
-        });
+    it('should return 401 if token is not provided', (done) => {
+        chai.request(app)
+            .get('/api/protected-route')
+            .end((err, res) => {
+                expect(res).to.have.status(401);
+                done();
+            });
+    });
+
+    it('should call next for authenticated user', (done) => {
+        chai.request(app)
+            .get('/api/protected-route')
+            .set('Authorization', `Bearer ${userToken}`)
+            .end((err, res) => {
+                expect(res).to.have.status(200);
+                done();
+            });
+    });
+
+    it('should return 403 if user does not exist', (done) => {
+        const invalidToken = User.generateAuthToken(new User({ _id: 'invalidUserId' }));
+        chai.request(app)
+            .get('/api/protected-route')
+            .set('Authorization', `Bearer ${invalidToken}`)
+            .end((err, res) => {
+                expect(res).to.have.status(403);
+                done();
+            });
     });
 });

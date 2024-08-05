@@ -1,105 +1,102 @@
 import * as chai from 'chai';
-import chaiHttp from 'chai-http';
-import Video from '../../../models/Video.js';
-import User from '../../../models/User.js';
 import mongoose from 'mongoose';
+import Video from '../../../models/Video.js';
 
-chai.use(chaiHttp);
 const { expect } = chai;
 
 describe('Video Model Tests', () => {
-    let userId;
     before(async () => {
-        await User.deleteMany();
-        const user = new User({
-            username: 'testuser',
-            email: 'testuser@example.com',
-            phone: '1234567890',
-            password: 'password123'
+        await mongoose.connect('mongodb://localhost/testDB', {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
         });
-        await user.save();
-        userId = user._id;
+        await Video.deleteMany();
+    });
+
+    after(async () => {
+        await mongoose.connection.close();
     });
 
     it('should create a new video', async () => {
         const video = new Video({
-            videoUrl: 'http://example.com/video.mp4',
-            description: 'Test video description',
-            author: userId
+            videoUrl: 'http://testurl.com/video.mp4',
+            author: new mongoose.Types.ObjectId(),
+            description: 'Test Video'
         });
         const savedVideo = await video.save();
         expect(savedVideo).to.have.property('_id');
+        expect(savedVideo).to.have.property('videoUrl', 'http://testurl.com/video.mp4');
     });
 
     it('should require a videoUrl', async () => {
+        const video = new Video({
+            author: new mongoose.Types.ObjectId(),
+            description: 'Test Video'
+        });
         try {
-            const video = new Video({
-                description: 'Test video description',
-                author: userId
-            });
             await video.save();
         } catch (error) {
-            expect(error).to.exist;
+            expect(error.errors.videoUrl).to.exist;
         }
     });
 
     it('should require an author', async () => {
+        const video = new Video({
+            videoUrl: 'http://testurl.com/video.mp4',
+            description: 'Test Video'
+        });
         try {
-            const video = new Video({
-                videoUrl: 'http://example.com/video.mp4',
-                description: 'Test video description'
-            });
             await video.save();
         } catch (error) {
-            expect(error).to.exist;
+            expect(error.errors.author).to.exist;
         }
     });
 
     it('should add a like to a video', async () => {
         const video = new Video({
-            videoUrl: 'http://example.com/video.mp4',
-            description: 'Test video description',
-            author: userId
+            videoUrl: 'http://testurl.com/video.mp4',
+            author: new mongoose.Types.ObjectId(),
+            description: 'Test Video'
         });
-        await video.save();
-        video.likes.push(userId);
-        await video.save();
-        expect(video.likes).to.include(userId);
+        const savedVideo = await video.save();
+        savedVideo.likes.push(new mongoose.Types.ObjectId());
+        const updatedVideo = await savedVideo.save();
+        expect(updatedVideo.likes).to.have.lengthOf(1);
     });
 
     it('should add a comment to a video', async () => {
         const video = new Video({
-            videoUrl: 'http://example.com/video.mp4',
-            description: 'Test video description',
-            author: userId
+            videoUrl: 'http://testurl.com/video.mp4',
+            author: new mongoose.Types.ObjectId(),
+            description: 'Test Video'
         });
-        await video.save();
-        video.comments.push({ author: new mongoose.Types.ObjectId(userId), content: 'Test comment' });
-        await video.save();
-        expect(video.comments).to.have.lengthOf(1);
+        const savedVideo = await video.save();
+        savedVideo.comments.push({ author: new mongoose.Types.ObjectId(), content: 'Test comment' });
+        const updatedVideo = await savedVideo.save();
+        expect(updatedVideo.comments).to.have.lengthOf(1);
     });
 
     it('should update a video description', async () => {
         const video = new Video({
-            videoUrl: 'http://example.com/video.mp4',
-            description: 'Test video description',
-            author: userId
+            videoUrl: 'http://testurl.com/video.mp4',
+            author: new mongoose.Types.ObjectId(),
+            description: 'Test Video'
         });
-        await video.save();
-        video.description = 'Updated video description';
-        await video.save();
-        expect(video.description).to.equal('Updated video description');
+        const savedVideo = await video.save();
+        savedVideo.description = 'Updated Test Video';
+        const updatedVideo = await savedVideo.save();
+        expect(updatedVideo).to.have.property('description', 'Updated Test Video');
     });
 
     it('should delete a video', async () => {
         const video = new Video({
-            videoUrl: 'http://example.com/video.mp4',
-            description: 'Test video description',
-            author: userId
+            videoUrl: 'http://testurl.com/video.mp4',
+            author: new mongoose.Types.ObjectId(),
+            description: 'Test Video'
         });
-        await video.save();
-        await video.deleteOne();
-        const foundVideo = await Video.findById(video._id);
-        expect(foundVideo).to.be.null;
+        const savedVideo = await video.save();
+        await savedVideo.remove();
+        const deletedVideo = await Video.findById(savedVideo._id);
+        expect(deletedVideo).to.be.null;
     });
 });

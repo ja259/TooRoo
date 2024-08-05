@@ -32,59 +32,51 @@ describe('Media Controller Tests', () => {
         userId = user._id;
     });
 
-    describe('POST /api/media/upload', () => {
-        it('should upload a media file', (done) => {
-            chai.request(app)
-                .post('/api/media/upload')
-                .set('Authorization', `Bearer ${userToken}`)
-                .field('authorId', userId.toString())
-                .field('description', 'Test Video')
-                .attach('video', 'test/test-files/testvideo.mp4', 'testvideo.mp4')
-                .end((err, res) => {
-                    expect(res).to.have.status(201);
-                    expect(res.body).to.have.property('message', 'Video uploaded successfully');
-                    videoId = res.body.video._id;
-                    done();
-                });
-        });
+    it('should upload a media file', (done) => {
+        chai.request(app)
+            .post('/api/media/upload')
+            .set('Authorization', `Bearer ${userToken}`)
+            .field('authorId', userId.toString())
+            .field('description', 'Test Video')
+            .attach('video', 'test/test-files/testvideo.mp4', 'testvideo.mp4')
+            .end((err, res) => {
+                expect(res).to.have.status(201);
+                expect(res.body).to.have.property('message', 'Video uploaded successfully');
+                videoId = res.body.video._id;
+                done();
+            });
     });
 
-    describe('GET /api/media/videos', () => {
-        it('should get all videos', (done) => {
-            chai.request(app)
-                .get('/api/media/videos')
-                .end((err, res) => {
-                    expect(res).to.have.status(200);
-                    expect(res.body).to.have.property('message', 'Videos retrieved successfully');
-                    done();
-                });
-        });
+    it('should get all videos', (done) => {
+        chai.request(app)
+            .get('/api/media/videos')
+            .end((err, res) => {
+                expect(res).to.have.status(200);
+                expect(res.body).to.have.property('message', 'Videos retrieved successfully');
+                done();
+            });
     });
 
-    describe('DELETE /api/media/videos/:id', () => {
-        it('should delete a video', (done) => {
-            chai.request(app)
-                .delete(`/api/media/videos/${videoId}`)
-                .set('Authorization', `Bearer ${userToken}`)
-                .end((err, res) => {
-                    expect(res).to.have.status(200);
-                    expect(res.body).to.have.property('message', 'Video deleted successfully');
-                    done();
-                });
-        });
+    it('should delete a video', (done) => {
+        chai.request(app)
+            .delete(`/api/media/videos/${videoId}`)
+            .set('Authorization', `Bearer ${userToken}`)
+            .end((err, res) => {
+                expect(res).to.have.status(200);
+                expect(res.body).to.have.property('message', 'Video deleted successfully');
+                done();
+            });
     });
 
-    describe('PUT /api/media/videos/:id', () => {
-        it('should update a video', (done) => {
-            chai.request(app)
-                .put(`/api/media/videos/${videoId}`)
-                .set('Authorization', `Bearer ${userToken}`)
-                .send({ description: 'Updated Test Video' })
-                .end((err, res) => {
-                    expect(res).to.have.status(200);
-                    expect(res.body).to.have.property('message', 'Video updated successfully');
-                    done();
-                });
-        });
+    it('should update a video', (done) => {
+        chai.request(app)
+            .put(`/api/media/videos/${videoId}`)
+            .set('Authorization', `Bearer ${userToken}`)
+            .send({ description: 'Updated Test Video' })
+            .end((err, res) => {
+                expect(res).to.have.status(200);
+                expect(res.body).to.have.property('message', 'Video updated successfully');
+                done();
+            });
     });
 });
