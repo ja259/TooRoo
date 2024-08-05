@@ -1,3 +1,5 @@
+import '../../setup.js';
+import '../../teardown.js';
 import * as chai from 'chai';
 import { sendEmail } from '../../../utils/emailService.js';
 

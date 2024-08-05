@@ -1,5 +1,7 @@
+import '../../setup.js';
+import '../../teardown.js';
 import * as chai from 'chai';
-import chaiHttp from 'chai-http';
+import chaiHttp from 'chai-http/index.js';
 import app from '../../../server.js';
 import User from '../../../models/User.js';
 import Post from '../../../models/Post.js';
@@ -13,9 +15,6 @@ describe('Post Controller Tests', () => {
     let postId;
 
     before(async () => {
-        await User.deleteMany();
-        await Post.deleteMany();
-
         const user = new User({
             username: 'testuser',
             email: 'testuser@example.com',

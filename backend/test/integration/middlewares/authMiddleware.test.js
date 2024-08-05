@@ -1,5 +1,7 @@
+import '../../setup.js';
+import '../../teardown.js';
 import * as chai from 'chai';
-import chaiHttp from 'chai-http';
+import chaiHttp from 'chai-http/index.js';
 import app from '../../../server.js';
 import User from '../../../models/User.js';
 
@@ -10,8 +12,6 @@ describe('Auth Middleware Tests', () => {
     let userToken;
 
     before(async () => {
-        await User.deleteMany();
-
         const user = new User({
             username: 'testuser',
             email: 'testuser@example.com',
