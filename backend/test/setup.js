@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { connectDB, disconnectDB } from '../../db.js';
+import { connectDB, disconnectDB } from '../../../db.js';
 
 before(async () => {
     await connectDB();
