@@ -1,5 +1,7 @@
+import '../../setup.js';
+import '../../teardown.js';
 import * as chai from 'chai';
-import chaiHttp from 'chai-http';
+import chaiHttp from 'chai-http/index.js';
 import Post from '../../../models/Post.js';
 import User from '../../../models/User.js';
 import mongoose from 'mongoose';
