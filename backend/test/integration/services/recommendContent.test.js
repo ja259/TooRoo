@@ -1,27 +1,12 @@
 import * as chai from 'chai';
-import chaiHttp from 'chai-http';
-import Post from '../../../models/Post.js';
-import recommendContent from '../../../recommendContent.js';
-import mongoose from 'mongoose';
+import { recommendContent } from '../../../recommendContent.js';
 
-chai.use(chaiHttp);
 const { expect } = chai;
 
 describe('Recommend Content Service Tests', () => {
-    let userId;
-
-    before(async () => {
-        const post = new Post({
-            content: 'Test post content',
-            author: new mongoose.Types.ObjectId()
-        });
-        await post.save();
-        userId = new mongoose.Types.ObjectId();
-    });
-
     it('should recommend content for a user', async () => {
-        const recommendedPosts = await recommendContent(userId);
-        expect(recommendedPosts).to.be.an('array');
+        const recommendations = await recommendContent('validUserId');
+        expect(recommendations).to.be.an('array');
     });
 
     it('should handle errors during content recommendation', async () => {
