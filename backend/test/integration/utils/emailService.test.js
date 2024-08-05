@@ -1,5 +1,5 @@
 import * as chai from 'chai';
-import { sendEmail } from '../../../emailService.js';
+import  { sendEmail } from '../../../utils/emailService.js';
 
 const { expect } = chai;
 
