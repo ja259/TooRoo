@@ -1,5 +1,5 @@
 import * as chai from 'chai';
-import { recommendContent } from '../../../recommendContent.js';
+import recommendContent  from '../../../recommendContent.js';
 
 const { expect } = chai;
 
