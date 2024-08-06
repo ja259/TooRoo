@@ -1,7 +1,7 @@
 import '../../setup.js';
 import '../../teardown.js';
 import * as chai from 'chai';
-import chaiHttp from 'chai-http/index.js'; 
+import chaiHttp from 'chai-http';
 import crypto from 'crypto';
 import gridFsStorageConfig from '../../../config/gridFsStorageConfig.js';
 
