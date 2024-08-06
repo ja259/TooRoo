@@ -1,7 +1,16 @@
 import analyzePreferences from './analyzePreferences.js';
 import Post from './models/Post.js';
+import mongoose from 'mongoose';
 
 const recommendContent = async (userId) => {
+    if (!userId) {
+        throw new Error('User ID is required');
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+        throw new Error('Invalid ObjectId');
+    }
+
     try {
         const preferences = await analyzePreferences(userId);
         const likedPosts = preferences.likes.map(post => post._id);

@@ -1,13 +1,11 @@
 import '../../setup.js';
 import '../../teardown.js';
 import * as chai from 'chai';
-import chaiHttp from 'chai-http/index.js';
 import Interaction from '../../../models/Interaction.js';
 import Post from '../../../models/Post.js';
 import analyzePreferences from '../../../analyzePreferences.js';
 import mongoose from 'mongoose';
 
-chai.use(chaiHttp);
 const { expect } = chai;
 
 describe('Analyze Preferences Service Tests', () => {
@@ -28,7 +26,7 @@ describe('Analyze Preferences Service Tests', () => {
             interactionType: 'like'
         });
         await interaction.save();
-        userId = interaction.userId;
+        userId = interaction.userId.toString();
     });
 
     it('should analyze user preferences correctly', async () => {
@@ -38,7 +36,7 @@ describe('Analyze Preferences Service Tests', () => {
     });
 
     it('should handle no interactions found', async () => {
-        const preferences = await analyzePreferences(new mongoose.Types.ObjectId());
+        const preferences = await analyzePreferences(new mongoose.Types.ObjectId().toString());
         expect(preferences.likes).to.be.empty;
         expect(preferences.comments).to.be.empty;
     });
@@ -47,7 +45,7 @@ describe('Analyze Preferences Service Tests', () => {
         try {
             await analyzePreferences(null);
         } catch (error) {
-            expect(error).to.exist;
+            expect(error.message).to.equal('User ID is required');
         }
     });
 
@@ -56,6 +54,14 @@ describe('Analyze Preferences Service Tests', () => {
             await analyzePreferences(undefined);
         } catch (error) {
             expect(error.message).to.equal('User ID is required');
+        }
+    });
+
+    it('should throw an error if userId is invalid', async () => {
+        try {
+            await analyzePreferences('invalidUserId');
+        } catch (error) {
+            expect(error.message).to.equal('Invalid ObjectId');
         }
     });
 });
