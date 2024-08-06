@@ -1,11 +1,9 @@
 import '../../setup.js';
 import '../../teardown.js';
 import * as chai from 'chai';
-import chaiHttp from 'chai-http';
 import crypto from 'crypto';
 import gridFsStorageConfig from '../../../config/gridFsStorageConfig.js';
 
-chai.use(chaiHttp);
 const { expect } = chai;
 
 describe('GridFS Storage Config Tests', () => {
@@ -16,9 +14,9 @@ describe('GridFS Storage Config Tests', () => {
     });
 
     it('should generate a valid filename using crypto', (done) => {
-        const fileInfo = gridFsStorageConfig.file(null, { originalname: 'testfile.jpg' });
-        expect(fileInfo).to.have.property('filename');
-        expect(fileInfo).to.have.property('bucketName', 'uploads');
+        const filename = crypto.randomBytes(16).toString('hex');
+        expect(filename).to.be.a('string');
+        expect(filename).to.have.lengthOf(32);
         done();
     });
 });

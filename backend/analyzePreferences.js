@@ -3,12 +3,8 @@ import Post from './models/Post.js';
 import mongoose from 'mongoose';
 
 const analyzePreferences = async (userId) => {
-    if (!userId) {
+    if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
         throw new Error('User ID is required');
-    }
-
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-        throw new Error('Invalid ObjectId');
     }
 
     try {

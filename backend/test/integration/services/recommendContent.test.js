@@ -1,8 +1,8 @@
 import '../../setup.js';
 import '../../teardown.js';
 import * as chai from 'chai';
-import recommendContent from '../../../recommendContent.js';
 import mongoose from 'mongoose';
+import recommendContent from '../../../recommendContent.js';
 
 const { expect } = chai;
 
@@ -10,11 +10,11 @@ describe('Recommend Content Service Tests', () => {
     let userId;
 
     before(async () => {
-        userId = new mongoose.Types.ObjectId().toString(); // Generate a valid ObjectId
+        userId = new mongoose.Types.ObjectId();
     });
 
     it('should recommend content for a user', async () => {
-        const recommendations = await recommendContent(userId);
+        const recommendations = await recommendContent(userId.toString());
         expect(recommendations).to.be.an('array');
     });
 
@@ -30,7 +30,7 @@ describe('Recommend Content Service Tests', () => {
         try {
             await recommendContent('invalidUserId');
         } catch (error) {
-            expect(error.message).to.equal('Invalid ObjectId');
+            expect(error.message).to.equal('User ID is required');
         }
     });
 });
