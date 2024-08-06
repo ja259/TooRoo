@@ -3,11 +3,16 @@ import '../../teardown.js';
 import * as chai from 'chai';
 import chaiHttp from 'chai-http';
 import app from '../../../server.js';
+import User from '../../../models/User.js';
 
 chai.use(chaiHttp);
 const { expect } = chai;
 
 describe('Auth Controller Tests', () => {
+    before(async () => {
+        await User.deleteMany({});
+    });
+
     it('should register a new user', (done) => {
         chai.request(app)
             .post('/api/auth/register')

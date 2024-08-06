@@ -15,6 +15,7 @@ describe('Post Controller Tests', () => {
     let postId;
 
     before(async () => {
+        await User.deleteMany({});
         const user = new User({
             username: 'testuser',
             email: 'testuser@example.com',

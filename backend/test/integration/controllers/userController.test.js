@@ -13,6 +13,7 @@ describe('User Controller Tests', () => {
     let userId;
 
     before(async () => {
+        await User.deleteMany({});
         const user = new User({
             username: 'testuser',
             email: 'testuser@example.com',

@@ -1,10 +1,9 @@
 import '../../setup.js';
 import '../../teardown.js';
 import * as chai from 'chai';
-import chaiHttp from 'chai-http/index.js';
+import chaiHttp from 'chai-http';
 import app from '../../../server.js';
 import User from '../../../models/User.js';
-import Video from '../../../models/Video.js';
 
 chai.use(chaiHttp);
 const { expect } = chai;
@@ -15,6 +14,7 @@ describe('Media Routes Tests', () => {
     let videoId;
 
     before(async () => {
+        await User.deleteMany({});
         const user = new User({
             username: 'testuser',
             email: 'testuser@example.com',

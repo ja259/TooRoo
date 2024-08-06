@@ -85,7 +85,7 @@ describe('Video Model Tests', () => {
             description: 'Test Video'
         });
         const savedVideo = await video.save();
-        await savedVideo.remove();
+        await Video.deleteOne({ _id: savedVideo._id });
         const deletedVideo = await Video.findById(savedVideo._id);
         expect(deletedVideo).to.be.null;
     });
