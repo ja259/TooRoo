@@ -1,7 +1,7 @@
 import '../../setup.js';
 import '../../teardown.js';
 import * as chai from 'chai';
-import chaiHttp from 'chai-http/index.js';
+import chaiHttp from 'chai-http';
 import app from '../../../server.js';
 import User from '../../../models/User.js';
 import Post from '../../../models/Post.js';
