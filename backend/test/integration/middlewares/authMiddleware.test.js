@@ -12,6 +12,7 @@ describe('Auth Middleware Tests', () => {
     let userToken;
 
     before(async () => {
+        await User.deleteMany({});
         const user = new User({
             username: 'testuser',
             email: 'testuser@example.com',
@@ -67,7 +68,7 @@ describe('Auth Middleware Tests', () => {
     });
 
     it('should return 403 if user does not exist', (done) => {
-        const invalidToken = User.generateAuthToken(new User({ _id: 'invalidUserId' }));
+        const invalidToken = new User({ _id: 'invalidUserId' }).generateAuthToken();
         chai.request(app)
             .get('/api/protected-route')
             .set('Authorization', `Bearer ${invalidToken}`)
