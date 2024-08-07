@@ -40,7 +40,7 @@ describe('Error Handler Middleware Tests', () => {
 
     it('should handle an error without status', async () => {
         const error = new Error('Test error');
-        error.status = null;
+        error.status = undefined;
         await errorHandler.errorHandler(error, req, res, next);
 
         expect(res.status.calledWith(500)).to.be.true;

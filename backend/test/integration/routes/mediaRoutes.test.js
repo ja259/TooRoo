@@ -2,8 +2,6 @@ import * as chai from 'chai';
 import sinon from 'sinon';
 import User from '../../../models/User.js';
 import * as mediaController from '../../../controllers/mediaController.js';
-import fs from 'fs';
-import path from 'path';
 
 const { expect } = chai;
 
@@ -18,7 +16,7 @@ describe('Media Routes Tests', () => {
 
     beforeEach(() => {
         sandbox = sinon.createSandbox();
-        req = { headers: { authorization: `Bearer ${authToken}` }, file: { path: path.resolve(__dirname, 'testfile.txt') } };
+        req = { headers: { authorization: `Bearer ${authToken}` }, file: { path: 'testfile.txt' } };
         res = {
             status: sandbox.stub().returnsThis(),
             json: sandbox.stub(),
