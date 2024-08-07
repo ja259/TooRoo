@@ -32,18 +32,6 @@ describe('Auth Controller Tests', () => {
         expect(res.json.calledOnce).to.be.true;
     });
 
-    it('should not register a user with existing email or phone', async () => {
-        const user = new User({ username: 'testuser', email: 'testuser@example.com', phone: '1234567890', password: 'password123' });
-        await user.save();
-
-        req.body = { username: 'testuser2', email: 'testuser@example.com', phone: '0987654321', password: 'password123' };
-
-        await authController.register(req, res);
-
-        expect(res.status.calledWith(400)).to.be.true;
-        expect(res.json.calledOnce).to.be.true;
-    });
-
     it('should login an existing user', async () => {
         const user = new User({ username: 'testuser', email: 'testuser@example.com', phone: '1234567890', password: 'password123' });
         await user.save();

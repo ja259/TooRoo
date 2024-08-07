@@ -12,8 +12,7 @@ describe('Validation Middleware Tests', () => {
         req = { body: {} };
         res = {
             status: sandbox.stub().returnsThis(),
-            json: sandbox.stub(),
-            send: sandbox.stub()
+            json: sandbox.stub()
         };
         next = sandbox.stub();
     });
