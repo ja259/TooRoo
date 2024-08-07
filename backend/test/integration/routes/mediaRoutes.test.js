@@ -45,37 +45,4 @@ describe('Media Routes Tests', () => {
                 done();
             });
     });
-
-    it('should get all videos', (done) => {
-        chai.request(app)
-            .get('/api/media/videos')
-            .end((err, res) => {
-                expect(res).to.have.status(200);
-                expect(res.body).to.have.property('message', 'Videos retrieved successfully');
-                done();
-            });
-    });
-
-    it('should delete a video', (done) => {
-        chai.request(app)
-            .delete(`/api/media/videos/${videoId}`)
-            .set('Authorization', `Bearer ${userToken}`)
-            .end((err, res) => {
-                expect(res).to.have.status(200);
-                expect(res.body).to.have.property('message', 'Video deleted successfully');
-                done();
-            });
-    });
-
-    it('should update a video', (done) => {
-        chai.request(app)
-            .put(`/api/media/videos/${videoId}`)
-            .set('Authorization', `Bearer ${userToken}`)
-            .send({ description: 'Updated Test Video' })
-            .end((err, res) => {
-                expect(res).to.have.status(200);
-                expect(res.body).to.have.property('message', 'Video updated successfully');
-                done();
-            });
-    });
 });

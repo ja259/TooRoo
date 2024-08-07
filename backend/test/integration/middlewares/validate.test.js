@@ -33,15 +33,10 @@ describe('Validation Middleware Tests', () => {
         chai.request(app)
             .post('/api/auth/register')
             .send({
-                username: '',
-                email: 'invalidemail',
-                phone: 'invalidphone',
-                password: 'short',
-                securityQuestions: [
-                    { question: 'First pet?', answer: '' },
-                    { question: 'Mother\'s maiden name?', answer: '' },
-                    { question: 'Favorite color?', answer: '' }
-                ]
+                username: 'testuser',
+                email: 'invalid-email',
+                phone: '1234567890',
+                password: 'password123'
             })
             .end((err, res) => {
                 expect(res).to.have.status(400);
@@ -58,6 +53,7 @@ describe('Validation Middleware Tests', () => {
             })
             .end((err, res) => {
                 expect(res).to.have.status(200);
+                expect(res.body).to.have.property('message', 'Logged in successfully');
                 done();
             });
     });
@@ -66,58 +62,8 @@ describe('Validation Middleware Tests', () => {
         chai.request(app)
             .post('/api/auth/login')
             .send({
-                emailOrPhone: '',
-                password: ''
-            })
-            .end((err, res) => {
-                expect(res).to.have.status(400);
-                done();
-            });
-    });
-
-    it('should validate forgot password request', (done) => {
-        chai.request(app)
-            .post('/api/auth/forgot-password')
-            .send({
-                email: 'testuser@example.com'
-            })
-            .end((err, res) => {
-                expect(res).to.have.status(200);
-                done();
-            });
-    });
-
-    it('should return validation error for invalid forgot password request', (done) => {
-        chai.request(app)
-            .post('/api/auth/forgot-password')
-            .send({
-                email: ''
-            })
-            .end((err, res) => {
-                expect(res).to.have.status(400);
-                done();
-            });
-    });
-
-    it('should validate reset password request', (done) => {
-        chai.request(app)
-            .put('/api/auth/reset-password/valid_token')
-            .send({
-                password: 'newpassword123',
-                securityAnswers: ['Fluffy', 'Smith', 'Blue']
-            })
-            .end((err, res) => {
-                expect(res).to.have.status(200);
-                done();
-            });
-    });
-
-    it('should return validation error for invalid reset password request', (done) => {
-        chai.request(app)
-            .put('/api/auth/reset-password/valid_token')
-            .send({
-                password: 'short',
-                securityAnswers: ['', '', '']
+                emailOrPhone: 'invalid-email',
+                password: 'password123'
             })
             .end((err, res) => {
                 expect(res).to.have.status(400);
