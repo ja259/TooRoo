@@ -29,6 +29,7 @@ describe('GridFS Storage Config Tests', () => {
 
         callback(null, { filename });
 
+        // Update the test to correctly call the file function
         gridFsStorageConfig.file(req, file, callback);
 
         expect(callback.calledOnce).to.be.true;
