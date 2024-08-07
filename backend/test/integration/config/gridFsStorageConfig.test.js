@@ -1,5 +1,6 @@
 import * as chai from 'chai';
 import chaiHttp from 'chai-http';
+import app from '../../../server.js';
 import gridFsStorageConfig from '../../../config/gridFsStorageConfig.js';
 
 chai.use(chaiHttp);
@@ -12,8 +13,10 @@ describe('GridFS Storage Config Tests', () => {
     });
 
     it('should generate a valid filename using crypto', (done) => {
-        gridFsStorageConfig.file(null, null, (err, file) => {
-            expect(file).to.have.property('filename');
+        const req = {};
+        const file = { originalname: 'testfile.txt' };
+        gridFsStorageConfig.file(req, file, (err, info) => {
+            expect(info).to.have.property('filename');
             done();
         });
     });

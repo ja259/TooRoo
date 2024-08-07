@@ -8,10 +8,10 @@ chai.use(chaiHttp);
 const { expect } = chai;
 
 describe('Video Model Tests', () => {
-    let authToken;
+    let authToken, user;
 
     before(async () => {
-        const user = new User({ username: 'testuser', email: 'testuser@example.com', phone: '1234567890', password: 'password123' });
+        user = new User({ username: 'testuser', email: 'testuser@example.com', phone: '1234567890', password: 'password123' });
         await user.save();
         authToken = user.generateAuthToken();
     });
