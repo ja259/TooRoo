@@ -1,5 +1,5 @@
 import * as chai from 'chai';
-import chaiHttp from 'chai-http';
+import chaiHttp from 'chai-http/index.js';
 import '../../setup.js';
 import '../../teardown.js';
 import app from '../../../server.js';
@@ -10,7 +10,7 @@ const { expect } = chai;
 describe('Error Handler Middleware Tests', () => {
     it('should return 404 for not found route', (done) => {
         chai.request(app)
-            .get('/non-existent-route')
+            .get('/api/non-existent-route')
             .end((err, res) => {
                 expect(res).to.have.status(404);
                 done();

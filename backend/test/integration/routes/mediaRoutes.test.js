@@ -1,5 +1,5 @@
 import * as chai from 'chai';
-import chaiHttp from 'chai-http';
+import chaiHttp from 'chai-http/index.js';
 import '../../setup.js';
 import '../../teardown.js';
 import app from '../../../server.js';

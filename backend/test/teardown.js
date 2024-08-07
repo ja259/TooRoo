@@ -1,9 +1,4 @@
-import { disconnectDB } from '../db.js';
 import mongoose from 'mongoose';
-
-after(async () => {
-    await disconnectDB();
-});
 
 afterEach(async () => {
     const collections = Object.keys(mongoose.connection.collections);
