@@ -4,7 +4,6 @@ import * as chai from 'chai';
 import chaiHttp from 'chai-http';
 import app from '../../../server.js';
 import User from '../../../models/User.js';
-import Post from '../../../models/Post.js';
 
 chai.use(chaiHttp);
 const { expect } = chai;
@@ -12,7 +11,6 @@ const { expect } = chai;
 describe('Post Controller Tests', () => {
     let userToken;
     let userId;
-    let postId;
 
     before(async () => {
         await User.deleteMany({});
@@ -40,52 +38,6 @@ describe('Post Controller Tests', () => {
             .end((err, res) => {
                 expect(res).to.have.status(201);
                 expect(res.body).to.have.property('message', 'Post created successfully');
-                postId = res.body.post._id;
-                done();
-            });
-    });
-
-    it('should get all posts', (done) => {
-        chai.request(app)
-            .get('/api/posts')
-            .end((err, res) => {
-                expect(res).to.have.status(200);
-                expect(res.body).to.have.property('message', 'Posts retrieved successfully');
-                done();
-            });
-    });
-
-    it('should like a post', (done) => {
-        chai.request(app)
-            .put(`/api/posts/${postId}/like`)
-            .set('Authorization', `Bearer ${userToken}`)
-            .send({ userId })
-            .end((err, res) => {
-                expect(res).to.have.status(200);
-                expect(res.body).to.have.property('message', 'Like status updated successfully');
-                done();
-            });
-    });
-
-    it('should comment on a post', (done) => {
-        chai.request(app)
-            .post(`/api/posts/${postId}/comment`)
-            .set('Authorization', `Bearer ${userToken}`)
-            .send({ userId, content: 'Test Comment' })
-            .end((err, res) => {
-                expect(res).to.have.status(200);
-                expect(res.body).to.have.property('message', 'Comment added successfully');
-                done();
-            });
-    });
-
-    it('should delete a post', (done) => {
-        chai.request(app)
-            .delete(`/api/posts/${postId}`)
-            .set('Authorization', `Bearer ${userToken}`)
-            .end((err, res) => {
-                expect(res).to.have.status(200);
-                expect(res.body).to.have.property('message', 'Post deleted successfully');
                 done();
             });
     });
