@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import chai from 'chai';
+import * as chai from 'chai';
 import chaiHttp from 'chai-http/index.js';
 import { connectDB, disconnectDB } from '../db.js';
 
