@@ -21,42 +21,36 @@ describe('Auth Routes Tests', () => {
             });
     });
 
-    it('should login an existing user', (done) => {
+    it('should login an existing user', async () => {
         const user = new User({ username: 'testuser', email: 'testuser@example.com', phone: '1234567890', password: 'password123' });
-        user.save().then(() => {
-            chai.request(app)
-                .post('/api/auth/login')
-                .send({ email: 'testuser@example.com', password: 'password123' })
-                .end((err, res) => {
-                    expect(res).to.have.status(200);
-                    done();
-                });
-        });
+        await user.save();
+        return chai.request(app)
+            .post('/api/auth/login')
+            .send({ email: 'testuser@example.com', password: 'password123' })
+            .then((res) => {
+                expect(res).to.have.status(200);
+            });
     });
 
-    it('should send a password reset token', (done) => {
+    it('should send a password reset token', async () => {
         const user = new User({ username: 'testuser', email: 'testuser@example.com', phone: '1234567890', password: 'password123' });
-        user.save().then(() => {
-            chai.request(app)
-                .post('/api/auth/forgot-password')
-                .send({ email: 'testuser@example.com' })
-                .end((err, res) => {
-                    expect(res).to.have.status(200);
-                    done();
-                });
-        });
+        await user.save();
+        return chai.request(app)
+            .post('/api/auth/forgot-password')
+            .send({ email: 'testuser@example.com' })
+            .then((res) => {
+                expect(res).to.have.status(200);
+            });
     });
 
-    it('should reset the password with valid token and security answers', (done) => {
+    it('should reset the password with valid token and security answers', async () => {
         const user = new User({ username: 'testuser', email: 'testuser@example.com', phone: '1234567890', password: 'password123', resetPasswordToken: 'validtoken', resetPasswordExpires: Date.now() + 3600000 });
-        user.save().then(() => {
-            chai.request(app)
-                .post('/api/auth/reset-password')
-                .send({ token: 'validtoken', password: 'newpassword123' })
-                .end((err, res) => {
-                    expect(res).to.have.status(200);
-                    done();
-                });
-        });
+        await user.save();
+        return chai.request(app)
+            .post('/api/auth/reset-password')
+            .send({ token: 'validtoken', password: 'newpassword123' })
+            .then((res) => {
+                expect(res).to.have.status(200);
+            });
     });
 });
