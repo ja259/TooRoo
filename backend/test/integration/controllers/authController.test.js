@@ -1,9 +1,6 @@
 import * as chai from 'chai';
 import sinon from 'sinon';
-import app from '../../../server.js';
 import User from '../../../models/User.js';
-import jwt from 'jsonwebtoken';
-import config from '../../../config/config.js';
 import * as authController from '../../../controllers/authController.js';
 
 const { expect } = chai;
@@ -16,9 +13,9 @@ describe('Auth Controller Tests', () => {
         sandbox = sinon.createSandbox();
         req = { body: {} };
         res = {
-            status: sinon.stub().returnsThis(),
-            json: sinon.stub(),
-            send: sinon.stub()
+            status: sandbox.stub().returnsThis(),
+            json: sandbox.stub(),
+            send: sandbox.stub()
         };
     });
 
@@ -38,7 +35,7 @@ describe('Auth Controller Tests', () => {
     it('should not register a user with existing email or phone', async () => {
         const user = new User({ username: 'testuser', email: 'testuser@example.com', phone: '1234567890', password: 'password123' });
         await user.save();
-        
+
         req.body = { username: 'testuser2', email: 'testuser@example.com', phone: '0987654321', password: 'password123' };
 
         await authController.register(req, res);
@@ -50,7 +47,7 @@ describe('Auth Controller Tests', () => {
     it('should login an existing user', async () => {
         const user = new User({ username: 'testuser', email: 'testuser@example.com', phone: '1234567890', password: 'password123' });
         await user.save();
-        
+
         req.body = { email: 'testuser@example.com', password: 'password123' };
 
         await authController.login(req, res);
@@ -62,7 +59,7 @@ describe('Auth Controller Tests', () => {
     it('should not login a user with incorrect password', async () => {
         const user = new User({ username: 'testuser', email: 'testuser@example.com', phone: '1234567890', password: 'password123' });
         await user.save();
-        
+
         req.body = { email: 'testuser@example.com', password: 'wrongpassword' };
 
         await authController.login(req, res);
@@ -74,7 +71,7 @@ describe('Auth Controller Tests', () => {
     it('should send a password reset token', async () => {
         const user = new User({ username: 'testuser', email: 'testuser@example.com', phone: '1234567890', password: 'password123' });
         await user.save();
-        
+
         req.body = { email: 'testuser@example.com' };
 
         await authController.forgotPassword(req, res);
@@ -86,19 +83,14 @@ describe('Auth Controller Tests', () => {
     it('should reset the password with valid token and security answers', async () => {
         const user = new User({ username: 'testuser', email: 'testuser@example.com', phone: '1234567890', password: 'password123' });
         await user.save();
-        
+
         // Generate a token for the user
-        const token = jwt.sign({ id: user._id }, config.jwtSecret, { expiresIn: '1h' });
-
-        // Mock security answers
-        const securityAnswers = ['answer1', 'answer2'];
-
-        // Save the token and security answers to the user model for testing
+        const token = 'validtoken';
         user.resetPasswordToken = token;
-        user.securityAnswers = securityAnswers;
+        user.resetPasswordExpires = Date.now() + 3600000;
         await user.save();
 
-        req.body = { token, newPassword: 'newpassword123', securityAnswers };
+        req.body = { token, password: 'newpassword123' };
 
         await authController.resetPassword(req, res);
 

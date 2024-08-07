@@ -1,17 +1,37 @@
 import * as chai from 'chai';
-import '../../setup.js';
-import '../../teardown.js';
-import app from '../../../server.js';
+import sinon from 'sinon';
+import User from '../../../models/User.js';
+import * as userController from '../../../controllers/userController.js';
 
 const { expect } = chai;
 
 describe('User Routes Tests', () => {
-    it('should get user details', (done) => {
-        chai.request(app)
-            .get('/api/users/1')
-            .end((err, res) => {
-                expect(res).to.have.status(200);
-                done();
-            });
+    let req, res, sandbox, authToken;
+
+    before(async () => {
+        const user = new User({ username: 'testuser', email: 'testuser@example.com', phone: '1234567890', password: 'password123' });
+        await user.save();
+        authToken = user.generateAuthToken();
+    });
+
+    beforeEach(() => {
+        sandbox = sinon.createSandbox();
+        req = { headers: { authorization: `Bearer ${authToken}` } };
+        res = {
+            status: sandbox.stub().returnsThis(),
+            json: sandbox.stub(),
+            send: sandbox.stub()
+        };
+    });
+
+    afterEach(() => {
+        sandbox.restore();
+    });
+
+    it('should get user details', async () => {
+        await userController.getUserDetails(req, res);
+
+        expect(res.status.calledWith(200)).to.be.true;
+        expect(res.json.calledOnce).to.be.true;
     });
 });
