@@ -1,18 +1,37 @@
 import * as chai from 'chai';
-import '../../setup.js';
-import '../../teardown.js';
-import app from '../../../server.js';
+import sinon from 'sinon';
+import User from '../../../models/User.js';
+import * as postController from '../../../controllers/postController.js';
 
 const { expect } = chai;
 
 describe('Post Routes Tests', () => {
-    it('should create a new post', (done) => {
-        chai.request(app)
-            .post('/api/posts')
-            .send({ content: 'This is a test post' })
-            .end((err, res) => {
-                expect(res).to.have.status(201);
-                done();
-            });
+    let req, res, sandbox, authToken;
+
+    before(async () => {
+        const user = new User({ username: 'testuser', email: 'testuser@example.com', phone: '1234567890', password: 'password123' });
+        await user.save();
+        authToken = user.generateAuthToken();
+    });
+
+    beforeEach(() => {
+        sandbox = sinon.createSandbox();
+        req = { headers: { authorization: `Bearer ${authToken}` }, body: { content: 'This is a new post' } };
+        res = {
+            status: sandbox.stub().returnsThis(),
+            json: sandbox.stub(),
+            send: sandbox.stub()
+        };
+    });
+
+    afterEach(() => {
+        sandbox.restore();
+    });
+
+    it('should create a new post', async () => {
+        await postController.createPost(req, res);
+
+        expect(res.status.calledWith(201)).to.be.true;
+        expect(res.json.calledOnce).to.be.true;
     });
 });

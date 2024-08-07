@@ -1,11 +1,20 @@
 import * as chai from 'chai';
-import '../../setup.js';
-import '../../teardown.js';
+import sinon from 'sinon';
 import gridFsStorageConfig from '../../../config/gridFsStorageConfig.js';
 
 const { expect } = chai;
 
 describe('GridFS Storage Config Tests', () => {
+    let sandbox;
+
+    beforeEach(() => {
+        sandbox = sinon.createSandbox();
+    });
+
+    afterEach(() => {
+        sandbox.restore();
+    });
+
     it('should have a valid GridFS storage configuration', (done) => {
         expect(gridFsStorageConfig).to.have.property('url');
         done();

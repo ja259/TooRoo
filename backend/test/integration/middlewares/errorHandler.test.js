@@ -1,35 +1,49 @@
 import * as chai from 'chai';
-import '../../setup.js';
-import '../../teardown.js';
-import app from '../../../server.js';
+import sinon from 'sinon';
+import * as errorHandler from '../../../middlewares/errorHandler.js';
 
 const { expect } = chai;
 
 describe('Error Handler Middleware Tests', () => {
-    it('should return 404 for not found route', (done) => {
-        chai.request(app)
-            .get('/api/nonexistent-route')
-            .end((err, res) => {
-                expect(res).to.have.status(404);
-                done();
-            });
+    let req, res, next, sandbox;
+
+    beforeEach(() => {
+        sandbox = sinon.createSandbox();
+        req = {};
+        res = {
+            status: sandbox.stub().returnsThis(),
+            json: sandbox.stub(),
+            send: sandbox.stub()
+        };
+        next = sandbox.stub();
     });
 
-    it('should handle an error', (done) => {
-        chai.request(app)
-            .get('/api/route-that-throws-error')
-            .end((err, res) => {
-                expect(res).to.have.status(500);
-                done();
-            });
+    afterEach(() => {
+        sandbox.restore();
     });
 
-    it('should handle an error without status', (done) => {
-        chai.request(app)
-            .get('/api/route-that-throws-error-without-status')
-            .end((err, res) => {
-                expect(res).to.have.status(500);
-                done();
-            });
+    it('should return 404 for not found route', async () => {
+        req.path = '/non-existent-route';
+        await errorHandler.notFound(req, res, next);
+
+        expect(res.status.calledWith(404)).to.be.true;
+        expect(res.send.calledOnce).to.be.true;
+    });
+
+    it('should handle an error', async () => {
+        const error = new Error('Test error');
+        await errorHandler.errorHandler(error, req, res, next);
+
+        expect(res.status.calledWith(500)).to.be.true;
+        expect(res.json.calledOnce).to.be.true;
+    });
+
+    it('should handle an error without status', async () => {
+        const error = new Error('Test error');
+        error.status = null;
+        await errorHandler.errorHandler(error, req, res, next);
+
+        expect(res.status.calledWith(500)).to.be.true;
+        expect(res.json.calledOnce).to.be.true;
     });
 });
