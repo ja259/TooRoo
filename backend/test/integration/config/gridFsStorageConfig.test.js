@@ -1,9 +1,6 @@
 import * as chai from 'chai';
-import chaiHttp from 'chai-http';
-import app from '../../../server.js';
 import gridFsStorageConfig from '../../../config/gridFsStorageConfig.js';
 
-chai.use(chaiHttp);
 const { expect } = chai;
 
 describe('GridFS Storage Config Tests', () => {

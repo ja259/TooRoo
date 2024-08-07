@@ -1,5 +1,9 @@
-import mongoose from 'mongoose';
 import { disconnectDB } from '../db.js';
+import mongoose from 'mongoose';
+
+after(async () => {
+    await disconnectDB();
+});
 
 afterEach(async () => {
     const collections = Object.keys(mongoose.connection.collections);
@@ -7,8 +11,4 @@ afterEach(async () => {
         const collection = mongoose.connection.collections[collectionName];
         await collection.deleteMany({});
     }
-});
-
-after(async () => {
-    await disconnectDB();
 });
