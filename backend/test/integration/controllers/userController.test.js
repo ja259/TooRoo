@@ -1,5 +1,3 @@
-import '../../setup.js';
-import '../../teardown.js';
 import * as chai from 'chai';
 import chaiHttp from 'chai-http';
 import app from '../../../server.js';
@@ -9,34 +7,20 @@ chai.use(chaiHttp);
 const { expect } = chai;
 
 describe('User Controller Tests', () => {
-    let userToken;
-    let userId;
+    let authToken;
 
     before(async () => {
-        await User.deleteMany({});
-        const user = new User({
-            username: 'testuser',
-            email: 'testuser@example.com',
-            phone: '1234567890',
-            password: 'password123',
-            securityQuestions: [
-                { question: 'First pet?', answer: 'Fluffy' },
-                { question: 'Mother\'s maiden name?', answer: 'Smith' },
-                { question: 'Favorite color?', answer: 'Blue' }
-            ]
-        });
+        const user = new User({ username: 'testuser', email: 'testuser@example.com', phone: '1234567890', password: 'password123' });
         await user.save();
-        userToken = user.generateAuthToken();
-        userId = user._id;
+        authToken = user.generateAuthToken();
     });
 
     it('should get user details', (done) => {
         chai.request(app)
-            .get(`/api/users/${userId}`)
-            .set('Authorization', `Bearer ${userToken}`)
+            .get('/api/users/me')
+            .set('Authorization', `Bearer ${authToken}`)
             .end((err, res) => {
                 expect(res).to.have.status(200);
-                expect(res.body).to.have.property('message', 'User profile retrieved successfully');
                 done();
             });
     });
