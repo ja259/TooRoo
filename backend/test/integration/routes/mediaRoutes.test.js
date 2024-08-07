@@ -1,5 +1,7 @@
 import * as chai from 'chai';
 import chaiHttp from 'chai-http';
+import '../../setup.js';
+import '../../teardown.js';
 import app from '../../../server.js';
 import User from '../../../models/User.js';
 import fs from 'fs';
