@@ -1,4 +1,4 @@
-import * as chai from 'chai';
+import chai from 'chai';
 import '../../setup.js';
 import '../../teardown.js';
 import gridFsStorageConfig from '../../../config/gridFsStorageConfig.js';
