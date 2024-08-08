@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import User from '../models/User.js';
 import emailService from '../utils/emailService.js';
+import config from '../config/config.js';
 
 export const register = async (req, res) => {
     try {
