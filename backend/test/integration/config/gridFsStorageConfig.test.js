@@ -1,7 +1,4 @@
 import * as chai from 'chai';
-import sinon from 'sinon';
-import '../../setup.js';
-import '../../teardown.js';
 import gridFsStorageConfig from '../../../config/gridFsStorageConfig.js';
 
 const { expect } = chai;
@@ -11,12 +8,10 @@ describe('GridFS Storage Config Tests', () => {
         expect(gridFsStorageConfig).to.have.property('url');
     });
 
-    it('should generate a valid filename using crypto', (done) => {
+    it('should generate a valid filename using crypto', async () => {
         const req = {};
-        const file = { originalname: 'testfile.txt' };
-        gridFsStorageConfig.file(req, file).then(info => {
-            expect(info).to.have.property('filename');
-            done();
-        }).catch(err => done(err));
+        const file = {};
+        const info = await gridFsStorageConfig.file(req, file);
+        expect(info).to.have.property('filename').that.is.a('string');
     });
 });

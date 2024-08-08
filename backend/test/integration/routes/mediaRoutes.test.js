@@ -1,8 +1,7 @@
 import * as chai from 'chai';
 import supertest from 'supertest';
+import path from 'path';
 import server from '../../../server.js';
-import '../../setup.js';
-import '../../teardown.js';
 
 const { expect } = chai;
 const request = supertest(server);
@@ -12,7 +11,7 @@ describe('Media Routes Tests', () => {
         request
             .post('/api/media/upload')
             .set('Authorization', 'Bearer validToken') // Ensure valid token
-            .attach('file', 'test/fixtures/testfile.mp4')
+            .attach('file', path.resolve(__dirname, '../../fixtures/testfile.mp4'))
             .expect(201)
             .end((err, res) => {
                 if (err) return done(err);
