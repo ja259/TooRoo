@@ -1,8 +1,6 @@
 import * as chai from 'chai';
-import sinon from 'sinon';
-import '../../setup.js';
-import '../../teardown.js';
-import * as validate from '../../../middlewares/validate.js';
+import { validateRegister, validateLogin } from '../../../middlewares/validate.js';
+import { validationResult } from 'express-validator';
 
 const { expect } = chai;
 
@@ -22,7 +20,7 @@ describe('Validation Middleware Tests', () => {
         sinon.restore();
     });
 
-    it('should validate register request', () => {
+    it('should validate register request', async () => {
         req.body = {
             username: 'testuser',
             email: 'testuser@example.com',
@@ -31,32 +29,60 @@ describe('Validation Middleware Tests', () => {
             securityQuestions: ['Question1', 'Question2', 'Question3']
         };
 
-        validate.validateRegister(req, res, next);
+        await Promise.all(validateRegister.map(validation => validation.run(req)));
+        const result = validationResult(req);
+
+        if (!result.isEmpty()) {
+            res.status(400).json({ errors: result.array() });
+        } else {
+            next();
+        }
 
         expect(next.calledOnce).to.be.true;
     });
 
-    it('should return validation error for invalid register request', () => {
+    it('should return validation error for invalid register request', async () => {
         req.body = { username: '', email: 'invalidemail', phone: '', password: 'short', securityQuestions: [] };
 
-        validate.validateRegister(req, res, next);
+        await Promise.all(validateRegister.map(validation => validation.run(req)));
+        const result = validationResult(req);
+
+        if (!result.isEmpty()) {
+            res.status(400).json({ errors: result.array() });
+        } else {
+            next();
+        }
 
         expect(res.status.calledWith(400)).to.be.true;
         expect(res.json.calledWith(sinon.match.has('errors'))).to.be.true;
     });
 
-    it('should validate login request', () => {
+    it('should validate login request', async () => {
         req.body = { emailOrPhone: 'testuser@example.com', password: 'password123' };
 
-        validate.validateLogin(req, res, next);
+        await Promise.all(validateLogin.map(validation => validation.run(req)));
+        const result = validationResult(req);
+
+        if (!result.isEmpty()) {
+            res.status(400).json({ errors: result.array() });
+        } else {
+            next();
+        }
 
         expect(next.calledOnce).to.be.true;
     });
 
-    it('should return validation error for invalid login request', () => {
+    it('should return validation error for invalid login request', async () => {
         req.body = { emailOrPhone: '', password: '' };
 
-        validate.validateLogin(req, res, next);
+        await Promise.all(validateLogin.map(validation => validation.run(req)));
+        const result = validationResult(req);
+
+        if (!result.isEmpty()) {
+            res.status(400).json({ errors: result.array() });
+        } else {
+            next();
+        }
 
         expect(res.status.calledWith(400)).to.be.true;
         expect(res.json.calledWith(sinon.match.has('errors'))).to.be.true;
