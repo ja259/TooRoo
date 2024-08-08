@@ -1,37 +1,37 @@
 import * as chai from 'chai';
 import sinon from 'sinon';
-import User from '../../../models/User.js';
+import '../../setup.js';
+import '../../teardown.js';
 import * as mediaController from '../../../controllers/mediaController.js';
+import Video from '../../../models/Video.js';
 
 const { expect } = chai;
 
 describe('Media Controller Tests', () => {
-    let req, res, sandbox, authToken;
-
-    before(async () => {
-        const user = new User({ username: 'testuser', email: 'testuser@example.com', phone: '1234567890', password: 'password123' });
-        await user.save();
-        authToken = user.generateAuthToken();
-    });
+    let req, res, next;
 
     beforeEach(() => {
-        sandbox = sinon.createSandbox();
-        req = { headers: { authorization: `Bearer ${authToken}` }, file: { path: 'testfile.txt' } };
+        req = { body: {}, file: {} };
         res = {
-            status: sandbox.stub().returnsThis(),
-            json: sandbox.stub(),
-            send: sandbox.stub()
+            status: sinon.stub().returnsThis(),
+            json: sinon.stub()
         };
+        next = sinon.stub();
     });
 
     afterEach(() => {
-        sandbox.restore();
+        sinon.restore();
     });
 
     it('should upload a media file', async () => {
-        await mediaController.uploadMedia(req, res);
+        req.file = { filename: 'testfile.mp4' };
+        req.body = { description: 'Test video', authorId: 'validAuthorId' };
 
-        expect(res.status.calledWith(200)).to.be.true;
-        expect(res.json.calledOnce).to.be.true;
+        sinon.stub(Video.prototype, 'save').resolves({});
+
+        await mediaController.uploadVideo(req, res, next);
+
+        expect(res.status.calledWith(201)).to.be.true;
+        expect(res.json.calledWith(sinon.match.has('message', 'Video uploaded successfully'))).to.be.true;
     });
 });

@@ -1,37 +1,37 @@
 import * as chai from 'chai';
 import sinon from 'sinon';
-import User from '../../../models/User.js';
+import '../../setup.js';
+import '../../teardown.js';
 import * as userController from '../../../controllers/userController.js';
+import User from '../../../models/User.js';
 
 const { expect } = chai;
 
 describe('User Controller Tests', () => {
-    let req, res, sandbox, authToken;
-
-    before(async () => {
-        const user = new User({ username: 'testuser', email: 'testuser@example.com', phone: '1234567890', password: 'password123' });
-        await user.save();
-        authToken = user.generateAuthToken();
-    });
+    let req, res, next;
 
     beforeEach(() => {
-        sandbox = sinon.createSandbox();
-        req = { headers: { authorization: `Bearer ${authToken}` } };
+        req = { body: {}, params: {} };
         res = {
-            status: sandbox.stub().returnsThis(),
-            json: sandbox.stub(),
-            send: sandbox.stub()
+            status: sinon.stub().returnsThis(),
+            json: sinon.stub()
         };
+        next = sinon.stub();
     });
 
     afterEach(() => {
-        sandbox.restore();
+        sinon.restore();
     });
 
     it('should get user details', async () => {
-        await userController.getUserDetails(req, res);
+        req.params.id = 'validUserId';
+
+        const user = new User({ _id: 'validUserId' });
+        sinon.stub(User, 'findById').resolves(user);
+
+        await userController.getUserProfile(req, res, next);
 
         expect(res.status.calledWith(200)).to.be.true;
-        expect(res.json.calledOnce).to.be.true;
+        expect(res.json.calledWith(sinon.match.has('message', 'User profile retrieved successfully'))).to.be.true;
     });
 });
