@@ -1,8 +1,8 @@
 import * as chai from 'chai';
 import chaiHttp from 'chai-http';
-import server from '../../../server.js';
 import '../../setup.js';
 import '../../teardown.js';
+import server from '../../../server.js';
 
 const { expect } = chai;
 chai.use(chaiHttp);
