@@ -1,37 +1,41 @@
 import * as chai from 'chai';
 import sinon from 'sinon';
-import User from '../../../models/User.js';
+import '../../setup.js';
+import '../../teardown.js';
 import * as postController from '../../../controllers/postController.js';
+import Post from '../../../models/Post.js';
+import User from '../../../models/User.js';
 
 const { expect } = chai;
 
 describe('Post Controller Tests', () => {
-    let req, res, sandbox, authToken;
-
-    before(async () => {
-        const user = new User({ username: 'testuser', email: 'testuser@example.com', phone: '1234567890', password: 'password123' });
-        await user.save();
-        authToken = user.generateAuthToken();
-    });
+    let req, res, next;
 
     beforeEach(() => {
-        sandbox = sinon.createSandbox();
-        req = { headers: { authorization: `Bearer ${authToken}` }, body: { content: 'This is a new post' } };
+        req = { body: {}, params: {} };
         res = {
-            status: sandbox.stub().returnsThis(),
-            json: sandbox.stub(),
-            send: sandbox.stub()
+            status: sinon.stub().returnsThis(),
+            json: sinon.stub()
         };
+        next = sinon.stub();
     });
 
     afterEach(() => {
-        sandbox.restore();
+        sinon.restore();
     });
 
     it('should create a new post', async () => {
-        await postController.createPost(req, res);
+        req.body = { content: 'Test content', authorId: 'validAuthorId' };
+        req.file = { filename: 'testfile.mp4' };
+
+        const user = new User({ _id: 'validAuthorId', posts: [] });
+        sinon.stub(User, 'findById').resolves(user);
+        sinon.stub(Post.prototype, 'save').resolves({});
+        sinon.stub(user, 'save').resolves(user);
+
+        await postController.createPost(req, res, next);
 
         expect(res.status.calledWith(201)).to.be.true;
-        expect(res.json.calledOnce).to.be.true;
+        expect(res.json.calledWith(sinon.match.has('message', 'Post created successfully'))).to.be.true;
     });
 });

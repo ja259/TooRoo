@@ -1,37 +1,20 @@
 import * as chai from 'chai';
-import sinon from 'sinon';
-import User from '../../../models/User.js';
-import * as userController from '../../../controllers/userController.js';
+import chaiHttp from 'chai-http';
+import app from '../../../server.js';
+import '../../setup.js';
+import '../../teardown.js';
 
 const { expect } = chai;
+chai.use(chaiHttp);
 
 describe('User Routes Tests', () => {
-    let req, res, sandbox, authToken;
-
-    before(async () => {
-        const user = new User({ username: 'testuser', email: 'testuser@example.com', phone: '1234567890', password: 'password123' });
-        await user.save();
-        authToken = user.generateAuthToken();
-    });
-
-    beforeEach(() => {
-        sandbox = sinon.createSandbox();
-        req = { headers: { authorization: `Bearer ${authToken}` } };
-        res = {
-            status: sandbox.stub().returnsThis(),
-            json: sandbox.stub(),
-            send: sandbox.stub()
-        };
-    });
-
-    afterEach(() => {
-        sandbox.restore();
-    });
-
-    it('should get user details', async () => {
-        await userController.getUserDetails(req, res);
-
-        expect(res.status.calledWith(200)).to.be.true;
-        expect(res.json.calledOnce).to.be.true;
+    it('should get user details', (done) => {
+        chai.request(app)
+            .get('/api/users/validUserId')
+            .end((err, res) => {
+                expect(res).to.have.status(200);
+                expect(res.body).to.have.property('message', 'User profile retrieved successfully');
+                done();
+            });
     });
 });

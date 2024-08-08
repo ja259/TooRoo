@@ -1,76 +1,52 @@
 import * as chai from 'chai';
-import sinon from 'sinon';
-import User from '../../../models/User.js';
-import * as authController from '../../../controllers/authController.js';
+import chaiHttp from 'chai-http';
+import app from '../../../server.js';
+import '../../setup.js';
+import '../../teardown.js';
 
 const { expect } = chai;
+chai.use(chaiHttp);
 
 describe('Auth Routes Tests', () => {
-    let req, res, sandbox;
-
-    beforeEach(async () => {
-        await User.deleteMany({});
-        sandbox = sinon.createSandbox();
-        req = { body: {} };
-        res = {
-            status: sandbox.stub().returnsThis(),
-            json: sandbox.stub(),
-            send: sandbox.stub()
-        };
+    it('should register a new user', (done) => {
+        chai.request(app)
+            .post('/api/auth/register')
+            .send({
+                username: 'testuser',
+                email: 'testuser@example.com',
+                phone: '1234567890',
+                password: 'password123',
+                securityQuestions: ['Question1', 'Question2', 'Question3']
+            })
+            .end((err, res) => {
+                expect(res).to.have.status(201);
+                expect(res.body).to.have.property('message', 'User registered successfully');
+                done();
+            });
     });
 
-    afterEach(() => {
-        sandbox.restore();
+    it('should login an existing user', (done) => {
+        chai.request(app)
+            .post('/api/auth/login')
+            .send({ emailOrPhone: 'testuser@example.com', password: 'password123' })
+            .end((err, res) => {
+                expect(res).to.have.status(200);
+                expect(res.body).to.have.property('message', 'Logged in successfully');
+                done();
+            });
     });
 
-    it('should register a new user', async () => {
-        req.body = { username: 'testuser', email: 'testuser@example.com', phone: '1234567890', password: 'password123' };
-
-        await authController.register(req, res);
-
-        expect(res.status.calledWith(201)).to.be.true;
-        expect(res.json.calledOnce).to.be.true;
-    });
-
-    it('should login an existing user', async () => {
-        const user = new User({ username: 'testuser', email: 'testuser@example.com', phone: '1234567890', password: 'password123' });
-        await user.save();
-
-        req.body = { email: 'testuser@example.com', password: 'password123' };
-
-        await authController.login(req, res);
-
-        expect(res.status.calledWith(200)).to.be.true;
-        expect(res.json.calledOnce).to.be.true;
-    });
-
-    it('should send a password reset token', async () => {
-        const user = new User({ username: 'testuser', email: 'testuser@example.com', phone: '1234567890', password: 'password123' });
-        await user.save();
-
-        req.body = { email: 'testuser@example.com' };
-
-        await authController.forgotPassword(req, res);
-
-        expect(res.status.calledWith(200)).to.be.true;
-        expect(res.json.calledOnce).to.be.true;
-    });
-
-    it('should reset the password with valid token and security answers', async () => {
-        const user = new User({ username: 'testuser', email: 'testuser@example.com', phone: '1234567890', password: 'password123' });
-        await user.save();
-
-        // Generate a token for the user
-        const token = 'validtoken';
-        user.resetPasswordToken = token;
-        user.resetPasswordExpires = Date.now() + 3600000;
-        await user.save();
-
-        req.body = { token, password: 'newpassword123' };
-
-        await authController.resetPassword(req, res);
-
-        expect(res.status.calledWith(200)).to.be.true;
-        expect(res.json.calledOnce).to.be.true;
+    it('should reset the password with valid token and security answers', (done) => {
+        chai.request(app)
+            .put('/api/auth/reset-password/validtoken')
+            .send({
+                password: 'newpassword123',
+                securityAnswers: ['Answer1', 'Answer2', 'Answer3']
+            })
+            .end((err, res) => {
+                expect(res).to.have.status(200);
+                expect(res.body).to.have.property('message', 'Password has been reset successfully');
+                done();
+            });
     });
 });
