@@ -1,8 +1,6 @@
 import * as chai from 'chai';
 import supertest from 'supertest';
 import server from '../../../server.js';
-import '../../setup.js';
-import '../../teardown.js';
 
 const { expect } = chai;
 const request = supertest(server);
@@ -16,7 +14,11 @@ describe('Auth Routes Tests', () => {
                 email: 'testuser@example.com',
                 phone: '1234567890',
                 password: 'password123',
-                securityQuestions: ['Question1', 'Question2', 'Question3']
+                securityQuestions: [
+                    { question: 'Question1', answer: 'Answer1' },
+                    { question: 'Question2', answer: 'Answer2' },
+                    { question: 'Question3', answer: 'Answer3' },
+                ],
             })
             .expect(201)
             .end((err, res) => {
@@ -44,7 +46,11 @@ describe('Auth Routes Tests', () => {
             .send({
                 token: 'validToken',
                 password: 'newpassword123',
-                securityAnswers: ['Answer1', 'Answer2', 'Answer3']
+                securityAnswers: [
+                    { question: 'Question1', answer: 'Answer1' },
+                    { question: 'Question2', answer: 'Answer2' },
+                    { question: 'Question3', answer: 'Answer3' },
+                ],
             })
             .expect(200)
             .end((err, res) => {

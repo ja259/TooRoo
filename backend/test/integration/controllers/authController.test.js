@@ -28,7 +28,7 @@ describe('Auth Controller Tests', () => {
             comparePassword: sinon.stub().resolves(true),
             generateAuthToken: sinon.stub().returns('token')
         };
-        sinon.stub(User, 'findOne').resolves(user);
+        sinon.stub(User, 'findOne').returns({ select: sinon.stub().resolves(user) });
 
         await login(req, res, next);
 
@@ -42,7 +42,7 @@ describe('Auth Controller Tests', () => {
         const user = {
             comparePassword: sinon.stub().resolves(false)
         };
-        sinon.stub(User, 'findOne').resolves(user);
+        sinon.stub(User, 'findOne').returns({ select: sinon.stub().resolves(user) });
 
         await login(req, res, next);
 
