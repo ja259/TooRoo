@@ -1,6 +1,7 @@
 import * as chai from 'chai';
 import { validateRegister, validateLogin } from '../../../middlewares/validate.js';
 import { validationResult } from 'express-validator';
+import sinon from 'sinon';
 
 const { expect } = chai;
 
