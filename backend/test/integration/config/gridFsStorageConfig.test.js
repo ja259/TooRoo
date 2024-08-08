@@ -14,9 +14,9 @@ describe('GridFS Storage Config Tests', () => {
     it('should generate a valid filename using crypto', (done) => {
         const req = {};
         const file = { originalname: 'testfile.txt' };
-        gridFsStorageConfig.file(req, file, (err, info) => {
+        gridFsStorageConfig.file(req, file).then(info => {
             expect(info).to.have.property('filename');
             done();
-        });
+        }).catch(err => done(err));
     });
 });

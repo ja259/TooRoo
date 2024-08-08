@@ -1,6 +1,6 @@
 import * as chai from 'chai';
 import chaiHttp from 'chai-http';
-import app from '../../../server.js';
+import server from '../../../server.js';
 import '../../setup.js';
 import '../../teardown.js';
 
@@ -9,7 +9,7 @@ chai.use(chaiHttp);
 
 describe('Media Routes Tests', () => {
     it('should upload a media file', (done) => {
-        chai.request(app)
+        chai.request(server)
             .post('/api/media/upload')
             .field('description', 'Test video')
             .field('authorId', 'validAuthorId')
