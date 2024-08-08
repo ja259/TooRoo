@@ -1,6 +1,6 @@
 import * as chai from 'chai';
 import chaiHttp from 'chai-http';
-import app from '../../../server.js';
+import server from '../../../server.js';
 import '../../setup.js';
 import '../../teardown.js';
 
@@ -9,7 +9,7 @@ chai.use(chaiHttp);
 
 describe('Auth Routes Tests', () => {
     it('should register a new user', (done) => {
-        chai.request(app)
+        chai.request(server)
             .post('/api/auth/register')
             .send({
                 username: 'testuser',
@@ -26,7 +26,7 @@ describe('Auth Routes Tests', () => {
     });
 
     it('should login an existing user', (done) => {
-        chai.request(app)
+        chai.request(server)
             .post('/api/auth/login')
             .send({ emailOrPhone: 'testuser@example.com', password: 'password123' })
             .end((err, res) => {
@@ -37,7 +37,7 @@ describe('Auth Routes Tests', () => {
     });
 
     it('should reset the password with valid token and security answers', (done) => {
-        chai.request(app)
+        chai.request(server)
             .put('/api/auth/reset-password/validtoken')
             .send({
                 password: 'newpassword123',

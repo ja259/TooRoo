@@ -1,6 +1,6 @@
 import * as chai from 'chai';
 import chaiHttp from 'chai-http';
-import app from '../../../server.js';
+import server from '../../../server.js';
 import '../../setup.js';
 import '../../teardown.js';
 
@@ -9,7 +9,7 @@ chai.use(chaiHttp);
 
 describe('Post Routes Tests', () => {
     it('should create a new post', (done) => {
-        chai.request(app)
+        chai.request(server)
             .post('/api/posts')
             .field('content', 'Test content')
             .field('authorId', 'validAuthorId')
