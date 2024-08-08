@@ -1,8 +1,6 @@
 import * as chai from 'chai';
 import sinon from 'sinon';
-import '../../setup.js';
-import '../../teardown.js';
-import * as userController from '../../../controllers/userController.js';
+import { getUserProfile } from '../../../controllers/userController.js';
 import User from '../../../models/User.js';
 
 const { expect } = chai;
@@ -11,7 +9,7 @@ describe('User Controller Tests', () => {
     let req, res, next;
 
     beforeEach(() => {
-        req = { body: {}, params: {} };
+        req = { params: { userId: 'validUserId' } };
         res = {
             status: sinon.stub().returnsThis(),
             json: sinon.stub()
@@ -24,14 +22,12 @@ describe('User Controller Tests', () => {
     });
 
     it('should get user details', async () => {
-        req.params.id = 'validUserId';
+        const user = { username: 'testuser' };
+        sinon.stub(User, 'findById').returns({ populate: sinon.stub().resolves(user) });
 
-        const user = new User({ _id: 'validUserId' });
-        sinon.stub(User, 'findById').resolves(user);
-
-        await userController.getUserProfile(req, res, next);
+        await getUserProfile(req, res, next);
 
         expect(res.status.calledWith(200)).to.be.true;
-        expect(res.json.calledWith(sinon.match.has('message', 'User profile retrieved successfully'))).to.be.true;
+        expect(res.json.calledWith(sinon.match.has('user'))).to.be.true;
     });
 });
