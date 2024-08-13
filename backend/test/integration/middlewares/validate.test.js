@@ -82,7 +82,7 @@ describe('Validation Middleware Tests', () => {
         if (!errors.isEmpty()) {
             const response = res.status(400).json({ errors: errors.array() });
             expect(response.status).to.equal(400);
-            expect(response.body.errors).to.be.an('array').that.is.not.empty;
+            expect(response.body.errors).to.be.an.array().that.is.not.empty;
         }
     });
 });
