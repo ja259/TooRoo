@@ -1,6 +1,6 @@
 import * as chai from 'chai';
 import { validationResult } from 'express-validator';
-import { validateRegister, validateLogin } from '../../../middlewares/validate.js';
+import { validateRegister, validateLogin } from '../../../middlewares/Validate.js';
 
 const { expect } = chai;
 
