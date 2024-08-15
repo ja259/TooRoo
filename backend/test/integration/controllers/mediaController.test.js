@@ -1,12 +1,17 @@
 import * as chai from 'chai';
 import supertest from 'supertest';
 import path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 import jwt from 'jsonwebtoken';
 import server from '../../../server.js';
 import config from '../../../config/config.js';
 
 const { expect } = chai;
 const request = supertest(server);
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 describe('Media Controller Tests', () => {
     let token;

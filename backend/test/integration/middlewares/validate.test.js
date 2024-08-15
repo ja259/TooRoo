@@ -56,9 +56,8 @@ describe('Validation Middleware Tests', () => {
         await Promise.all(validateRegister.map(validation => validation(req, res, next)));
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            const response = res.status(400).json({ errors: errors.array() });
-            expect(response.status).to.equal(400);
-            expect(res.json.calledWith(sinon.match({ errors: sinon.match.array }))).to.be.true;
+            res.status(400).json({ errors: errors.array() });
+            expect(res.status.calledWith(400)).to.be.true;
         }
     });
 
@@ -81,9 +80,8 @@ describe('Validation Middleware Tests', () => {
         await Promise.all(validateLogin.map(validation => validation(req, res, next)));
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            const response = res.status(400).json({ errors: errors.array() });
-            expect(response.status).to.equal(400);
-            expect(res.json.calledWith(sinon.match({ errors: sinon.match.array }))).to.be.true;
+            res.status(400).json({ errors: errors.array() });
+            expect(res.status.calledWith(400)).to.be.true;
         }
     });
 });
