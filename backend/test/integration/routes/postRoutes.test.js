@@ -11,8 +11,8 @@ describe('Post Routes Tests', () => {
     let token;
 
     before(() => {
-        // Generate a valid token
-        const userPayload = { id: 'testUserId', email: 'testuser@example.com' };
+        // Generate a valid token with a valid ObjectId
+        const userPayload = { id: '60d0fe4f5311236168a109ca', email: 'testuser@example.com' };
         token = jwt.sign(userPayload, config.jwtSecret, { expiresIn: '1h' });
     });
 
@@ -20,7 +20,7 @@ describe('Post Routes Tests', () => {
         request
             .post('/api/posts')
             .set('Authorization', `Bearer ${token}`) // Use the generated token
-            .send({ content: 'Test content', authorId: 'validAuthorId' })
+            .send({ content: 'Test content', authorId: '60d0fe4f5311236168a109ca' }) // Use a valid ObjectId for authorId
             .expect(201)
             .end((err, res) => {
                 if (err) return done(err);

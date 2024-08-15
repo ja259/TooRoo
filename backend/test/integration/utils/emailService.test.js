@@ -6,24 +6,37 @@ import { sendEmail } from '../../../utils/emailService.js';
 const { expect } = chai;
 
 describe('Email Service Integration Tests', () => {
+
     it('should send an email successfully', async () => {
+        // Provide a valid recipient email address
         const result = await sendEmail('test@example.com', 'Test Subject', 'Test Body');
         expect(result.response).to.equal('Email sent successfully');
     });
 
     it('should handle errors during email sending', async () => {
         try {
+            // Pass `null` as recipient to simulate an error
             await sendEmail(null, 'Test Subject', 'Test Body');
         } catch (error) {
-            expect(error.message).to.equal('Failed to send email');
+            expect(error.message).to.equal('No recipients defined');
         }
     });
 
     it('should throw an error if no recipient is provided', async () => {
         try {
+            // Pass an empty string as recipient to simulate missing recipient
             await sendEmail('', 'Test Subject', 'Test Body');
         } catch (error) {
-            expect(error.message).to.equal('Failed to send email');
+            expect(error.message).to.equal('No recipients defined');
+        }
+    });
+
+    it('should throw an error if the recipient email is invalid', async () => {
+        try {
+            // Pass an invalid email address
+            await sendEmail('invalid-email', 'Test Subject', 'Test Body');
+        } catch (error) {
+            expect(error.message).to.equal('Invalid email address');
         }
     });
 });

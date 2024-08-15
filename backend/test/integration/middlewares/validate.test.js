@@ -10,14 +10,14 @@ describe('Validation Middleware Tests', () => {
     beforeEach(() => {
         req = { body: {} };
         res = {
-            status: (statusCode) => ({
-                json: (body) => ({
-                    status: statusCode,
-                    body,
-                }),
-            }),
+            status: sinon.stub().returnsThis(),
+            json: sinon.stub().returnsThis()
         };
-        next = () => true;
+        next = sinon.stub();
+    });
+
+    afterEach(() => {
+        sinon.restore();
     });
 
     it('should validate register request', async () => {
@@ -33,14 +33,14 @@ describe('Validation Middleware Tests', () => {
             ],
         };
 
-        await Promise.all(validateRegister.map((validation) => validation.run(req)));
+        await Promise.all(validateRegister.map(validation => validation(req, res, next)));
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             res.status(400).json({ errors: errors.array() });
         } else {
             next();
         }
-        expect(next()).to.be.true;
+        expect(next.calledOnce).to.be.true;
     });
 
     it('should return validation error for invalid register request', async () => {
@@ -52,37 +52,37 @@ describe('Validation Middleware Tests', () => {
             securityQuestions: [],
         };
 
-        await Promise.all(validateRegister.map((validation) => validation.run(req)));
+        await Promise.all(validateRegister.map(validation => validation(req, res, next)));
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             const response = res.status(400).json({ errors: errors.array() });
             expect(response.status).to.equal(400);
-            expect(response.body.errors).to.be.an('array').that.is.not.empty;
+            expect(res.json.calledWith(sinon.match({ errors: sinon.match.array }))).to.be.true;
         }
     });
 
     it('should validate login request', async () => {
         req.body = { emailOrPhone: 'testuser@example.com', password: 'password123' };
 
-        await Promise.all(validateLogin.map((validation) => validation.run(req)));
+        await Promise.all(validateLogin.map(validation => validation(req, res, next)));
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             res.status(400).json({ errors: errors.array() });
         } else {
             next();
         }
-        expect(next()).to.be.true;
+        expect(next.calledOnce).to.be.true;
     });
 
     it('should return validation error for invalid login request', async () => {
         req.body = { emailOrPhone: '', password: '' };
 
-        await Promise.all(validateLogin.map((validation) => validation.run(req)));
+        await Promise.all(validateLogin.map(validation => validation(req, res, next)));
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             const response = res.status(400).json({ errors: errors.array() });
             expect(response.status).to.equal(400);
-            expect(response.body.errors).to.be.an.array().that.is.not.empty;
+            expect(res.json.calledWith(sinon.match({ errors: sinon.match.array }))).to.be.true;
         }
     });
 });

@@ -17,8 +17,8 @@ describe('Media Routes Tests', () => {
     let token;
 
     before(() => {
-        // Generate a valid token
-        const userPayload = { id: 'testUserId', email: 'testuser@example.com' };
+        // Generate a valid token with a valid ObjectId
+        const userPayload = { id: '60d0fe4f5311236168a109ca', email: 'testuser@example.com' };
         token = jwt.sign(userPayload, config.jwtSecret, { expiresIn: '1h' });
     });
 

@@ -1,8 +1,8 @@
 import * as chai from 'chai';
 import supertest from 'supertest';
-import jwt from 'jsonwebtoken'; // Import jwt to generate a token
+import jwt from 'jsonwebtoken';
 import server from '../../../server.js';
-import config from '../../../config/config.js'; // Assuming you have a config file with your secret
+import config from '../../../config/config.js';
 
 const { expect } = chai;
 const request = supertest(server);
@@ -11,19 +11,20 @@ describe('User Routes Tests', () => {
     let token;
 
     before(() => {
-        // Generate a valid token
-        const userPayload = { id: 'testUserId', email: 'testuser@example.com' };
+        // Use a valid ObjectId format for the userPayload
+        const userPayload = { id: '60d0fe4f5311236168a109ca', email: 'testuser@example.com' }; 
         token = jwt.sign(userPayload, config.jwtSecret, { expiresIn: '1h' });
     });
 
     it('should get user details', (done) => {
+        // Ensure you use a valid ObjectId string in the URL
         request
-            .get('/api/users/validUserId')
-            .set('Authorization', `Bearer ${token}`) // Use the generated token
+            .get('/api/users/60d0fe4f5311236168a109ca') // Using a valid ObjectId here
+            .set('Authorization', `Bearer ${token}`) 
             .expect(200)
             .end((err, res) => {
                 if (err) return done(err);
-                expect(res.body).to.have.property('user');
+                expect(res.body).to.have.property('user'); // Assuming the response contains a user object
                 done();
             });
     });
