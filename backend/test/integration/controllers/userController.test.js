@@ -9,7 +9,7 @@ describe('User Controller Tests', () => {
     let req, res, next;
 
     beforeEach(() => {
-        req = { params: { userId: 'validUserId' } };
+        req = { params: { userId: '60d0fe4f5311236168a109ca' } };
         res = {
             status: sinon.stub().returnsThis(),
             json: sinon.stub()

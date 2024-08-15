@@ -1,8 +1,8 @@
 import * as chai from 'chai';
 import supertest from 'supertest';
-import jwt from 'jsonwebtoken'; // Import jwt to generate a token
+import jwt from 'jsonwebtoken';
 import server from '../../../server.js';
-import config from '../../../config/config.js'; // Assuming you have a config file with your secret
+import config from '../../../config/config.js';
 
 const { expect } = chai;
 const request = supertest(server);
@@ -11,7 +11,6 @@ describe('Post Controller Tests', () => {
     let token;
 
     before(() => {
-        // Generate a valid token with a valid ObjectId
         const userPayload = { id: '60d0fe4f5311236168a109ca', email: 'testuser@example.com' };
         token = jwt.sign(userPayload, config.jwtSecret, { expiresIn: '1h' });
     });
@@ -19,8 +18,8 @@ describe('Post Controller Tests', () => {
     it('should create a new post', (done) => {
         request
             .post('/api/posts')
-            .set('Authorization', `Bearer ${token}`) // Use the generated token
-            .send({ content: 'Test content', authorId: '60d0fe4f5311236168a109ca' }) // Use a valid ObjectId for authorId
+            .set('Authorization', `Bearer ${token}`)
+            .send({ content: 'Test content', authorId: '60d0fe4f5311236168a109ca' })
             .expect(201)
             .end((err, res) => {
                 if (err) return done(err);
