@@ -23,7 +23,9 @@ describe('User Controller Tests', () => {
 
     it('should get user details', async () => {
         const user = { username: 'testuser' };
-        sinon.stub(User, 'findById').returns({ populate: sinon.stub().resolves(user) });
+        sinon.stub(User, 'findById').returns({
+            populate: sinon.stub().resolves(user)
+        });
 
         await getUserProfile(req, res, next);
 
