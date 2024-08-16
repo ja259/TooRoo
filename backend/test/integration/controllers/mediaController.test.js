@@ -26,10 +26,12 @@ describe('Media Controller Tests', () => {
             .post('/api/media/upload')
             .set('Authorization', `Bearer ${token}`)
             .attach('video', path.resolve(__dirname, '../../fixtures/testfile.mp4'))
+            .field('authorId', '60d0fe4f5311236168a109ca') // Pass authorId to match controller logic
             .expect(201)
             .end((err, res) => {
                 if (err) return done(err);
                 expect(res.body).to.have.property('message', 'Video uploaded successfully');
+                expect(res.body.video).to.have.property('videoUrl');
                 done();
             });
     });
