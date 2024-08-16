@@ -17,6 +17,6 @@ describe('Error Handler Middleware Tests', () => {
         errorHandler(err, req, res, next);
 
         expect(res.status.calledWith(500)).to.be.true;
-        expect(res.json.calledWith(sinon.match.has('message'))).to.be.true;
+        expect(res.json.calledWith(sinon.match({ message: 'Test error' }))).to.be.true;
     });
 });

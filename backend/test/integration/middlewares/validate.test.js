@@ -36,11 +36,7 @@ describe('Validation Middleware Tests', () => {
 
         await Promise.all(validateRegister.map(validation => validation(req, res, next)));
         const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            res.status(400).json({ errors: errors.array() });
-        } else {
-            next();
-        }
+        expect(errors.isEmpty()).to.be.true;
         expect(next.calledOnce).to.be.true;
     });
 
@@ -55,10 +51,8 @@ describe('Validation Middleware Tests', () => {
 
         await Promise.all(validateRegister.map(validation => validation(req, res, next)));
         const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            res.status(400).json({ errors: errors.array() });
-            expect(res.status.calledWith(400)).to.be.true;
-        }
+        expect(errors.isEmpty()).to.be.false;
+        expect(res.status.calledWith(400)).to.be.true;
     });
 
     it('should validate login request', async () => {
@@ -66,11 +60,7 @@ describe('Validation Middleware Tests', () => {
 
         await Promise.all(validateLogin.map(validation => validation(req, res, next)));
         const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            res.status(400).json({ errors: errors.array() });
-        } else {
-            next();
-        }
+        expect(errors.isEmpty()).to.be.true;
         expect(next.calledOnce).to.be.true;
     });
 
@@ -79,9 +69,7 @@ describe('Validation Middleware Tests', () => {
 
         await Promise.all(validateLogin.map(validation => validation(req, res, next)));
         const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            res.status(400).json({ errors: errors.array() });
-            expect(res.status.calledWith(400)).to.be.true;
-        }
+        expect(errors.isEmpty()).to.be.false;
+        expect(res.status.calledWith(400)).to.be.true;
     });
 });

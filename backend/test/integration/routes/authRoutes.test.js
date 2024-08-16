@@ -1,11 +1,20 @@
 import * as chai from 'chai';
 import supertest from 'supertest';
+import jwt from 'jsonwebtoken';
 import server from '../../../server.js';
+import config from '../../../config/config.js';
 
 const { expect } = chai;
 const request = supertest(server);
 
 describe('Auth Routes Tests', () => {
+    let token;
+
+    before(() => {
+        const userPayload = { id: '60d0fe4f5311236168a109ca', email: 'testuser@example.com' };
+        token = jwt.sign(userPayload, config.jwtSecret, { expiresIn: '1h' });
+    });
+
     it('should register a new user', (done) => {
         request
             .post('/api/auth/register')
@@ -42,9 +51,8 @@ describe('Auth Routes Tests', () => {
 
     it('should reset the password with valid token and security answers', (done) => {
         request
-            .post('/api/auth/reset-password')
+            .put('/api/auth/reset-password/validToken')
             .send({
-                token: 'validToken',
                 password: 'newpassword123',
                 securityAnswers: [
                     { question: 'Question1', answer: 'Answer1' },

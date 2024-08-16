@@ -9,7 +9,7 @@ describe('User Controller Tests', () => {
     let req, res, next;
 
     beforeEach(() => {
-        req = { params: { userId: '60d0fe4f5311236168a109ca' } };
+        req = { params: { id: '60d0fe4f5311236168a109ca' } };
         res = {
             status: sinon.stub().returnsThis(),
             json: sinon.stub()
@@ -22,7 +22,7 @@ describe('User Controller Tests', () => {
     });
 
     it('should get user details', async () => {
-        const user = { username: 'testuser' };
+        const user = { username: 'testuser', posts: [] };
         sinon.stub(User, 'findById').returns({
             populate: sinon.stub().resolves(user)
         });

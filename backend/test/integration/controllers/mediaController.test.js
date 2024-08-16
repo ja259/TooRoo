@@ -25,11 +25,11 @@ describe('Media Controller Tests', () => {
         request
             .post('/api/media/upload')
             .set('Authorization', `Bearer ${token}`)
-            .attach('file', path.resolve(__dirname, '../../fixtures/testfile.mp4'))
+            .attach('video', path.resolve(__dirname, '../../fixtures/testfile.mp4'))
             .expect(201)
             .end((err, res) => {
                 if (err) return done(err);
-                expect(res.body).to.have.property('message', 'File uploaded successfully');
+                expect(res.body).to.have.property('message', 'Video uploaded successfully');
                 done();
             });
     });
