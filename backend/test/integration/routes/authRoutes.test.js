@@ -2,6 +2,10 @@ import * as chai from 'chai';
 import supertest from 'supertest';
 import server from '../../../server.js';
 
+// Import setup and teardown scripts
+import '../../setup.js';
+import '../../teardown.js';
+
 const { expect } = chai;
 const request = supertest(server);
 

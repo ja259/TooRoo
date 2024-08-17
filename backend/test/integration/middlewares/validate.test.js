@@ -3,6 +3,10 @@ import sinon from 'sinon';
 import { validationResult } from 'express-validator';
 import { validateRegister, validateLogin } from '../../../middlewares/Validate.js';
 
+// Import setup and teardown scripts
+import '../../setup.js';
+import '../../teardown.js';
+
 const { expect } = chai;
 
 describe('Validation Middleware Tests', () => {

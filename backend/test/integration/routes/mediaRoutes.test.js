@@ -5,6 +5,10 @@ import jwt from 'jsonwebtoken';
 import server from '../../../server.js';
 import config from '../../../config/config.js';
 
+// Import setup and teardown scripts
+import '../../setup.js';
+import '../../teardown.js';
+
 const { expect } = chai;
 const request = supertest(server);
 

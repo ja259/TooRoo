@@ -1,13 +1,16 @@
-import * as chai from 'chai';
-import chaiHttp from 'chai-http';
-import { connectDB, disconnectDB } from '../db.js';
+import { connectDB } from '../db.js';
+import mongoose from 'mongoose';
 
-chai.use(chaiHttp);
-
+// Hook to run before all tests
 before(async () => {
     await connectDB();
 });
 
-after(async () => {
-    await disconnectDB();
+// Hook to run after each test to clean up database collections
+afterEach(async () => {
+    const collections = Object.keys(mongoose.connection.collections);
+    for (const collectionName of collections) {
+        const collection = mongoose.connection.collections[collectionName];
+        await collection.deleteMany({});
+    }
 });
