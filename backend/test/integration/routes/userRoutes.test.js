@@ -1,11 +1,11 @@
 import * as chai from 'chai';
-import supertest from 'supertest';
+import chaiHttp from 'chai-http/index.js';
 import jwt from 'jsonwebtoken';
 import server from '../../../server.js';
 import config from '../../../config/config.js';
 
+chai.use(chaiHttp);
 const { expect } = chai;
-const request = supertest(server);
 
 describe('User Routes Tests', () => {
     let token;
@@ -16,12 +16,12 @@ describe('User Routes Tests', () => {
     });
 
     it('should get user details', (done) => {
-        request
+        chai.request(server)
             .get('/api/users/60d0fe4f5311236168a109ca')
             .set('Authorization', `Bearer ${token}`)
-            .expect(200)
             .end((err, res) => {
                 if (err) return done(err);
+                expect(res).to.have.status(200);
                 expect(res.body).to.have.property('user');
                 done();
             });
