@@ -32,9 +32,9 @@ const io = new Server(server, {
 const port = config.port || 5000;
 
 // Security middleware
-app.use(helmet());
-app.use(xss());
-app.use(hpp());
+app.use(helmet());  // Secures HTTP headers
+app.use(xss());     // Prevents XSS attacks
+app.use(hpp());     // Prevents HTTP parameter pollution
 
 // Rate limiting
 const limiter = rateLimit({
@@ -45,12 +45,15 @@ app.use(limiter);
 
 // CORS configuration
 app.use(cors({
-    origin: config.corsOrigins,
+    origin: config.corsOrigins,  // Can be an array of allowed origins
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
-    optionsSuccessStatus: 200
+    optionsSuccessStatus: 200 // For legacy browsers
 }));
+
+// Handle preflight requests explicitly
+app.options('*', cors());
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -67,6 +70,7 @@ app.use('/api/users', authenticate, userRoutes);
 app.use('/api/posts', authenticate, postRoutes);
 app.use('/api/media', authenticate, mediaRoutes);
 
+// Web Push Notification setup
 webPush.setVapidDetails(
     'mailto:example@yourdomain.org',
     config.vapidPublicKey,
@@ -105,6 +109,7 @@ io.on('connection', (socket) => {
 
 server.listen(port, () => console.log(`Server running on port ${port}`));
 
+// Graceful shutdown
 process.on('SIGINT', async () => {
     await disconnectDB();
     process.exit(0);
