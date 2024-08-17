@@ -20,7 +20,7 @@ describe('Post Controller Tests', () => {
         token = jwt.sign(userPayload, config.jwtSecret, { expiresIn: '1h' });
 
         // Ensure the user exists in the database
-        await User.create({ _id: '60d0fe4f5311236168a109ca', email: 'testuser@example.com', password: 'hashed_password' });
+        await User.create({ _id: '60d0fe4f5311236168a109ca', email: 'testuser@example.com', phone: '1234567890', password: 'hashed_password' });
     });
 
     it('should create a new post', (done) => {

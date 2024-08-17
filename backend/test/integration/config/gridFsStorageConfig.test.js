@@ -6,7 +6,7 @@ const { expect } = chai;
 
 describe('GridFS Storage Config Tests', () => {
     it('should have a valid GridFS storage configuration', () => {
-        expect(storage).to.have.property('db'); // Check if `db` exists
+        expect(storage).to.have.property('db'); // Check if db exists
         if (storage.hasOwnProperty('options')) {
             expect(storage.options).to.have.property('bucketName').that.equals(config.gridFsBucket); // Check bucket name
         }

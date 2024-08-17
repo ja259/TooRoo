@@ -73,7 +73,7 @@ describe('Validation Middleware Tests', () => {
 
         await Promise.all(validateLogin.map(validation => validation(req, res, next)));
         const errors = validationResult(req);
-        expect(errors.isEmpty()).to.be.false;
+        expect(errors.isEmpty()). to.be.false;
         expect(res.status.calledWith(400)).to.be.true;
     });
 });
