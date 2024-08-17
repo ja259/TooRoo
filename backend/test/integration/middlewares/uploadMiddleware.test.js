@@ -25,7 +25,7 @@ describe('Upload Middleware Tests', () => {
     });
 
     it('should upload a valid image file', (done) => {
-        request.post('/api/upload')  // Adjust the route based on your setup
+        request.post('/api/upload')
             .attach('file', path.resolve(__dirname, '../../fixtures/testfile.jpg'))
             .expect(200)
             .end((err, res) => {
@@ -58,8 +58,6 @@ describe('Upload Middleware Tests', () => {
     });
 
     it('should handle Multer errors correctly', (done) => {
-        // Simulate a Multer-specific error, e.g., a memory storage limit reached
-        // You may need to mock or simulate this based on your test setup
         request.post('/api/upload')
             .attach('file', path.resolve(__dirname, '../../fixtures/testfile.jpg'))
             .expect(400)
@@ -69,5 +67,4 @@ describe('Upload Middleware Tests', () => {
                 done();
             });
     });
-
 });
