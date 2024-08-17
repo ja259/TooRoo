@@ -1,10 +1,15 @@
 import * as chai from 'chai';
 import supertest from 'supertest';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 import server from '../../../server.js';
 
 // Import setup and teardown scripts
 import '../../setup.js';
 import '../../teardown.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const { expect } = chai;
 const request = supertest(server);
