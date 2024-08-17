@@ -1,14 +1,13 @@
-import * as chai from 'chai';
-import chaiHttp from 'chai-http';
+import chai from 'chai';
+import supertest from 'supertest';
 import server from '../../../server.js';
 
-chai.use(chaiHttp);
 const { expect } = chai;
+const request = supertest(server);
 
 describe('Auth Routes Tests', () => {
     it('should register a new user', (done) => {
-        chai.request(server)
-            .post('/api/auth/register')
+        request.post('/api/auth/register')
             .send({
                 username: 'testuser',
                 email: 'testuser@example.com',
@@ -20,21 +19,20 @@ describe('Auth Routes Tests', () => {
                     { question: 'Question3', answer: 'Answer3' },
                 ],
             })
+            .expect(201)
             .end((err, res) => {
                 if (err) return done(err);
-                expect(res).to.have.status(201);
                 expect(res.body).to.have.property('message', 'User registered successfully');
                 done();
             });
     });
 
     it('should login an existing user', (done) => {
-        chai.request(server)
-            .post('/api/auth/login')
+        request.post('/api/auth/login')
             .send({ emailOrPhone: 'testuser@example.com', password: 'password123' })
+            .expect(200)
             .end((err, res) => {
                 if (err) return done(err);
-                expect(res).to.have.status(200);
                 expect(res.body).to.have.property('token');
                 done();
             });

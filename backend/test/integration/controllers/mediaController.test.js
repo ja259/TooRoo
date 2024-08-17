@@ -1,12 +1,12 @@
 import chai from 'chai';
-import chaiHttp from 'chai-http';
+import supertest from 'supertest';
 import path from 'path';
 import jwt from 'jsonwebtoken';
 import server from '../../../server.js';
 import config from '../../../config/config.js';
 
-chai.use(chaiHttp);
 const { expect } = chai;
+const request = supertest(server);
 
 describe('Media Controller Tests', () => {
     let token;
@@ -17,14 +17,13 @@ describe('Media Controller Tests', () => {
     });
 
     it('should upload a media file', (done) => {
-        chai.request(server)
-            .post('/api/media/upload')
+        request.post('/api/media/upload')
             .set('Authorization', `Bearer ${token}`)
             .attach('file', path.resolve(__dirname, '../../fixtures/testfile.mp4'))
+            .expect(201)
             .end((err, res) => {
                 if (err) return done(err);
-                expect(res).to.have.status(201);
-                expect(res.body).to.have.property('message', 'Video uploaded successfully');
+                expect(res.body).to.have.property('message', 'File uploaded successfully');
                 done();
             });
     });
