@@ -13,9 +13,9 @@ const __dirname = dirname(__filename);
 
 describe('Upload Middleware Tests', () => {
     it('should upload a valid image file', (done) => {
-        request.post('/api/upload')
+        request.post('/api/media/upload') // Ensure the route is correct
             .attach('file', path.resolve(__dirname, '../../fixtures/testfile.jpg'))
-            .expect(200)
+            .expect(201)
             .end((err, res) => {
                 if (err) return done(err);
                 expect(res.body).to.have.property('message', 'File uploaded successfully');
@@ -24,7 +24,7 @@ describe('Upload Middleware Tests', () => {
     });
 
     it('should reject files larger than the allowed size', (done) => {
-        request.post('/api/upload')
+        request.post('/api/media/upload') // Ensure the route is correct
             .attach('file', path.resolve(__dirname, '../../fixtures/largefile.mp4'))
             .expect(400)
             .end((err, res) => {
@@ -35,7 +35,7 @@ describe('Upload Middleware Tests', () => {
     });
 
     it('should reject files with disallowed types', (done) => {
-        request.post('/api/upload')
+        request.post('/api/media/upload') // Ensure the route is correct
             .attach('file', path.resolve(__dirname, '../../fixtures/testfile.txt'))
             .expect(400)
             .end((err, res) => {
@@ -46,7 +46,7 @@ describe('Upload Middleware Tests', () => {
     });
 
     it('should handle Multer errors correctly', (done) => {
-        request.post('/api/upload')
+        request.post('/api/media/upload') // Ensure the route is correct
             .attach('file', path.resolve(__dirname, '../../fixtures/testfile.jpg'))
             .expect(400)
             .end((err, res) => {

@@ -4,13 +4,14 @@ import path from 'path';
 import jwt from 'jsonwebtoken';
 import server from '../../../server.js';
 import config from '../../../config/config.js';
-
-// Import setup and teardown scripts
-import '../../setup.js';
-import '../../teardown.js';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 
 const { expect } = chai;
 const request = supertest(server);
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 describe('Media Routes Tests', () => {
     let token;

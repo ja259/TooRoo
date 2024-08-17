@@ -38,7 +38,7 @@ describe('Media Controller Tests', () => {
             .expect(201)
             .end((err, res) => {
                 if (err) return done(err);
-                expect(res.body).to.have.property('message', 'File uploaded successfully');
+                expect(res.body).to.have.property('message', 'Video uploaded successfully');
                 done();
             });
     });
