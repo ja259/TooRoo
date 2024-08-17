@@ -14,7 +14,7 @@ export const uploadVideo = async (req, res) => {
         }
 
         const newVideo = new Video({
-            videoUrl: req.file.filename,
+            videoUrl: `/uploads/${req.file.filename}`,
             description,
             author: authorId
         });
@@ -32,7 +32,7 @@ export const getAllVideos = async (req, res) => {
     try {
         const videos = await Video.find().populate('author', 'username email avatar');
 
-        if (videos.length === 0) {
+        if (!videos.length) {
             return res.status(404).json({ message: 'No videos found' });
         }
 

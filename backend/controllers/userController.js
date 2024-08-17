@@ -1,8 +1,13 @@
 import User from '../models/User.js';
 import Post from '../models/Post.js';
+import mongoose from 'mongoose';
 
 export const getUserProfile = async (req, res) => {
     try {
+        if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+            return res.status(400).json({ message: 'Invalid user ID' });
+        }
+
         const user = await User.findById(req.params.id).populate('posts');
         if (!user) {
             return res.status(404).json({ message: 'User not found!' });
@@ -20,9 +25,17 @@ export const updateUserProfile = async (req, res) => {
         return res.status(400).json({ message: 'Update information cannot be empty.' });
     }
     try {
+        if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+            return res.status(400).json({ message: 'Invalid user ID' });
+        }
+
         const updatedUser = await User.findByIdAndUpdate(
             req.params.id,
-            { username, bio, avatar },
+            {
+                username,
+                bio,
+                avatar: req.file ? `/uploads/${req.file.filename}` : avatar
+            },
             { new: true, runValidators: true }
         );
         if (!updatedUser) {
@@ -43,6 +56,10 @@ export const followUser = async (req, res) => {
         return res.status(400).json({ message: 'User ID is required for following.' });
     }
     try {
+        if (!mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(currentUserId)) {
+            return res.status(400).json({ message: 'Invalid user ID' });
+        }
+
         const targetUser = await User.findById(userId);
         const currentUser = await User.findById(currentUserId);
 
@@ -71,6 +88,10 @@ export const unfollowUser = async (req, res) => {
         return res.status(400).json({ message: 'User ID is required for unfollowing.' });
     }
     try {
+        if (!mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(currentUserId)) {
+            return res.status(400).json({ message: 'Invalid user ID' });
+        }
+
         const targetUser = await User.findById(userId);
         const currentUser = await User.findById(currentUserId);
 
@@ -94,6 +115,10 @@ export const unfollowUser = async (req, res) => {
 export const getUserAnalytics = async (req, res) => {
     const { userId } = req.user;
     try {
+        if (!mongoose.Types.ObjectId.isValid(userId)) {
+            return res.status(400).json({ message: 'Invalid user ID' });
+        }
+
         const user = await User.findById(userId);
         const posts = await Post.find({ author: userId });
         const likes = posts.reduce((acc, post) => acc + post.likes.length, 0);

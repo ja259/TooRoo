@@ -1,5 +1,6 @@
 import Post from '../models/Post.js';
 import User from '../models/User.js';
+import mongoose from 'mongoose';
 
 export const createPost = async (req, res) => {
     const { content, authorId } = req.body;
@@ -9,6 +10,10 @@ export const createPost = async (req, res) => {
     }
 
     try {
+        if (!mongoose.Types.ObjectId.isValid(authorId)) {
+            return res.status(400).json({ message: 'Invalid author ID' });
+        }
+
         const author = await User.findById(authorId);
         if (!author) {
             return res.status(404).json({ message: 'Author not found.' });
@@ -27,7 +32,7 @@ export const createPost = async (req, res) => {
         res.status(201).json({ message: 'Post created successfully', post: newPost });
     } catch (error) {
         console.error('Error creating post:', error);
-        res.status(500).json({ message: 'Internal server error', details: error.toString() });
+        res.status(500).json({ message: 'Internal server error', error: error.message });
     }
 };
 
@@ -44,7 +49,7 @@ export const getPosts = async (req, res) => {
         res.json({ message: 'Posts retrieved successfully', posts });
     } catch (error) {
         console.error('Error retrieving posts:', error);
-        res.status(500).json({ message: 'Internal server error', details: error.toString() });
+        res.status(500).json({ message: 'Internal server error', error: error.message });
     }
 };
 
@@ -57,7 +62,7 @@ export const getTimelinePosts = async (req, res) => {
         res.json(posts);
     } catch (error) {
         console.error('Failed to retrieve posts:', error);
-        res.status(500).json({ message: 'Failed to retrieve posts' });
+        res.status(500).json({ message: 'Failed to retrieve posts', error: error.message });
     }
 };
 
@@ -106,6 +111,10 @@ export const likePost = async (req, res) => {
     }
 
     try {
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ message: 'Invalid post ID' });
+        }
+
         const post = await Post.findById(id);
         if (!post) {
             return res.status(404).json({ message: 'Post not found.' });
@@ -122,7 +131,7 @@ export const likePost = async (req, res) => {
         res.json({ message: 'Like status updated successfully', post });
     } catch (error) {
         console.error('Error liking post:', error);
-        res.status(500).json({ message: 'Internal server error', details: error.toString() });
+        res.status(500).json({ message: 'Internal server error', error: error.message });
     }
 };
 
@@ -135,6 +144,10 @@ export const commentOnPost = async (req, res) => {
     }
 
     try {
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ message: 'Invalid post ID' });
+        }
+
         const post = await Post.findById(id);
         if (!post) {
             return res.status(404).json({ message: 'Post not found.' });
@@ -150,7 +163,7 @@ export const commentOnPost = async (req, res) => {
         res.json({ message: 'Comment added successfully', post });
     } catch (error) {
         console.error('Error commenting on post:', error);
-        res.status(500).json({ message: 'Internal server error', details: error.toString() });
+        res.status(500).json({ message: 'Internal server error', error: error.message });
     }
 };
 
@@ -158,13 +171,18 @@ export const deletePost = async (req, res) => {
     const { id } = req.params;
 
     try {
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ message: 'Invalid post ID' });
+        }
+
         const post = await Post.findByIdAndRemove(id);
         if (!post) {
             return res.status(404).json({ message: 'Post not found' });
         }
+
         res.json({ message: 'Post deleted successfully' });
     } catch (error) {
         console.error('Error deleting post:', error);
-        res.status(500).json({ message: 'Internal server error', error: error.toString() });
+        res.status(500).json({ message: 'Internal server error', error: error.message });
     }
 };

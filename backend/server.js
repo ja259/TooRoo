@@ -2,14 +2,12 @@ import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
-import multer from 'multer';
 import path from 'path';
 import http from 'http';
 import { Server } from 'socket.io';
 import webPush from 'web-push';
-import gridFsStorage from './config/gridFsStorageConfig.js';
 import { errorHandler, notFound } from './middlewares/errorHandler.js';
-import { authenticate, protect } from './middlewares/authMiddleware.js';
+import { authenticate } from './middlewares/authMiddleware.js';
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 import xss from 'xss-clean';
@@ -33,16 +31,19 @@ const io = new Server(server, {
 });
 const port = config.port || 5000;
 
+// Security middleware
 app.use(helmet());
 app.use(xss());
 app.use(hpp());
 
+// Rate limiting
 const limiter = rateLimit({
     windowMs: 10 * 60 * 1000, // 10 minutes
     max: 100, // limit each IP to 100 requests per windowMs
 });
 app.use(limiter);
 
+// CORS configuration
 app.use(cors({
     origin: config.corsOrigins,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -54,18 +55,17 @@ app.use(cors({
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+// Serve static files from the uploads directory
+app.use('/uploads', express.static(path.join(path.resolve(), 'uploads')));
+
+// Connect to MongoDB
 connectDB();
 
-const upload = multer({ storage: gridFsStorage });
-
+// Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', authenticate, userRoutes);
 app.use('/api/posts', authenticate, postRoutes);
 app.use('/api/media', authenticate, mediaRoutes);
-
-app.post('/upload', authenticate, upload.single('file'), (req, res) => {
-    res.status(200).send({ message: 'File uploaded successfully', fileName: req.file.filename });
-});
 
 webPush.setVapidDetails(
     'mailto:example@yourdomain.org',
@@ -80,9 +80,11 @@ app.post('/subscribe', (req, res) => {
     webPush.sendNotification(subscription, payload).catch(error => console.error(error.stack));
 });
 
+// Error handling
 app.use(notFound);
 app.use(errorHandler);
 
+// Serve frontend in production
 if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.join(path.resolve(), 'frontend', 'build')));
     app.get('*', (req, res) => {
@@ -90,6 +92,7 @@ if (process.env.NODE_ENV === 'production') {
     });
 }
 
+// WebSocket connection
 io.on('connection', (socket) => {
     console.log('New client connected');
     socket.on('message', (message) => {
