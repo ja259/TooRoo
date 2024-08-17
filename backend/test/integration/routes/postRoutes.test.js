@@ -1,11 +1,11 @@
 import * as chai from 'chai';
-import chaiHttp from 'chai-http';
+import supertest from 'supertest';
 import jwt from 'jsonwebtoken';
 import server from '../../../server.js';
 import config from '../../../config/config.js';
 
-chai.use(chaiHttp);
 const { expect } = chai;
+const request = supertest(server);
 
 describe('Post Routes Tests', () => {
     let token;
@@ -16,13 +16,12 @@ describe('Post Routes Tests', () => {
     });
 
     it('should create a new post', (done) => {
-        chai.request(server)
-            .post('/api/posts')
+        request.post('/api/posts')
             .set('Authorization', `Bearer ${token}`)
             .send({ content: 'Test content', authorId: '60d0fe4f5311236168a109ca' })
+            .expect(201)
             .end((err, res) => {
                 if (err) return done(err);
-                expect(res).to.have.status(201);
                 expect(res.body).to.have.property('message', 'Post created successfully');
                 done();
             });

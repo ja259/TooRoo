@@ -1,4 +1,4 @@
-import chai from 'chai';
+import * as chai from 'chai';
 import supertest from 'supertest';
 import jwt from 'jsonwebtoken';
 import server from '../../../server.js';
