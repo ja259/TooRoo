@@ -3,10 +3,6 @@ import sinon from 'sinon';
 import { validationResult } from 'express-validator';
 import { validateRegister, validateLogin } from '../../../middlewares/Validate.js';
 
-// Import setup and teardown scripts
-import '../../setup.js';
-import '../../teardown.js';
-
 const { expect } = chai;
 
 describe('Validation Middleware Tests', () => {
@@ -19,10 +15,6 @@ describe('Validation Middleware Tests', () => {
             json: sinon.stub().returnsThis()
         };
         next = sinon.stub();
-    });
-
-    afterEach(() => {
-        sinon.restore();
     });
 
     it('should validate register request', async () => {
@@ -73,7 +65,7 @@ describe('Validation Middleware Tests', () => {
 
         await Promise.all(validateLogin.map(validation => validation(req, res, next)));
         const errors = validationResult(req);
-        expect(errors.isEmpty()). to.be.false;
+        expect(errors.isEmpty()).to.be.false;
         expect(res.status.calledWith(400)).to.be.true;
     });
 });

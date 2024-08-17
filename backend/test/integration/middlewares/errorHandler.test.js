@@ -2,10 +2,6 @@ import * as chai from 'chai';
 import sinon from 'sinon';
 import { errorHandler } from '../../../middlewares/errorHandler.js';
 
-// Import setup and teardown scripts
-import '../../setup.js';
-import '../../teardown.js';
-
 const { expect } = chai;
 
 describe('Error Handler Middleware Tests', () => {

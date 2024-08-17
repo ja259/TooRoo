@@ -8,22 +8,10 @@ import { dirname } from 'path';
 const { expect } = chai;
 const request = supertest(server);
 
-// Use these to get the directory of the current file
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 describe('Upload Middleware Tests', () => {
-
-    before(async () => {
-        // Apply global setup tasks (like database connection)
-        await import('../../setup.js');
-    });
-
-    after(async () => {
-        // Apply global teardown tasks (like closing database connection)
-        await import('../../teardown.js');
-    });
-
     it('should upload a valid image file', (done) => {
         request.post('/api/upload')
             .attach('file', path.resolve(__dirname, '../../fixtures/testfile.jpg'))
