@@ -1,5 +1,5 @@
 import * as chai from 'chai';
-import chaiHttp from 'chai-http/index.js';
+import chaiHttp from 'chai-http';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';

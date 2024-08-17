@@ -1,5 +1,5 @@
 import * as chai from 'chai';
-import chaiHttp from 'chai-http/index.js';
+import chaiHttp from 'chai-http';
 import jwt from 'jsonwebtoken';
 import server from '../../../server.js';
 import config from '../../../config/config.js';

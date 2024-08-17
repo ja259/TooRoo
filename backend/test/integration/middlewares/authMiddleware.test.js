@@ -34,4 +34,12 @@ describe('Auth Middleware Tests', () => {
 
         expect(next.calledOnce).to.be.true;
     });
+
+    it('should reject an invalid token', async () => {
+        req.headers.authorization = 'Bearer invalidToken';
+        await authMiddleware.authenticate(req, res, next);
+
+        expect(res.status.calledWith(401)).to.be.true;
+        expect(res.json.calledWith(sinon.match.has('message'))).to.be.true;
+    });
 });

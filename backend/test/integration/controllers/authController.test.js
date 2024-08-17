@@ -1,6 +1,6 @@
 import * as chai from 'chai';
 import sinon from 'sinon';
-import bcrypt from 'bcryptjs'; // Import bcrypt to simulate hashing
+import bcrypt from 'bcryptjs';
 import { login } from '../../../controllers/authController.js';
 import User from '../../../models/User.js';
 
@@ -25,11 +25,10 @@ describe('Auth Controller Tests', () => {
     it('should login an existing user', async () => {
         req.body = { emailOrPhone: 'testuser@example.com', password: 'password123' };
 
-        // Simulate the hashing process
         const hashedPassword = await bcrypt.hash('password123', 10);
 
         const user = {
-            password: hashedPassword, // Use the hashed password in the simulation
+            password: hashedPassword,
             comparePassword: function (inputPassword) {
                 return bcrypt.compare(inputPassword, this.password);
             },
@@ -46,11 +45,10 @@ describe('Auth Controller Tests', () => {
     it('should not login a user with incorrect password', async () => {
         req.body = { emailOrPhone: 'testuser@example.com', password: 'wrongpassword' };
 
-        // Simulate the hashing process
         const hashedPassword = await bcrypt.hash('password123', 10);
 
         const user = {
-            password: hashedPassword, // Use the hashed password in the simulation
+            password: hashedPassword,
             comparePassword: function (inputPassword) {
                 return bcrypt.compare(inputPassword, this.password);
             }
