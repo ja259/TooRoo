@@ -11,7 +11,8 @@ describe('User Controller Tests', () => {
     let token;
 
     before(() => {
-        token = jwt.sign({ id: '60d0fe4f5311236168a109ca', email: 'testuser@example.com' }, config.jwtSecret, { expiresIn: '1h' });
+        const userPayload = { id: '60d0fe4f5311236168a109ca', email: 'testuser@example.com' };
+        token = jwt.sign(userPayload, config.jwtSecret, { expiresIn: '1h' });
     });
 
     it('should get user details', (done) => {

@@ -1,8 +1,6 @@
 import * as chai from 'chai';
-import chaiHttp from 'chai-http/index.js';
 import { sendEmail } from '../../../utils/emailService.js';
 
-chai.use(chaiHttp);
 const { expect } = chai;
 
 describe('Email Service Integration Tests', () => {
