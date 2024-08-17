@@ -1,4 +1,4 @@
-import * as chai from 'chai';
+import chai from 'chai';
 import sinon from 'sinon';
 import { validationResult } from 'express-validator';
 import { validateRegister, validateLogin } from '../../../middlewares/Validate.js';

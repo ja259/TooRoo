@@ -1,17 +1,12 @@
-import * as chai from 'chai';
+import chai from 'chai';
 import chaiHttp from 'chai-http';
 import path from 'path';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
 import jwt from 'jsonwebtoken';
 import server from '../../../server.js';
 import config from '../../../config/config.js';
 
 chai.use(chaiHttp);
 const { expect } = chai;
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 describe('Media Controller Tests', () => {
     let token;
@@ -29,7 +24,7 @@ describe('Media Controller Tests', () => {
             .end((err, res) => {
                 if (err) return done(err);
                 expect(res).to.have.status(201);
-                expect(res.body).to.have.property('message', 'File uploaded successfully');
+                expect(res.body).to.have.property('message', 'Video uploaded successfully');
                 done();
             });
     });
