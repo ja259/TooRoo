@@ -16,6 +16,7 @@ const userSchema = new mongoose.Schema({
     securityQuestions: [securityQuestionSchema],
     following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    posts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],  // Ensure 'posts' field is defined
     resetPasswordToken: String,
     resetPasswordExpires: Date
 }, { timestamps: true });
