@@ -23,7 +23,14 @@ const sendEmail = async (to, subject, text) => {
         return { response: 'Email sent successfully' };
     } catch (error) {
         console.error('Error sending email:', error);
-        throw new Error('Failed to send email');
+
+        if (error.response && error.response.includes('No recipients defined')) {
+            throw new Error('No recipients defined');
+        } else if (error.response && error.response.includes('Invalid email address')) {
+            throw new Error('Invalid email address');
+        } else {
+            throw new Error('Failed to send email');
+        }
     }
 };
 

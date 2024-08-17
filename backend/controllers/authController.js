@@ -81,6 +81,11 @@ export const forgotPassword = async (req, res) => {
 export const resetPassword = async (req, res) => {
     try {
         const { token, password, securityAnswers } = req.body;
+
+        if (!token || !password || !securityAnswers || securityAnswers.length < 3) {
+            return res.status(400).json({ message: 'All fields are required' });
+        }
+
         const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
         const user = await User.findOne({
             resetPasswordToken: hashedToken,
