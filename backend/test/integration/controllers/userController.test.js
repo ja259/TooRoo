@@ -1,35 +1,25 @@
 import * as chai from 'chai';
-import sinon from 'sinon';
-import { getUserProfile } from '../../../controllers/userController.js';
-import User from '../../../models/User.js';
+import supertest from 'supertest';
+import server from '../../../server.js';
 
 const { expect } = chai;
+const request = supertest(server);
 
 describe('User Controller Tests', () => {
-    let req, res, next;
+    let token;
 
-    beforeEach(() => {
-        req = { params: { id: '60d0fe4f5311236168a109ca' } };
-        res = {
-            status: sinon.stub().returnsThis(),
-            json: sinon.stub()
-        };
-        next = sinon.stub();
-    });
-
-    afterEach(() => {
-        sinon.restore();
+    before(async () => {
+        // Set up user and token here
+        token = jwt.sign({ id: '60d0fe4f5311236168a109ca', email: 'testuser@example.com' }, config.jwtSecret, { expiresIn: '1h' });
     });
 
     it('should get user details', async () => {
-        const user = { username: 'testuser', posts: [] };
-        sinon.stub(User, 'findById').returns({
-            populate: sinon.stub().resolves(user)
-        });
+        const res = await request
+            .get('/api/users/60d0fe4f5311236168a109ca')
+            .set('Authorization', `Bearer ${token}`)
+            .expect(200);
 
-        await getUserProfile(req, res, next);
-
-        expect(res.status.calledWith(200)).to.be.true;
-        expect(res.json.calledWith(sinon.match.has('user'))).to.be.true;
+        expect(res.body).to.have.property('message', 'User profile retrieved successfully');
+        expect(res.body.user).to.have.property('_id', '60d0fe4f5311236168a109ca');
     });
 });
