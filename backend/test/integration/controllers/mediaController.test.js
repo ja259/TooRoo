@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken';
 import server from '../../../server.js';
 import config from '../../../config/config.js';
 import User from '../../../models/User.js';
+import Video from '../../../models/Video.js';
 
 // Import setup and teardown scripts
 import '../../setup.js';
