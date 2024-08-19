@@ -45,7 +45,7 @@ app.use(limiter);
 
 // CORS configuration
 app.use(cors({
-    origin: config.corsOrigins,  // Can be an array of allowed origins
+    origin: config.corsOrigins.split(','),  // Can be an array of allowed origins
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
