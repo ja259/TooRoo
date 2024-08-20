@@ -10,7 +10,7 @@ const TermsAndPolicies = () => {
     };
 
     const handleDecline = () => {
-        navigate('/register'); // Redirect back to the registration page
+        navigate('/login'); // Redirect to the login page
     };
 
     return (
@@ -50,7 +50,35 @@ const TermsAndPolicies = () => {
             <p>
                 We may update these terms from time to time. We will notify you of any changes by posting the new terms on our platform. Your continued use of TooRoo after any changes constitutes your acceptance of the new terms.
             </p>
-            <h3>8. Contact Us</h3>
+            <h3>8. Payment and Subscriptions</h3>
+            <p>
+                TooRoo may offer paid services or subscriptions. If you choose to purchase a service or subscription, you agree to pay the applicable fees. All payments are non-refundable except as required by law.
+            </p>
+            <h3>9. Third-Party Links</h3>
+            <p>
+                TooRoo may contain links to third-party websites or services that are not owned or controlled by us. We are not responsible for the content, privacy policies, or practices of any third-party websites or services.
+            </p>
+            <h3>10. Limitation of Liability</h3>
+            <p>
+                To the maximum extent permitted by law, TooRoo shall not be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of profits or revenues, whether incurred directly or indirectly, or any loss of data, use, goodwill, or other intangible losses resulting from your use of the platform.
+            </p>
+            <h3>11. Governing Law</h3>
+            <p>
+                These terms shall be governed and construed in accordance with the laws of the jurisdiction in which TooRoo operates, without regard to its conflict of law provisions.
+            </p>
+            <h3>12. Dispute Resolution</h3>
+            <p>
+                Any disputes arising out of or relating to these terms or your use of TooRoo shall be resolved through binding arbitration conducted in accordance with the arbitration rules of the jurisdiction in which TooRoo operates.
+            </p>
+            <h3>13. Severability</h3>
+            <p>
+                If any provision of these terms is found to be invalid or unenforceable by a court of competent jurisdiction, the remaining provisions shall remain in full force and effect.
+            </p>
+            <h3>14. Entire Agreement</h3>
+            <p>
+                These terms, along with our Privacy Policy, constitute the entire agreement between you and TooRoo regarding your use of the platform and supersede any prior agreements.
+            </p>
+            <h3>15. Contact Us</h3>
             <p>
                 If you have any questions about these Terms and Policies, please contact us at support@tooroo.com.
             </p>
@@ -63,4 +91,3 @@ const TermsAndPolicies = () => {
 };
 
 export default TermsAndPolicies;
-

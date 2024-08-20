@@ -28,7 +28,7 @@ const Register = () => {
 
     const response = await authService.register(username, email, phone, password, securityQuestions);
     if (response.success) {
-      navigate('/login'); // Redirect to the login page
+      navigate('/terms-and-policies'); // Redirect to the terms and policies page
     } else {
       setError(response.message);
     }
