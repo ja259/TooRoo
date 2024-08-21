@@ -4,7 +4,7 @@ import { FaBroadcastTower, FaSearch, FaBars } from 'react-icons/fa';
 import { useSwipeable } from 'react-swipeable';
 import './Navbar.css';
 
-const Navbar = ({ user, onLogout, onMenuToggle, notifications }) => {
+const Navbar = ({ user, onLogout, onMenuToggle, notifications = {} }) => {
     const navigate = useNavigate();
 
     // Define an array of routes in the order you want them to be swiped
