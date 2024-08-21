@@ -1,3 +1,4 @@
+// server.js (updated)
 import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
@@ -16,6 +17,7 @@ import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import postRoutes from './routes/postRoutes.js';
 import mediaRoutes from './routes/mediaRoutes.js';
+import liveRoutes from './routes/liveRoutes.js';  // Import the live video routes
 import { connectDB, disconnectDB } from './db.js';
 import config from './config/config.js';
 
@@ -74,6 +76,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', authenticate, userRoutes);
 app.use('/api/posts', authenticate, postRoutes);
 app.use('/api/media', authenticate, mediaRoutes);
+app.use('/api', liveRoutes);  // Add the live video routes
 
 // Web Push Notification setup
 webPush.setVapidDetails(
