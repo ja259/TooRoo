@@ -10,14 +10,19 @@ const Live = ({ user }) => {
     useEffect(() => {
         const fetchLiveVideos = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/api/live');
-                setLiveVideos(response.data);
+                const response = await axios.get('http://localhost:5000/api/live-videos'); // Ensure this matches your backend route
+                setLiveVideos(response.data.videos);
             } catch (err) {
-                setError('Failed to fetch live videos');
+                if (err.response && err.response.status === 404) {
+                    setError('No live videos found.');
+                } else {
+                    setError('Failed to fetch live videos.');
+                }
             } finally {
                 setLoading(false);
             }
         };
+
         fetchLiveVideos();
     }, []);
 
@@ -26,7 +31,11 @@ const Live = ({ user }) => {
     }
 
     if (error) {
-        return <div>{error}</div>;
+        return <div className="error">{error}</div>;
+    }
+
+    if (liveVideos.length === 0) {
+        return <div className="no-videos">No live videos are currently available.</div>;
     }
 
     return (

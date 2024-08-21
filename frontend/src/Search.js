@@ -9,7 +9,8 @@ const Search = () => {
     const [error, setError] = useState('');
 
     const handleSearch = async () => {
-        if (!query) {
+        if (!query.trim()) {
+            setError('Please enter a search query.');
             return;
         }
 
@@ -17,10 +18,20 @@ const Search = () => {
         setError('');
 
         try {
-            const response = await axios.get(`http://localhost:5000/api/search?query=${query}`);
-            setResults(response.data);
+            const response = await axios.get(`http://localhost:5000/api/search`, {
+                params: { query }
+            });
+            if (response.data) {
+                setResults(response.data);
+            } else {
+                setError('No results found.');
+            }
         } catch (err) {
-            setError('Error fetching search results. Please try again.');
+            if (err.response && err.response.status === 404) {
+                setError('No results found for your query.');
+            } else {
+                setError('Error fetching search results. Please try again.');
+            }
         } finally {
             setLoading(false);
         }
@@ -28,6 +39,7 @@ const Search = () => {
 
     const handleChange = (e) => {
         setQuery(e.target.value);
+        setError('');  // Clear error when user starts typing
     };
 
     const handleSubmit = (e) => {
