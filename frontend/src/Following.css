@@ -1,10 +1,50 @@
-.following {
+.following-videos {
     display: flex;
     flex-direction: column;
     gap: 16px;
     padding: 24px;
     background-color: #1a1a1a;
     color: #ffffff;
+}
+
+.live-section {
+    margin-bottom: 24px;
+}
+
+.live-container {
+    display: flex;
+    flex-direction: column;
+    background-color: #333;
+    padding: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.live-container:hover {
+    transform: scale(1.02);
+}
+
+.live-content {
+    width: 100%;
+    border-radius: 8px;
+}
+
+.live-info {
+    display: flex;
+    align-items: center;
+    margin-top: 8px;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 12px;
+}
+
+.live-details h4, .video-info h4 {
+    margin: 0;
 }
 
 .video-container {
@@ -24,17 +64,6 @@
     display: flex;
     align-items: center;
     margin-top: 8px;
-}
-
-.avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    margin-right: 12px;
-}
-
-.video-info h4 {
-    margin: 0;
 }
 
 .video-stats {

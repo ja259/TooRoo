@@ -5,6 +5,7 @@ import './YouAll.css';
 
 const YouAll = () => {
     const [videos, setVideos] = useState([]);
+    const [liveVideos, setLiveVideos] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const navigate = useNavigate();
@@ -20,13 +21,21 @@ const YouAll = () => {
                     return;
                 }
 
-                const response = await axios.get('http://localhost:5000/api/media/you-all-videos', {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                });
+                const [allVideosResponse, liveVideosResponse] = await Promise.all([
+                    axios.get('http://localhost:5000/api/media/you-all-videos', {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    }),
+                    axios.get('http://localhost:5000/api/live-videos', {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    })
+                ]);
 
-                setVideos(response.data.videos);
+                setVideos(allVideosResponse.data.videos);
+                setLiveVideos(liveVideosResponse.data.videos);
             } catch (error) {
                 if (error.response && error.response.status === 401) {
                     setError('Unauthorized access. Please log in.');
@@ -43,6 +52,10 @@ const YouAll = () => {
         fetchVideos();
     }, [navigate]);
 
+    const handleJoinLive = (liveVideo) => {
+        navigate(`/live/${liveVideo._id}`);
+    };
+
     if (loading) {
         return <div className="loading">Loading...</div>;
     }
@@ -53,6 +66,23 @@ const YouAll = () => {
 
     return (
         <div className="you-all">
+            {liveVideos.length > 0 && (
+                <div className="live-section">
+                    <h3>Live Now</h3>
+                    {liveVideos.map((liveVideo) => (
+                        <div key={liveVideo._id} className="live-container" onClick={() => handleJoinLive(liveVideo)}>
+                            <video autoPlay muted src={liveVideo.url} className="live-content"></video>
+                            <div className="live-info">
+                                <img src={liveVideo.author.avatar} alt="avatar" className="avatar" />
+                                <div className="live-details">
+                                    <h4>{liveVideo.author.username}</h4>
+                                    <p>{liveVideo.title}</p>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
             {videos.map((video) => (
                 <div key={video._id} className="video-container">
                     <video controls src={`http://localhost:5000/videos/${video.videoUrl}`} className="video-content"></video>

@@ -37,7 +37,6 @@ const Navbar = ({ user, onLogout, onMenuToggle, notifications = {} }) => {
             <div className="navbar-scroll">
                 <NavLink to="/live" className={getActiveLinkClass}>
                     <FaBroadcastTower />
-                    {notifications.live && <span className="notification-dot">{notifications.live}</span>}
                 </NavLink>
                 <NavLink to="/following" className={getActiveLinkClass}>
                     Following
@@ -59,5 +58,4 @@ const Navbar = ({ user, onLogout, onMenuToggle, notifications = {} }) => {
 };
 
 export default Navbar;
-
 
