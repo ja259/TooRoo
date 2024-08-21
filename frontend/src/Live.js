@@ -6,6 +6,9 @@ const Live = ({ user }) => {
     const [liveVideos, setLiveVideos] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [isLive, setIsLive] = useState(false);
+    const [viewers, setViewers] = useState([]);
+    const [comments, setComments] = useState([]);
 
     useEffect(() => {
         const fetchLiveVideos = async () => {
@@ -26,6 +29,35 @@ const Live = ({ user }) => {
         fetchLiveVideos();
     }, []);
 
+    const handleGoLive = async () => {
+        try {
+            const response = await axios.post('http://localhost:5000/api/live/start', {
+                userId: user.id,
+            });
+            setIsLive(true);
+            setLiveVideos([...liveVideos, response.data.liveVideo]);
+        } catch (err) {
+            console.error('Failed to start live video:', err);
+        }
+    };
+
+    const handleEndLive = async () => {
+        setIsLive(false);
+        // Additional logic to stop the live session on the server can be added here
+    };
+
+    const handleSendComment = async (comment) => {
+        try {
+            const response = await axios.post('http://localhost:5000/api/live/comment', {
+                userId: user.id,
+                comment,
+            });
+            setComments([...comments, response.data.comment]);
+        } catch (err) {
+            console.error('Failed to send comment:', err);
+        }
+    };
+
     if (loading) {
         return <div>Loading...</div>;
     }
@@ -34,15 +66,51 @@ const Live = ({ user }) => {
         return <div className="error">{error}</div>;
     }
 
-    if (liveVideos.length === 0) {
-        return <div className="no-videos">No live videos are currently available.</div>;
+    if (isLive) {
+        return (
+            <div className="live-session">
+                <video className="live-video-feed" autoPlay muted controls />
+                <div className="live-info">
+                    <div className="live-header">
+                        <h1>Live: {user.username}</h1>
+                        <button className="end-live-button" onClick={handleEndLive}>End Live</button>
+                    </div>
+                    <div className="live-interactions">
+                        <div className="live-viewers">
+                            <h3>Viewers</h3>
+                            <ul>
+                                {viewers.map(viewer => (
+                                    <li key={viewer.id}>{viewer.username}</li>
+                                ))}
+                            </ul>
+                        </div>
+                        <div className="live-comments">
+                            <h3>Comments</h3>
+                            <ul>
+                                {comments.map((comment, index) => (
+                                    <li key={index}>{comment}</li>
+                                ))}
+                            </ul>
+                            <div className="comment-input">
+                                <input type="text" placeholder="Add a comment" onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                        handleSendComment(e.target.value);
+                                        e.target.value = '';
+                                    }
+                                }} />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
     }
 
     return (
         <div className="live">
             <div className="live-header">
                 <h1><span role="img" aria-label="Live">🔴</span> Live Videos</h1>
-                <button className="go-live-button">Go Live</button>
+                <button className="go-live-button" onClick={handleGoLive}>Go Live</button>
             </div>
             <div className="live-content">
                 {liveVideos.map((video) => (
@@ -57,20 +125,6 @@ const Live = ({ user }) => {
                         </div>
                     </div>
                 ))}
-            </div>
-            <div className="live-sidebar">
-                <h3>Viewers</h3>
-                <ul className="live-viewers">
-                    {/* List of viewers */}
-                </ul>
-                <h3>Comments</h3>
-                <ul className="live-comments">
-                    {/* List of comments */}
-                </ul>
-                <div className="comment-input">
-                    <input type="text" placeholder="Add a comment" />
-                    <button>Send</button>
-                </div>
             </div>
         </div>
     );
