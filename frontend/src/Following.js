@@ -12,17 +12,17 @@ const Following = () => {
     useEffect(() => {
         const fetchFollowingVideos = async () => {
             try {
-                const token = localStorage.getItem('authToken'); // Retrieve the token from localStorage
+                const token = localStorage.getItem('authToken');
 
                 if (!token) {
                     setError('You are not authenticated. Please log in.');
-                    navigate('/login'); // Redirect to login if no token is found
+                    navigate('/login');
                     return;
                 }
 
                 const response = await axios.get('http://localhost:5000/api/posts/following-videos', {
                     headers: {
-                        Authorization: `Bearer ${token}` // Include the token in the Authorization header
+                        Authorization: `Bearer ${token}`
                     }
                 });
 
@@ -30,7 +30,7 @@ const Following = () => {
             } catch (error) {
                 if (error.response && error.response.status === 401) {
                     setError('Unauthorized access. Please log in.');
-                    navigate('/login'); // Redirect to login on unauthorized access
+                    navigate('/login');
                 } else {
                     setError('Error fetching videos');
                     console.error('Error fetching videos:', error);

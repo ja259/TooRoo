@@ -102,7 +102,7 @@ const Timeline = () => {
             const response = await axios.post(`http://localhost:5000/api/posts/${postId}/share`, {}, {
                 headers: { 'Authorization': `Bearer ${token}` },
             });
-            setSharedPostId(response.data._id); // assuming the shared post returns a new post ID
+            setSharedPostId(response.data._id);
         } catch (error) {
             console.error('Error sharing post:', error);
         }

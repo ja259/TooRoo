@@ -11,6 +11,7 @@
     transition: transform 0.3s;
     transform: translateX(100%);
     z-index: 1000;
+    overflow-y: auto;
 }
 
 .menu.open {

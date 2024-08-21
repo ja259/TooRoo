@@ -10,7 +10,7 @@ const Live = ({ user }) => {
     useEffect(() => {
         const fetchLiveVideos = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/api/live-videos'); // Ensure this matches your backend route
+                const response = await axios.get('http://localhost:5000/api/live-videos');
                 setLiveVideos(response.data.videos);
             } catch (err) {
                 if (err.response && err.response.status === 404) {
