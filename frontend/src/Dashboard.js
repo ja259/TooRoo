@@ -4,10 +4,15 @@ import Live from './Live'; // Ensure this is the correct path to your Live compo
 import './Dashboard.css';
 
 const Dashboard = ({ user }) => {
+    if (!user || !user._id) {
+        console.error("User is not defined or missing _id in Dashboard component.");
+        return <div className="error">User data is missing or incomplete. Please try again later.</div>;
+    }
+
     return (
         <div className="dashboard">
             <header className="dashboard-header">
-                <h1>Welcome to TooRoo, {user?.username}!</h1>
+                <h1>Welcome to TooRoo, {user.username}!</h1>
                 <nav className="dashboard-nav">
                     <Link to="/profile">Profile</Link>
                     <Link to="/feed">Feed</Link>
@@ -19,9 +24,8 @@ const Dashboard = ({ user }) => {
             </header>
             <main className="dashboard-content">
                 <section className="welcome-section">
-                    <h2>Welcome back, {user?.username}!</h2>
+                    <h2>Welcome back, {user.username}!</h2>
                     <p>Here’s what’s happening on TooRoo:</p>
-                    {/* Include components like Feed, Notifications, etc. */}
                     <div className="dashboard-widgets">
                         <div className="dashboard-widget">
                             <h3>Your Feed</h3>

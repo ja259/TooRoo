@@ -3,6 +3,11 @@ import axios from 'axios';
 import './Live.css';
 
 const Live = ({ user }) => {
+    if (!user || !user._id) {
+        console.error("User is not defined or missing _id in Live component.");
+        return <div className="error">User data is missing or incomplete. Please try again later.</div>;
+    }
+
     const [liveVideos, setLiveVideos] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -12,7 +17,6 @@ const Live = ({ user }) => {
     const [currentLiveVideo, setCurrentLiveVideo] = useState(null);
 
     useEffect(() => {
-        console.log('User object:', user); // Debugging line
         const fetchLiveVideos = async () => {
             try {
                 const response = await axios.get('http://localhost:5000/api/live-videos');
@@ -32,11 +36,6 @@ const Live = ({ user }) => {
     }, []);
 
     const handleGoLive = async () => {
-        if (!user || !user._id) {
-            console.error('User is not defined or missing _id');
-            return;
-        }
-
         try {
             const response = await axios.post('http://localhost:5000/api/live/start', {
                 userId: user._id,
@@ -67,11 +66,6 @@ const Live = ({ user }) => {
     };
 
     const handleSendComment = async (comment) => {
-        if (!user || !user._id) {
-            console.error('User is not defined or missing _id');
-            return;
-        }
-
         try {
             const response = await axios.post('http://localhost:5000/api/live/comment', {
                 userId: user._id,
