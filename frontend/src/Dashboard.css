@@ -2,6 +2,7 @@
     background-color: #1a1a1a;
     color: #ffffff;
     padding: 24px;
+    min-height: 100vh;
 }
 
 .dashboard-header {
@@ -16,28 +17,36 @@
 .dashboard-header h1 {
     font-size: 3em;
     margin-bottom: 16px;
+    color: #00bcd4;
 }
 
 .dashboard-nav {
     display: flex;
     justify-content: center;
     gap: 24px;
+    margin-top: 16px;
 }
 
 .dashboard-nav a {
     color: #00bcd4;
     text-decoration: none;
     font-size: 20px;
-    transition: color 0.3s;
+    padding: 8px 16px;
+    border-radius: 8px;
+    transition: background-color 0.3s, color 0.3s;
 }
 
 .dashboard-nav a:hover {
-    color: #0097a7;
-    text-decoration: underline;
+    background-color: #0097a7;
+    color: #ffffff;
 }
 
 .dashboard-content {
     text-align: center;
+    padding: 24px;
+    background-color: #222;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .welcome-section {
@@ -52,4 +61,47 @@
 .welcome-section p {
     font-size: 1.4em;
     color: #b0b0b0;
+}
+
+.dashboard-widgets {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    gap: 24px;
+    margin-top: 24px;
+}
+
+.dashboard-widget {
+    background-color: #333;
+    padding: 16px;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 300px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: left;
+}
+
+.dashboard-widget h3 {
+    font-size: 1.8em;
+    margin-bottom: 8px;
+    color: #00bcd4;
+}
+
+.dashboard-widget p {
+    font-size: 1.2em;
+    color: #b0b0b0;
+    margin-bottom: 16px;
+}
+
+.widget-link {
+    display: inline-block;
+    color: #00bcd4;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+.widget-link:hover {
+    color: #0097a7;
+    text-decoration: underline;
 }
