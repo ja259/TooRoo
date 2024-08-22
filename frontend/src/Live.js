@@ -3,10 +3,10 @@ import axios from 'axios';
 import './Live.css';
 
 const Live = ({ user }) => {
-    // Ensure user is defined and has _id property
+    // Check if user prop is passed and has _id
     if (!user || !user._id) {
         console.error("User is not defined or missing _id in Live component.");
-        return <div className="error">User data is missing or incomplete. Please log in again.</div>;
+        return <div>User data is missing or incomplete. Please log in again.</div>;
     }
 
     const [liveVideos, setLiveVideos] = useState([]);
