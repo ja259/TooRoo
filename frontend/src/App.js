@@ -37,8 +37,8 @@ import TermsAndPolicies from './TermsAndPolicies';
 import LocationSharing from './LocationSharing';
 import QRCodeScanner from './QRCodeScanner';
 import Translation from './Translation';
-import Salon from './Salon'; // Import Salon component
-import Wallet from './Wallet'; // Import Wallet component
+import Salon from './Salon';
+import Wallet from './Wallet';
 
 const App = () => {
     const user = useSelector(state => state.auth.user);
@@ -77,10 +77,11 @@ const App = () => {
                             </>
                         ) : (
                             <>
-                                <Route path="/" element={<Dashboard />} />
+                                {/* Ensure user data is passed down */}
+                                <Route path="/" element={<Dashboard user={user} />} />
                                 <Route path="/profile/:id" element={<Profile />} />
                                 <Route path="/search" element={<Search />} />
-                                <Route path="/live" element={<Live />} />
+                                <Route path="/live" element={<Live user={user} />} />
                                 <Route path="/ar-filters" element={<ARFilters />} />
                                 <Route path="/virtual-events" element={<VirtualEvents />} />
                                 <Route path="/you-all" element={<YouAll />} />
@@ -103,8 +104,8 @@ const App = () => {
                                 <Route path="/qr-code-scanner" element={<QRCodeScanner />} />
                                 <Route path="/translation" element={<Translation />} />
                                 <Route path="/two-factor-auth" element={<TwoFactorAuth />} />
-                                <Route path="/salon" element={<Salon />} /> {/* Add Salon route */}
-                                <Route path="/wallet" element={<Wallet />} /> {/* Add Wallet route */}
+                                <Route path="/salon" element={<Salon />} />
+                                <Route path="/wallet" element={<Wallet />} />
                                 <Route path="*" element={<Navigate to="/" />} />
                             </>
                         )}
