@@ -4,6 +4,7 @@ import Live from './Live'; // Ensure this is the correct path to your Live compo
 import './Dashboard.css';
 
 const Dashboard = ({ user }) => {
+    // Check if user is defined and has an _id property
     if (!user || !user._id) {
         console.error("User is not defined or missing _id in Dashboard component.");
         return <div className="error">User data is missing or incomplete. Please try again later.</div>;
