@@ -8,7 +8,7 @@
     height: 100%;
     background-color: #333;
     color: #fff;
-    transition: transform 0.3s;
+    transition: transform 0.3s ease-in-out;
     transform: translateX(100%);
     z-index: 1000;
     overflow-y: auto;
@@ -36,7 +36,7 @@
     display: flex;
     align-items: center;
     padding: 16px;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s ease;
     cursor: pointer;
 }
 
@@ -46,4 +46,63 @@
 
 .menu-item svg {
     margin-right: 16px;
+}
+
+.logout-button {
+    background: none;
+    border: none;
+    color: inherit;
+    width: 100%;
+    text-align: left;
+    font: inherit;
+    cursor: pointer;
+    padding: 16px;
+}
+
+.logout-button:hover {
+    background-color: #555;
+}
+
+.logout-confirmation {
+    text-align: center;
+    background-color: #444;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    margin: 20px;
+}
+
+.logout-confirmation p {
+    color: #ffffff;
+    margin-bottom: 20px;
+}
+
+.confirm-logout-button {
+    padding: 10px 20px;
+    background-color: #d32f2f;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.confirm-logout-button:hover {
+    background-color: #c62828;
+    transform: translateY(-2px);
+}
+
+.cancel-logout-button {
+    padding: 10px 20px;
+    background-color: #757575;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.cancel-logout-button:hover {
+    background-color: #616161;
 }

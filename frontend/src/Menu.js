@@ -1,10 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { FaUser, FaComments, FaBell, FaCog, FaSearch, FaSignOutAlt, FaShieldAlt, FaBook, FaLanguage, FaBookOpen, FaHome, FaStore, FaChartLine, FaLocationArrow, FaQrcode, FaCommentAlt, FaCut, FaWallet } from 'react-icons/fa';
+import { 
+    FaUser, FaComments, FaBell, FaCog, FaSearch, FaSignOutAlt, FaShieldAlt, 
+    FaBook, FaLanguage, FaBookOpen, FaHome, FaStore, FaChartLine, 
+    FaLocationArrow, FaQrcode, FaCommentAlt, FaCut, FaWallet 
+} from 'react-icons/fa';
+import Logout from './Logout';
 import './Menu.css';
 
 const Menu = ({ user, onLogout, menuOpen }) => {
+    const [confirmLogout, setConfirmLogout] = useState(false);
+
     if (!user) return null;
+
+    const handleLogoutClick = () => {
+        setConfirmLogout(true);
+    };
+
+    const handleCancelLogout = () => {
+        setConfirmLogout(false);
+    };
 
     return (
         <div className={`menu ${menuOpen ? 'open' : ''}`}>
@@ -30,7 +45,15 @@ const Menu = ({ user, onLogout, menuOpen }) => {
             <NavLink to="/translation" className="menu-item"><FaLanguage /> Translation</NavLink>
             <NavLink to="/salon" className="menu-item"><FaCut /> Salon & Barber Shop</NavLink>
             <NavLink to="/wallet" className="menu-item"><FaWallet /> Wallet</NavLink>
-            <button onClick={onLogout} className="menu-item"><FaSignOutAlt /> Logout</button>
+            <button onClick={handleLogoutClick} className="menu-item logout-button">
+                <FaSignOutAlt /> Logout
+            </button>
+            {confirmLogout && (
+                <Logout 
+                    onLogout={onLogout} 
+                    onCancel={handleCancelLogout} 
+                />
+            )}
         </div>
     );
 };

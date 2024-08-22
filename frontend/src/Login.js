@@ -21,7 +21,11 @@ const Login = () => {
 
         const response = await authService.login(emailOrPhone, password);
         if (response.success) {
-            navigate('/dashboard'); // Redirect to the dashboard or another protected route
+            if (response.data.twoFactorRequired) {
+                navigate('/two-factor-auth');
+            } else {
+                navigate('/dashboard');
+            }
         } else {
             setError(response.message);
         }

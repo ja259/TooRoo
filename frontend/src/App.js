@@ -72,12 +72,12 @@ const App = () => {
                                 <Route path="/register" element={<Register onRegister={handleRegister} />} />
                                 <Route path="/forgot-password" element={<ForgotPassword />} />
                                 <Route path="/reset-password/:token" element={<ResetPassword />} />
+                                <Route path="/two-factor-auth" element={<TwoFactorAuth />} />
                                 <Route path="/terms-and-policies" element={<TermsAndPolicies />} />
                                 <Route path="*" element={<Navigate to="/login" />} />
                             </>
                         ) : (
                             <>
-                                {/* Ensure user data is passed down */}
                                 <Route path="/" element={<Dashboard user={user} />} />
                                 <Route path="/profile/:id" element={<Profile />} />
                                 <Route path="/search" element={<Search />} />

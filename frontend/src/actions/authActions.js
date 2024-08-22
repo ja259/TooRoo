@@ -1,11 +1,12 @@
+// authActions.js
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import authService from '../services/authService';
 
 export const register = createAsyncThunk(
   'auth/register',
-  async ({ username, email, password }, { rejectWithValue }) => {
+  async ({ username, email, phone, password, securityQuestions }, { rejectWithValue }) => {
     try {
-      const { data, success } = await authService.register(username, email, password);
+      const { data, success } = await authService.register(username, email, phone, password, securityQuestions);
       if (success) localStorage.setItem('user', JSON.stringify(data));
       return data;
     } catch (error) {
