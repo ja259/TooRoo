@@ -31,9 +31,14 @@ const Live = ({ user }) => {
     }, []);
 
     const handleGoLive = async () => {
+        if (!user || !user._id) {
+            console.error('User is not defined or missing _id');
+            return;
+        }
+
         try {
             const response = await axios.post('http://localhost:5000/api/live/start', {
-                userId: user._id,  // Ensure user object has _id
+                userId: user._id,
                 title: `${user.username}'s Live Stream`,
                 url: 'http://localhost:5000/live-stream-url', // Replace with the actual live stream URL
             });
@@ -61,6 +66,11 @@ const Live = ({ user }) => {
     };
 
     const handleSendComment = async (comment) => {
+        if (!user || !user._id) {
+            console.error('User is not defined or missing _id');
+            return;
+        }
+
         try {
             const response = await axios.post('http://localhost:5000/api/live/comment', {
                 userId: user._id,
