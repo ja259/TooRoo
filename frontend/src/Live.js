@@ -9,6 +9,7 @@ const Live = ({ user }) => {
     const [isLive, setIsLive] = useState(false);
     const [viewers, setViewers] = useState([]);
     const [comments, setComments] = useState([]);
+    const [currentLiveVideo, setCurrentLiveVideo] = useState(null);
 
     useEffect(() => {
         const fetchLiveVideos = async () => {
@@ -32,9 +33,12 @@ const Live = ({ user }) => {
     const handleGoLive = async () => {
         try {
             const response = await axios.post('http://localhost:5000/api/live/start', {
-                userId: user.id,
+                userId: user._id,  // Ensure user object has _id
+                title: `${user.username}'s Live Stream`,
+                url: 'http://localhost:5000/live-stream-url', // Replace with the actual live stream URL
             });
             setIsLive(true);
+            setCurrentLiveVideo(response.data.liveVideo);
             setLiveVideos([...liveVideos, response.data.liveVideo]);
         } catch (err) {
             console.error('Failed to start live video:', err);
@@ -43,13 +47,23 @@ const Live = ({ user }) => {
 
     const handleEndLive = async () => {
         setIsLive(false);
+
+        if (currentLiveVideo) {
+            try {
+                await axios.put(`http://localhost:5000/api/live/end/${currentLiveVideo._id}`);
+                setCurrentLiveVideo(null);
+            } catch (err) {
+                console.error('Failed to end live video:', err);
+            }
+        }
+
         // Additional logic to stop the live session on the server can be added here
     };
 
     const handleSendComment = async (comment) => {
         try {
             const response = await axios.post('http://localhost:5000/api/live/comment', {
-                userId: user.id,
+                userId: user._id,
                 comment,
             });
             setComments([...comments, response.data.comment]);

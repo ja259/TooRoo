@@ -1,4 +1,3 @@
-// routes/liveRoutes.js
 import express from 'express';
 import { startLiveStream, getLiveVideos, endLiveStream } from '../controllers/liveController.js';
 import { protect } from '../middlewares/authMiddleware.js';

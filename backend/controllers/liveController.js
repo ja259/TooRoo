@@ -1,4 +1,3 @@
-// controllers/liveController.js
 import LiveVideo from '../models/LiveVideo.js';
 import User from '../models/User.js';
 
@@ -25,10 +24,7 @@ export const getLiveVideos = async (req, res) => {
     try {
         const liveVideos = await LiveVideo.find({ isLive: true })
             .populate('author', 'username avatar');
-        if (liveVideos.length === 0) {
-            return res.status(404).json({ message: 'No live videos found.' });
-        }
-        res.json({ videos: liveVideos });
+        res.json({ videos: liveVideos }); // Always return an array
     } catch (error) {
         console.error('Error fetching live videos:', error);
         res.status(500).json({ message: 'Internal server error', error: error.message });
