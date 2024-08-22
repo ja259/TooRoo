@@ -3,10 +3,10 @@ import axios from 'axios';
 import './Live.css';
 
 const Live = ({ user }) => {
-    // Check if user is defined and has an _id property
+    // Ensure user is defined and has _id property
     if (!user || !user._id) {
         console.error("User is not defined or missing _id in Live component.");
-        return <div className="error">User data is missing or incomplete. Please try again later.</div>;
+        return <div className="error">User data is missing or incomplete. Please log in again.</div>;
     }
 
     const [liveVideos, setLiveVideos] = useState([]);
@@ -39,7 +39,7 @@ const Live = ({ user }) => {
     const handleGoLive = async () => {
         try {
             const response = await axios.post('http://localhost:5000/api/live/start', {
-                userId: user._id,  // Ensure user object has _id
+                userId: user._id,
                 title: `${user.username}'s Live Stream`,
                 url: 'http://localhost:5000/live-stream-url', // Replace with the actual live stream URL
             });
