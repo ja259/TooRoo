@@ -6,19 +6,19 @@ import './BottomNav.css';
 const BottomNav = () => {
     return (
         <div className="bottom-nav">
-            <NavLink to="/timeline" className={({ isActive }) => isActive ? "active" : ""}>
+            <NavLink to="/timeline" className={({ isActive }) => (isActive ? 'active' : '')}>
                 <FaHome /><span>Home</span>
             </NavLink>
-            <NavLink to="/inbox" className={({ isActive }) => isActive ? "active" : ""}>
+            <NavLink to="/inbox" className={({ isActive }) => (isActive ? 'active' : '')}>
                 <FaInbox /><span>Inbox</span>
             </NavLink>
-            <NavLink to="/create-video" className={({ isActive }) => isActive ? "active" : ""}>
+            <NavLink to="/create-video" className={({ isActive }) => (isActive ? 'active' : '')}>
                 <FaVideo />
             </NavLink>
-            <NavLink to="/notifications" className={({ isActive }) => isActive ? "active" : ""}>
+            <NavLink to="/notifications" className={({ isActive }) => (isActive ? 'active' : '')}>
                 <FaBell /><span>Notifications</span>
             </NavLink>
-            <NavLink to="/profile" className={({ isActive }) => isActive ? "active" : ""}>
+            <NavLink to="/profile" className={({ isActive }) => (isActive ? 'active' : '')}>
                 <FaUser /><span>Profile</span>
             </NavLink>
         </div>

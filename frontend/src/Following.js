@@ -56,6 +56,11 @@ const Following = () => {
         navigate(`/live/${liveVideo._id}`);
     };
 
+    const handleAddSoundOrMusic = (videoId) => {
+        // Logic to add sound or music to the video
+        alert(`Add sound or music to video with ID: ${videoId}`);
+    };
+
     if (loading) {
         return <div className="loading">Loading...</div>;
     }
@@ -96,7 +101,11 @@ const Following = () => {
                             <span>{video.likes.length} ❤️</span>
                             <span>{video.comments.length} 💬</span>
                             <span>{video.shares} ↪️</span>
+                            <span>{video.views} 👁️</span>
                         </div>
+                        <button className="add-sound-button" onClick={() => handleAddSoundOrMusic(video._id)}>
+                            Add Sound/Music
+                        </button>
                     </div>
                 </div>
             ))}

@@ -7,7 +7,7 @@ import './Navbar.css';
 const Navbar = ({ user, onLogout, onMenuToggle, notifications = {} }) => {
     const navigate = useNavigate();
 
-    const routes = ['/live', '/following', '/you-all', '/', '/search'];
+    const routes = ['/live', '/following', '/you-all', '/timeline', '/search'];
     const currentIndex = routes.findIndex(route => route === window.location.pathname);
 
     const handlers = useSwipeable({
@@ -41,7 +41,7 @@ const Navbar = ({ user, onLogout, onMenuToggle, notifications = {} }) => {
                     You All
                     {notifications.youAll && <span className="notification-dot">{notifications.youAll}</span>}
                 </NavLink>
-                <NavLink to="/" className={getActiveLinkClass}>
+                <NavLink to="/timeline" className={getActiveLinkClass}>
                     Timeline
                     {notifications.timeline && <span className="notification-dot">{notifications.timeline}</span>}
                 </NavLink>

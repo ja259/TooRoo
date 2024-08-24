@@ -69,7 +69,7 @@ const Timeline = () => {
             return;
         }
 
-        if (!comment.trim()) {
+        if (!comment) {
             setError('Comment cannot be empty');
             return;
         }

@@ -71,3 +71,18 @@
     display: flex;
     gap: 16px;
 }
+
+.add-sound-button {
+    padding: 8px 16px;
+    background-color: #007bff;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 12px;
+    transition: background-color 0.3s ease;
+}
+
+.add-sound-button:hover {
+    background-color: #0056b3;
+}
