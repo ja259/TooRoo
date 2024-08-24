@@ -7,21 +7,16 @@ import './Navbar.css';
 const Navbar = ({ user, onLogout, onMenuToggle, notifications = {} }) => {
     const navigate = useNavigate();
 
-    // Define an array of routes in the order you want them to be swiped
     const routes = ['/live', '/following', '/you-all', '/', '/search'];
-
-    // Determine the current active route
     const currentIndex = routes.findIndex(route => route === window.location.pathname);
 
     const handlers = useSwipeable({
         onSwipedLeft: () => {
-            // Navigate to the next route on swipe left
             if (currentIndex < routes.length - 1) {
                 navigate(routes[currentIndex + 1]);
             }
         },
         onSwipedRight: () => {
-            // Navigate to the previous route on swipe right
             if (currentIndex > 0) {
                 navigate(routes[currentIndex - 1]);
             }

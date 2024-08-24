@@ -23,6 +23,8 @@ const Login = () => {
         if (response.success) {
             if (response.data.twoFactorRequired) {
                 navigate('/two-factor-auth');
+            } else if (response.data.newUser) {
+                navigate('/terms-and-policies');
             } else {
                 navigate('/dashboard');
             }

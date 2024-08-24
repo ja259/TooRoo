@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { login, logout, register } from './actions/authActions';
@@ -39,6 +39,7 @@ import QRCodeScanner from './QRCodeScanner';
 import Translation from './Translation';
 import Salon from './Salon';
 import Wallet from './Wallet';
+import AddProfilePicture from './AddProfilePicture';
 
 const App = () => {
     const user = useSelector(state => state.auth.user);
@@ -62,7 +63,7 @@ const App = () => {
     return (
         <div className={darkMode ? 'App dark-mode' : 'App'}>
             <Router>
-                <Navbar user={user} onLogout={handleLogout} onMenuToggle={() => setMenuOpen(!menuOpen)} />
+                {isAuthenticated && <Navbar user={user} onLogout={handleLogout} onMenuToggle={() => setMenuOpen(!menuOpen)} />}
                 {isAuthenticated && <Menu user={user} onLogout={handleLogout} menuOpen={menuOpen} />}
                 <div className="content">
                     <Routes>
@@ -72,8 +73,9 @@ const App = () => {
                                 <Route path="/register" element={<Register onRegister={handleRegister} />} />
                                 <Route path="/forgot-password" element={<ForgotPassword />} />
                                 <Route path="/reset-password/:token" element={<ResetPassword />} />
-                                <Route path="/two-factor-auth" element={<TwoFactorAuth />} />
                                 <Route path="/terms-and-policies" element={<TermsAndPolicies />} />
+                                <Route path="/two-factor-auth" element={<TwoFactorAuth />} />
+                                <Route path="/add-profile-picture" element={<AddProfilePicture />} />
                                 <Route path="*" element={<Navigate to="/login" />} />
                             </>
                         ) : (
@@ -103,7 +105,6 @@ const App = () => {
                                 <Route path="/location-sharing" element={<LocationSharing />} />
                                 <Route path="/qr-code-scanner" element={<QRCodeScanner />} />
                                 <Route path="/translation" element={<Translation />} />
-                                <Route path="/two-factor-auth" element={<TwoFactorAuth />} />
                                 <Route path="/salon" element={<Salon />} />
                                 <Route path="/wallet" element={<Wallet />} />
                                 <Route path="*" element={<Navigate to="/" />} />

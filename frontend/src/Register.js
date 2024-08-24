@@ -1,4 +1,3 @@
-// Register.js
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import authService from './services/authService';
@@ -50,22 +49,10 @@ const Register = () => {
 
         const response = await authService.register(username, email, `${countryCode}${phone}`, password, securityQuestions);
         if (response.success) {
-            navigate('/terms-and-policies'); // Redirect to the terms and policies page
+            navigate('/login'); // Redirect to the login page after registration
         } else {
             setError(response.message);
         }
-    };
-
-    const handleSecurityQuestionChange = (index, value) => {
-        const updatedQuestions = [...selectedQuestions];
-        updatedQuestions[index] = value;
-        setSelectedQuestions(updatedQuestions);
-    };
-
-    const handleAnswerChange = (index, value) => {
-        const updatedAnswers = [...answers];
-        updatedAnswers[index] = value;
-        setAnswers(updatedAnswers);
     };
 
     return (
