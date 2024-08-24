@@ -63,3 +63,30 @@
 .icon {
     margin-right: 8px;
 }
+
+.comment-section {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.comment-section input {
+    flex-grow: 1;
+    padding: 8px;
+    border-radius: 4px;
+    border: none;
+}
+
+.comment-section button {
+    padding: 8px 16px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.comment-section button:hover {
+    background-color: #0056b3;
+}

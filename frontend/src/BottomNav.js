@@ -6,7 +6,7 @@ import './BottomNav.css';
 const BottomNav = () => {
     return (
         <div className="bottom-nav">
-            <NavLink to="/" className={({ isActive }) => isActive ? "active" : ""}>
+            <NavLink to="/timeline" className={({ isActive }) => isActive ? "active" : ""}>
                 <FaHome /><span>Home</span>
             </NavLink>
             <NavLink to="/inbox" className={({ isActive }) => isActive ? "active" : ""}>

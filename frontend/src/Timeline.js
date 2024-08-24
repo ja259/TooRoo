@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './Timeline.css';
 import { FaHeart, FaComment, FaShare } from 'react-icons/fa';
@@ -23,7 +23,7 @@ const Timeline = () => {
 
             try {
                 const response = await axios.get('http://localhost:5000/api/timeline-posts', {
-                    headers: { 'Authorization': `Bearer ${token}` },
+                    headers: { Authorization: `Bearer ${token}` },
                 });
                 setPosts(response.data);
             } catch (error) {
@@ -48,7 +48,7 @@ const Timeline = () => {
 
         try {
             await axios.put(`http://localhost:5000/api/posts/${postId}/like`, {}, {
-                headers: { 'Authorization': `Bearer ${token}` },
+                headers: { Authorization: `Bearer ${token}` },
             });
             setPosts((prevPosts) =>
                 prevPosts.map((post) =>
@@ -69,14 +69,14 @@ const Timeline = () => {
             return;
         }
 
-        if (!comment) {
+        if (!comment.trim()) {
             setError('Comment cannot be empty');
             return;
         }
 
         try {
             const response = await axios.post(`http://localhost:5000/api/posts/${postId}/comment`, { comment }, {
-                headers: { 'Authorization': `Bearer ${token}` },
+                headers: { Authorization: `Bearer ${token}` },
             });
             setPosts((prevPosts) =>
                 prevPosts.map((post) =>
@@ -100,7 +100,7 @@ const Timeline = () => {
 
         try {
             const response = await axios.post(`http://localhost:5000/api/posts/${postId}/share`, {}, {
-                headers: { 'Authorization': `Bearer ${token}` },
+                headers: { Authorization: `Bearer ${token}` },
             });
             setSharedPostId(response.data._id);
         } catch (error) {

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FaEdit, FaShare, FaThumbsUp, FaComment, FaHome, FaInbox, FaBell, FaUser, FaVideo } from 'react-icons/fa';
-import { NavLink, useNavigate, useParams } from 'react-router-dom';
+import { FaEdit, FaShare, FaThumbsUp, FaComment, FaInbox, FaVideo } from 'react-icons/fa';
+import { useNavigate, useParams } from 'react-router-dom';
+import BottomNav from './BottomNav';
 import './Profile.css';
 
 const Profile = () => {
@@ -16,8 +17,14 @@ const Profile = () => {
         const fetchUser = async () => {
             try {
                 const token = JSON.parse(localStorage.getItem('user'))?.token;
+                if (!token) {
+                    setError('User not authenticated');
+                    setLoading(false);
+                    return;
+                }
+
                 const response = await axios.get(`http://localhost:5000/api/users/${id}`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
+                    headers: { Authorization: `Bearer ${token}` }
                 });
                 setUser(response.data);
             } catch (err) {
@@ -26,14 +33,20 @@ const Profile = () => {
                 setLoading(false);
             }
         };
+
         fetchUser();
     }, [id]);
 
     const handleFollow = async () => {
         try {
             const token = JSON.parse(localStorage.getItem('user'))?.token;
+            if (!token) {
+                setError('User not authenticated');
+                return;
+            }
+
             await axios.post(`http://localhost:5000/api/users/${id}/follow`, {}, {
-                headers: { 'Authorization': `Bearer ${token}` }
+                headers: { Authorization: `Bearer ${token}` }
             });
             setUser((prevUser) => ({
                 ...prevUser,
