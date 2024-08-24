@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './Dashboard.css';
+import BottomNav from './BottomNav';
 
 const Dashboard = ({ user }) => {
     if (!user || !user._id) {
@@ -32,6 +33,26 @@ const Dashboard = ({ user }) => {
                             <h3>Notifications</h3>
                             <p>Check out your latest notifications.</p>
                             <Link to="/notifications" className="widget-link">View Notifications</Link>
+                        </div>
+                        <div className="dashboard-widget">
+                            <h3>Marketplace</h3>
+                            <p>Browse and purchase products.</p>
+                            <Link to="/marketplace" className="widget-link">Visit Marketplace</Link>
+                        </div>
+                        <div className="dashboard-widget">
+                            <h3>Salon & Barber Shop</h3>
+                            <p>Book your next appointment.</p>
+                            <Link to="/salon" className="widget-link">Book Now</Link>
+                        </div>
+                        <div className="dashboard-widget">
+                            <h3>Explore</h3>
+                            <p>Discover new content and trends.</p>
+                            <Link to="/explore" className="widget-link">Start Exploring</Link>
+                        </div>
+                        <div className="dashboard-widget">
+                            <h3>Stories</h3>
+                            <p>View the latest stories from your network.</p>
+                            <Link to="/stories" className="widget-link">View Stories</Link>
                         </div>
                     </div>
                 </section>
