@@ -7,6 +7,7 @@
   position: fixed;
   width: 100%;
   bottom: 0;
+  z-index: 1000; /* Ensure it stays on top of most elements, but below the menu */
 }
 
 .bottom-nav a {

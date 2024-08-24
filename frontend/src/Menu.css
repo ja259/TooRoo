@@ -10,8 +10,9 @@
     color: #fff;
     transition: transform 0.3s ease-in-out;
     transform: translateX(100%);
-    z-index: 1000;
+    z-index: 1100; /* Higher than BottomNav */
     overflow-y: auto;
+    padding-bottom: 70px; /* Padding to avoid being covered by BottomNav */
 }
 
 .menu.open {
@@ -30,6 +31,11 @@
     height: 50px;
     border-radius: 50%;
     margin-right: 16px;
+}
+
+.menu-content {
+    flex: 1;
+    overflow-y: auto;
 }
 
 .menu-item {
