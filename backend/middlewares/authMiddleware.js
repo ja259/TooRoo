@@ -6,7 +6,7 @@ export const authenticate = (req, res, next) => {
     const token = req.headers.authorization?.split(' ')[1];
 
     if (!token) {
-        return res.status(401).json({ message: 'No token, authorization denied' });
+        return res.status(401).json({ success: false, message: 'No token, authorization denied' });
     }
 
     try {
@@ -14,7 +14,7 @@ export const authenticate = (req, res, next) => {
         req.user = decoded.userId;  // Store userId in req.user
         next();
     } catch (err) {
-        res.status(401).json({ message: 'Token is not valid' });
+        res.status(401).json({ success: false, message: 'Token is not valid' });
     }
 };
 
@@ -23,12 +23,12 @@ export const protect = async (req, res, next) => {
         const user = await User.findById(req.user);  // Retrieve full user object
 
         if (!user) {
-            return res.status(401).json({ message: 'Not authorized, user not found' });
+            return res.status(401).json({ success: false, message: 'Not authorized, user not found' });
         }
 
         req.user = user;  // Replace userId with full user object
         next();
     } catch (error) {
-        res.status(401).json({ message: 'Not authorized' });
+        res.status(401).json({ success: false, message: 'Not authorized' });
     }
 };

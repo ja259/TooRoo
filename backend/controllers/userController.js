@@ -5,28 +5,28 @@ import mongoose from 'mongoose';
 export const getUserProfile = async (req, res) => {
     try {
         if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-            return res.status(400).json({ message: 'Invalid user ID' });
+            return res.status(400).json({ success: false, message: 'Invalid user ID' });
         }
 
         const user = await User.findById(req.params.id).populate('posts');
         if (!user) {
-            return res.status(404).json({ message: 'User not found!' });
+            return res.status(404).json({ success: false, message: 'User not found!' });
         }
-        res.json({ message: 'User profile retrieved successfully', user });
+        res.json({ success: true, message: 'User profile retrieved successfully', user });
     } catch (error) {
         console.error('Failed to retrieve user profile:', error);
-        res.status(500).json({ message: 'Failed to retrieve user profile.', error: error.message });
+        res.status(500).json({ success: false, message: 'Failed to retrieve user profile.', error: error.message });
     }
 };
 
 export const updateUserProfile = async (req, res) => {
     const { username, bio, avatar } = req.body;
     if (!username && !bio && !avatar) {
-        return res.status(400).json({ message: 'Update information cannot be empty.' });
+        return res.status(400).json({ success: false, message: 'Update information cannot be empty.' });
     }
     try {
         if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-            return res.status(400).json({ message: 'Invalid user ID' });
+            return res.status(400).json({ success: false, message: 'Invalid user ID' });
         }
 
         const updatedUser = await User.findByIdAndUpdate(
@@ -39,12 +39,12 @@ export const updateUserProfile = async (req, res) => {
             { new: true, runValidators: true }
         );
         if (!updatedUser) {
-            return res.status(404).json({ message: 'User not found.' });
+            return res.status(404).json({ success: false, message: 'User not found.' });
         }
-        res.json({ message: 'User profile updated successfully.', user: updatedUser });
+        res.json({ success: true, message: 'User profile updated successfully.', user: updatedUser });
     } catch (error) {
         console.error('Failed to update user profile:', error);
-        res.status(500).json({ message: 'Failed to update user profile.', error: error.message });
+        res.status(500).json({ success: false, message: 'Failed to update user profile.', error: error.message });
     }
 };
 
@@ -53,30 +53,30 @@ export const followUser = async (req, res) => {
     const { userId: currentUserId } = req.body;
 
     if (!currentUserId) {
-        return res.status(400).json({ message: 'User ID is required for following.' });
+        return res.status(400).json({ success: false, message: 'User ID is required for following.' });
     }
     try {
         if (!mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(currentUserId)) {
-            return res.status(400).json({ message: 'Invalid user ID' });
+            return res.status(400).json({ success: false, message: 'Invalid user ID' });
         }
 
         const targetUser = await User.findById(userId);
         const currentUser = await User.findById(currentUserId);
 
         if (!targetUser || !currentUser) {
-            return res.status(404).json({ message: 'User not found.' });
+            return res.status(404).json({ success: false, message: 'User not found.' });
         }
 
         if (currentUser.following.includes(userId)) {
-            return res.status(400).json({ message: 'You are already following this user.' });
+            return res.status(400).json({ success: false, message: 'You are already following this user.' });
         }
 
         currentUser.following.push(userId);
         await currentUser.save();
-        res.json({ message: 'Followed user successfully.', user: currentUser });
+        res.json({ success: true, message: 'Followed user successfully.', user: currentUser });
     } catch (error) {
         console.error('Failed to follow user:', error);
-        res.status(500).json({ message: 'Failed to follow user.', error: error.message });
+        res.status(500).json({ success: false, message: 'Failed to follow user.', error: error.message });
     }
 };
 
@@ -85,30 +85,30 @@ export const unfollowUser = async (req, res) => {
     const { userId: currentUserId } = req.body;
 
     if (!currentUserId) {
-        return res.status(400).json({ message: 'User ID is required for unfollowing.' });
+        return res.status(400).json({ success: false, message: 'User ID is required for unfollowing.' });
     }
     try {
         if (!mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(currentUserId)) {
-            return res.status(400).json({ message: 'Invalid user ID' });
+            return res.status(400).json({ success: false, message: 'Invalid user ID' });
         }
 
         const targetUser = await User.findById(userId);
         const currentUser = await User.findById(currentUserId);
 
         if (!targetUser || !currentUser) {
-            return res.status(404).json({ message: 'User not found.' });
+            return res.status(404).json({ success: false, message: 'User not found.' });
         }
 
         if (!currentUser.following.includes(userId)) {
-            return res.status(400).json({ message: 'You are not following this user.' });
+            return res.status(400).json({ success: false, message: 'You are not following this user.' });
         }
 
         currentUser.following = currentUser.following.filter(followedUserId => followedUserId.toString() !== userId);
         await currentUser.save();
-        res.json({ message: 'Unfollowed user successfully.', user: currentUser });
+        res.json({ success: true, message: 'Unfollowed user successfully.', user: currentUser });
     } catch (error) {
         console.error('Failed to unfollow user:', error);
-        res.status(500).json({ message: 'Failed to unfollow user.', error: error.message });
+        res.status(500).json({ success: false, message: 'Failed to unfollow user.', error: error.message });
     }
 };
 
@@ -116,7 +116,7 @@ export const getUserAnalytics = async (req, res) => {
     const { userId } = req.user;
     try {
         if (!mongoose.Types.ObjectId.isValid(userId)) {
-            return res.status(400).json({ message: 'Invalid user ID' });
+            return res.status(400).json({ success: false, message: 'Invalid user ID' });
         }
 
         const user = await User.findById(userId);
@@ -125,6 +125,7 @@ export const getUserAnalytics = async (req, res) => {
         const comments = posts.reduce((acc, post) => acc + post.comments.length, 0);
 
         res.json({
+            success: true,
             posts: posts.length,
             followers: user.followers.length,
             following: user.following.length,
@@ -133,6 +134,6 @@ export const getUserAnalytics = async (req, res) => {
         });
     } catch (error) {
         console.error('Failed to retrieve user analytics:', error);
-        res.status(500).json({ message: 'Failed to retrieve user analytics', error: error.message });
+        res.status(500).json({ success: false, message: 'Failed to retrieve user analytics', error: error.message });
     }
 };

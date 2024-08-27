@@ -41,25 +41,6 @@ const disconnectDB = async () => {
   }
 };
 
-const checkDBConnection = () => {
-  const state = mongoose.connection.readyState;
-  const states = ['disconnected', 'connected', 'connecting', 'disconnecting'];
-  return states[state];
-};
-
-// Event handlers for MongoDB connection
-mongoose.connection.on('connected', () => {
-  logger.info('Mongoose connected to DB');
-});
-
-mongoose.connection.on('error', (err) => {
-  logger.error(`Mongoose connection error: ${err.message}`);
-});
-
-mongoose.connection.on('disconnected', () => {
-  logger.info('Mongoose disconnected from DB');
-});
-
 // Graceful shutdown handler
 const gracefulShutdown = (msg, callback) => {
   mongoose.connection.close(() => {
@@ -82,11 +63,4 @@ process.on('SIGINT', () => {
   });
 });
 
-// For Heroku app termination
-process.on('SIGTERM', () => {
-  gracefulShutdown('Heroku app termination', () => {
-    process.exit(0);
-  });
-});
-
-export { connectDB, disconnectDB, checkDBConnection };
+export { connectDB, disconnectDB };

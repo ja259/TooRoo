@@ -5,28 +5,33 @@ import User from '../models/User.js';
 import emailService from '../utils/emailService.js';
 import config from '../config/config.js';
 
+// Helper function to generate JWT
+const generateToken = (userId) => {
+    return jwt.sign({ userId }, config.jwtSecret, { expiresIn: '1h' });
+};
+
 export const register = async (req, res) => {
     try {
         const { username, email, phone, password, securityQuestions } = req.body;
 
         if (!username || !email || !phone || !password || !securityQuestions || securityQuestions.length < 3) {
-            return res.status(400).json({ message: 'All fields are required' });
+            return res.status(400).json({ success: false, message: 'All fields are required' });
         }
 
         const existingUser = await User.findOne({ $or: [{ email }, { phone }] });
         if (existingUser) {
-            return res.status(409).json({ message: 'Email or phone already registered' });
+            return res.status(409).json({ success: false, message: 'Email or phone already registered' });
         }
 
         const hashedPassword = await bcrypt.hash(password, 12);
         const newUser = new User({ username, email, phone, password: hashedPassword, securityQuestions });
         await newUser.save();
 
-        const token = jwt.sign({ userId: newUser._id }, config.jwtSecret, { expiresIn: '1h' });
-        res.status(201).json({ message: 'User registered successfully', token, userId: newUser._id });
+        const token = generateToken(newUser._id);
+        res.status(201).json({ success: true, message: 'User registered successfully', token, user: newUser });
     } catch (error) {
         console.error('Registration error:', error);
-        res.status(500).json({ message: 'Internal server error', error: error.message });
+        res.status(500).json({ success: false, message: 'Internal server error', error: error.message });
     }
 };
 
@@ -42,14 +47,14 @@ export const login = async (req, res) => {
         }
 
         if (!user || !(await bcrypt.compare(password, user.password))) {
-            return res.status(401).json({ message: 'Invalid credentials' });
+            return res.status(401).json({ success: false, message: 'Invalid credentials' });
         }
 
-        const token = jwt.sign({ userId: user._id }, config.jwtSecret, { expiresIn: '1h' });
-        res.status(200).json({ message: 'Logged in successfully', token, userId: user._id });
+        const token = generateToken(user._id);
+        res.status(200).json({ success: true, message: 'Logged in successfully', token, user });
     } catch (error) {
         console.error('Login error:', error);
-        res.status(500).json({ message: 'Internal server error', error: error.message });
+        res.status(500).json({ success: false, message: 'Internal server error', error: error.message });
     }
 };
 
@@ -58,12 +63,12 @@ export const forgotPassword = async (req, res) => {
         const { email } = req.body;
         const user = await User.findOne({ email });
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            return res.status(404).json({ success: false, message: 'User not found' });
         }
 
         const resetToken = crypto.randomBytes(20).toString('hex');
         user.resetPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex');
-        user.resetPasswordExpires = Date.now() + 3600000;
+        user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
 
         await user.save();
 
@@ -71,10 +76,10 @@ export const forgotPassword = async (req, res) => {
         const message = `You have requested a password reset. Please make a PUT request to: \n\n ${resetUrl}`;
         await emailService.sendEmail(user.email, 'Password Reset Request', message);
 
-        res.status(200).json({ message: 'Password reset token sent', token: resetToken });
+        res.status(200).json({ success: true, message: 'Password reset token sent', token: resetToken });
     } catch (error) {
         console.error('Forgot password error:', error);
-        res.status(500).json({ message: 'Internal server error', error: error.message });
+        res.status(500).json({ success: false, message: 'Internal server error', error: error.message });
     }
 };
 
@@ -83,7 +88,7 @@ export const resetPassword = async (req, res) => {
         const { token, password, securityAnswers } = req.body;
 
         if (!token || !password || !securityAnswers || securityAnswers.length < 3) {
-            return res.status(400).json({ message: 'All fields are required' });
+            return res.status(400).json({ success: false, message: 'All fields are required' });
         }
 
         const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
@@ -93,12 +98,12 @@ export const resetPassword = async (req, res) => {
         });
 
         if (!user) {
-            return res.status(400).json({ message: 'Token is invalid or has expired' });
+            return res.status(400).json({ success: false, message: 'Token is invalid or has expired' });
         }
 
         for (let i = 0; i < securityAnswers.length; i++) {
             if (user.securityQuestions[i].answer !== securityAnswers[i]) {
-                return res.status(400).json({ message: 'Invalid security answer' });
+                return res.status(400).json({ success: false, message: 'Invalid security answer' });
             }
         }
 
@@ -107,9 +112,9 @@ export const resetPassword = async (req, res) => {
         user.resetPasswordExpires = undefined;
         await user.save();
 
-        res.status(200).json({ message: 'Password has been reset successfully' });
+        res.status(200).json({ success: true, message: 'Password has been reset successfully' });
     } catch (error) {
         console.error('Reset password error:', error);
-        res.status(500).json({ message: 'Internal server error', error: error.message });
+        res.status(500).json({ success: false, message: 'Internal server error', error: error.message });
     }
 };

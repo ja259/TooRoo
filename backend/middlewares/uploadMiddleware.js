@@ -39,9 +39,9 @@ const upload = multer({
 const uploadMiddleware = (req, res, next) => {
     upload.single('file')(req, res, (err) => {
         if (err instanceof multer.MulterError) {
-            return res.status(400).json({ message: `Multer error: ${err.message}` });
+            return res.status(400).json({ success: false, message: `Multer error: ${err.message}` });
         } else if (err) {
-            return res.status(400).json({ message: `File upload error: ${err.message}` });
+            return res.status(400).json({ success: false, message: `File upload error: ${err.message}` });
         }
         next();
     });
