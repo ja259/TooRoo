@@ -5,19 +5,35 @@ const API_URL = 'http://localhost:5000/api/auth/';
 
 const register = async (username, email, phone, password, securityQuestions) => {
   try {
-    const response = await axios.post(`${API_URL}register`, { username, email, phone, password, securityQuestions }, { withCredentials: true });
+    const response = await axios.post(
+      `${API_URL}register`,
+      { username, email, phone, password, securityQuestions },
+      { withCredentials: true }
+    );
     if (response.data.token) {
       localStorage.setItem('user', JSON.stringify(response.data));
     }
     return { success: true, data: response.data };
   } catch (error) {
-    return { success: false, message: error.response?.data?.message || 'Registration failed.' };
+    let errorMessage = 'Registration failed.';
+    if (error.response) {
+      if (error.response.status === 409) {
+        errorMessage = error.response.data.message || 'User already exists. Please use a different email or username.';
+      } else {
+        errorMessage = error.response.data.message || errorMessage;
+      }
+    }
+    return { success: false, message: errorMessage };
   }
 };
 
 const login = async (emailOrPhone, password) => {
   try {
-    const response = await axios.post(`${API_URL}login`, { emailOrPhone, password }, { withCredentials: true });
+    const response = await axios.post(
+      `${API_URL}login`,
+      { emailOrPhone, password },
+      { withCredentials: true }
+    );
     if (response.data.token) {
       localStorage.setItem('user', JSON.stringify(response.data));
     }

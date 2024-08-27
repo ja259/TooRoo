@@ -1,3 +1,4 @@
+// Register.js
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import authService from './services/authService';
@@ -63,7 +64,7 @@ const Register = () => {
         if (response.success) {
             navigate('/login'); // Redirect to the login page after registration
         } else {
-            setError(response.message);
+            setError(response.message); // Display the error message
         }
     };
 
