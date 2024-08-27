@@ -23,10 +23,22 @@ const Register = () => {
     const [countryCode, setCountryCode] = useState('+1');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [selectedQuestions, setSelectedQuestions] = useState([null, null, null]);
+    const [selectedQuestions, setSelectedQuestions] = useState(['', '', '']);
     const [answers, setAnswers] = useState(['', '', '']);
     const [error, setError] = useState('');
     const navigate = useNavigate();
+
+    const handleSecurityQuestionChange = (index, value) => {
+        const newSelectedQuestions = [...selectedQuestions];
+        newSelectedQuestions[index] = value;
+        setSelectedQuestions(newSelectedQuestions);
+    };
+
+    const handleAnswerChange = (index, value) => {
+        const newAnswers = [...answers];
+        newAnswers[index] = value;
+        setAnswers(newAnswers);
+    };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -37,7 +49,7 @@ const Register = () => {
             return;
         }
 
-        if (selectedQuestions.includes(null)) {
+        if (selectedQuestions.includes('')) {
             setError('Please select and answer all three security questions');
             return;
         }
