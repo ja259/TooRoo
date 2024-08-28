@@ -31,11 +31,11 @@ export const register = async (req, res) => {
             phone, 
             password: hashedPassword, 
             securityQuestions,
-            bio: '', // Default value for bio
-            avatar: '', // Default value for avatar
-            following: [], // Default value for following list
-            followers: [], // Default value for followers list
-            posts: [] // Default value for posts list
+            bio: '', 
+            avatar: '', 
+            following: [], 
+            followers: [], 
+            posts: [] 
         });
         await newUser.save();
 
