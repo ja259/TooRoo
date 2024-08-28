@@ -19,19 +19,29 @@ const Login = () => {
             return;
         }
 
-        const response = await authService.login(emailOrPhone, password);
-        if (response.success) {
-            // Store the JWT token and user data in localStorage
-            localStorage.setItem('user', JSON.stringify(response.data));
-
-            // Redirect based on user status
-            if (response.data.newUser) {
-                navigate('/terms-and-policies');
+        try {
+            const response = await authService.login(emailOrPhone, password);
+            if (response.success) {
+                if (response.data.twoFactorRequired) {
+                    // Navigate to the 2FA page if 2FA is required
+                    navigate('/two-factor-auth', { state: { userId: response.data.userId } });
+                } else {
+                    // Store the JWT token and user data in localStorage
+                    localStorage.setItem('user', JSON.stringify(response.data));
+                    
+                    // Redirect based on user status
+                    if (response.data.newUser) {
+                        navigate('/terms-and-policies');
+                    } else {
+                        navigate('/dashboard');
+                    }
+                }
             } else {
-                navigate('/dashboard');
+                setError(response.message);
             }
-        } else {
-            setError(response.message);
+        } catch (error) {
+            setError('An error occurred during login. Please try again.');
+            console.error('Login error:', error);
         }
     };
 

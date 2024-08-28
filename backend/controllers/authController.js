@@ -64,7 +64,7 @@ export const register = async (req, res) => {
     }
 };
 
-// Login Controller
+// Login Controller with 2FA
 export const login = async (req, res) => {
     try {
         const { emailOrPhone, password } = req.body;
@@ -80,10 +80,62 @@ export const login = async (req, res) => {
             return res.status(401).json({ success: false, message: 'Invalid credentials' });
         }
 
+        // Generate a 6-digit 2FA code
+        const twoFactorCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+        // Store the 2FA code and expiration time in the user's document
+        user.twoFactorCode = crypto.createHash('sha256').update(twoFactorCode).digest('hex');
+        user.twoFactorExpires = Date.now() + 5 * 60 * 1000; // Code valid for 5 minutes
+        await user.save();
+
+        // Send 2FA code to the user's email
+        const message = `Your TooRoo 2FA code is: ${twoFactorCode}`;
+        await emailService.sendEmail(user.email, 'Your 2FA Code', message);
+
+        res.status(200).json({ 
+            success: true, 
+            message: '2FA code sent to your email', 
+            twoFactorRequired: true, 
+            userId: user._id 
+        });
+    } catch (error) {
+        console.error('Login error:', error);
+        res.status(500).json({ success: false, message: 'Internal server error', error: error.message });
+    }
+};
+
+// 2FA Verification Controller
+export const verifyTwoFactorAuth = async (req, res) => {
+    try {
+        const { userId, twoFactorCode } = req.body;
+
+        const user = await User.findById(userId);
+
+        if (!user || !user.twoFactorCode) {
+            return res.status(400).json({ success: false, message: '2FA code is invalid or has expired' });
+        }
+
+        // Check if the code has expired
+        if (Date.now() > user.twoFactorExpires) {
+            return res.status(400).json({ success: false, message: '2FA code has expired' });
+        }
+
+        // Verify the 2FA code
+        const hashedCode = crypto.createHash('sha256').update(twoFactorCode).digest('hex');
+        if (hashedCode !== user.twoFactorCode) {
+            return res.status(400).json({ success: false, message: 'Invalid 2FA code' });
+        }
+
+        // Clear 2FA code from the user's document after successful verification
+        user.twoFactorCode = undefined;
+        user.twoFactorExpires = undefined;
+        await user.save();
+
+        // Generate JWT token
         const token = generateToken(user._id);
         res.status(200).json({ 
             success: true, 
-            message: 'Logged in successfully', 
+            message: '2FA verified successfully', 
             token, 
             user: {
                 _id: user._id,
@@ -100,7 +152,7 @@ export const login = async (req, res) => {
             } 
         });
     } catch (error) {
-        console.error('Login error:', error);
+        console.error('2FA verification error:', error);
         res.status(500).json({ success: false, message: 'Internal server error', error: error.message });
     }
 };
