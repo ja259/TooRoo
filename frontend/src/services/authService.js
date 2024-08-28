@@ -14,14 +14,7 @@ const register = async (username, email, phone, password, securityQuestions) => 
     }
     return { success: true, data: response.data };
   } catch (error) {
-    let errorMessage = 'Registration failed.';
-    if (error.response) {
-      if (error.response.status === 409) {
-        errorMessage = error.response.data.message || 'User already exists. Please use a different email or username.';
-      } else {
-        errorMessage = error.response.data.message || errorMessage;
-      }
-    }
+    const errorMessage = error.response?.data?.message || 'Registration failed.';
     return { success: false, message: errorMessage };
   }
 };
@@ -36,30 +29,9 @@ const login = async (emailOrPhone, password) => {
     if (response.data.token) {
       localStorage.setItem('user', JSON.stringify(response.data));
     }
-
-    // Check if additional steps are required after login
-    if (response.data.twoFactorRequired) {
-      return {
-        success: true,
-        data: response.data,
-        twoFactorRequired: true,
-      };
-    }
-
-    if (response.data.newUser) {
-      return {
-        success: true,
-        data: response.data,
-        newUser: true,
-      };
-    }
-
     return { success: true, data: response.data };
   } catch (error) {
-    let errorMessage = 'Unable to login. Please check your credentials.';
-    if (error.response && error.response.data && error.response.data.message) {
-      errorMessage = error.response.data.message;
-    }
+    const errorMessage = error.response?.data?.message || 'Unable to login. Please check your credentials.';
     return { success: false, message: errorMessage };
   }
 };
@@ -69,10 +41,7 @@ const forgotPassword = async (email) => {
     await axios.post(`${API_URL}forgot-password`, { email });
     return { success: true, message: 'Password reset link has been sent to your email.' };
   } catch (error) {
-    let errorMessage = 'Failed to send password reset link.';
-    if (error.response && error.response.data && error.response.data.message) {
-      errorMessage = error.response.data.message;
-    }
+    const errorMessage = error.response?.data?.message || 'Failed to send password reset link.';
     return { success: false, message: errorMessage };
   }
 };
