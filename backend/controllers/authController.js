@@ -10,6 +10,7 @@ const generateToken = (userId) => {
     return jwt.sign({ userId }, config.jwtSecret, { expiresIn: '1h' });
 };
 
+// Registration Controller
 export const register = async (req, res) => {
     try {
         const { username, email, phone, password, securityQuestions } = req.body;
@@ -24,17 +25,46 @@ export const register = async (req, res) => {
         }
 
         const hashedPassword = await bcrypt.hash(password, 12);
-        const newUser = new User({ username, email, phone, password: hashedPassword, securityQuestions });
+        const newUser = new User({ 
+            username, 
+            email, 
+            phone, 
+            password: hashedPassword, 
+            securityQuestions,
+            bio: '', // Default value for bio
+            avatar: '', // Default value for avatar
+            following: [], // Default value for following list
+            followers: [], // Default value for followers list
+            posts: [] // Default value for posts list
+        });
         await newUser.save();
 
         const token = generateToken(newUser._id);
-        res.status(201).json({ success: true, message: 'User registered successfully', token, user: newUser });
+        res.status(201).json({ 
+            success: true, 
+            message: 'User registered successfully', 
+            token, 
+            user: {
+                _id: newUser._id,
+                username: newUser.username,
+                email: newUser.email,
+                phone: newUser.phone,
+                bio: newUser.bio,
+                avatar: newUser.avatar,
+                following: newUser.following,
+                followers: newUser.followers,
+                posts: newUser.posts,
+                createdAt: newUser.createdAt,
+                updatedAt: newUser.updatedAt
+            } 
+        });
     } catch (error) {
         console.error('Registration error:', error);
         res.status(500).json({ success: false, message: 'Internal server error', error: error.message });
     }
 };
 
+// Login Controller
 export const login = async (req, res) => {
     try {
         const { emailOrPhone, password } = req.body;
@@ -51,13 +81,31 @@ export const login = async (req, res) => {
         }
 
         const token = generateToken(user._id);
-        res.status(200).json({ success: true, message: 'Logged in successfully', token, user });
+        res.status(200).json({ 
+            success: true, 
+            message: 'Logged in successfully', 
+            token, 
+            user: {
+                _id: user._id,
+                username: user.username,
+                email: user.email,
+                phone: user.phone,
+                bio: user.bio,
+                avatar: user.avatar,
+                following: user.following,
+                followers: user.followers,
+                posts: user.posts,
+                createdAt: user.createdAt,
+                updatedAt: user.updatedAt
+            } 
+        });
     } catch (error) {
         console.error('Login error:', error);
         res.status(500).json({ success: false, message: 'Internal server error', error: error.message });
     }
 };
 
+// Forgot Password Controller
 export const forgotPassword = async (req, res) => {
     try {
         const { email } = req.body;
@@ -83,6 +131,7 @@ export const forgotPassword = async (req, res) => {
     }
 };
 
+// Reset Password Controller
 export const resetPassword = async (req, res) => {
     try {
         const { token, password, securityAnswers } = req.body;

@@ -1,4 +1,3 @@
-// authActions.js
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import authService from '../services/authService';
 

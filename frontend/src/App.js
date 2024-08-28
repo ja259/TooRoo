@@ -52,8 +52,8 @@ const App = () => {
         dispatch(login({ emailOrPhone, password }));
     };
 
-    const handleRegister = (username, email, password) => {
-        dispatch(register({ username, email, password }));
+    const handleRegister = (username, email, phone, password, securityQuestions) => {
+        dispatch(register({ username, email, phone, password, securityQuestions }));
     };
 
     const handleLogout = () => {

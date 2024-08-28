@@ -21,9 +21,11 @@ const Login = () => {
 
         const response = await authService.login(emailOrPhone, password);
         if (response.success) {
-            if (response.data.twoFactorRequired) {
-                navigate('/two-factor-auth');
-            } else if (response.data.newUser) {
+            // Store the JWT token and user data in localStorage
+            localStorage.setItem('user', JSON.stringify(response.data));
+
+            // Redirect based on user status
+            if (response.data.newUser) {
                 navigate('/terms-and-policies');
             } else {
                 navigate('/dashboard');
