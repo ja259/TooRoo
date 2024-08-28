@@ -1,3 +1,4 @@
+import dotenv from 'dotenv';  // Add this line to import dotenv
 import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
@@ -19,7 +20,7 @@ import liveRoutes from './routes/liveRoutes.js';
 import { connectDB, disconnectDB } from './db.js';
 import config from './config/config.js';
 
-dotenv.config();
+dotenv.config();  // Ensure this is called to load environment variables from your .env file
 
 const app = express();
 const server = http.createServer(app);
