@@ -1,6 +1,6 @@
 import express from 'express';
 import { register, login, forgotPassword, resetPassword, verifyTwoFactorAuth } from '../controllers/authController.js';
-import { validateRegister, validateLogin, validateForgotPassword, validateResetPassword } from '../middlewares/Validate.js';
+import { validateRegister, validateLogin, validateForgotPassword, validateResetPassword } from '../middlewares/validate.js';
 
 const router = express.Router();
 
