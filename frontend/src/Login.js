@@ -30,7 +30,7 @@ const Login = () => {
                     localStorage.setItem('user', JSON.stringify(response.data));
                     
                     // Redirect based on user status
-                    if (response.data.newUser) {
+                    if (response.data.user.newUser) {
                         navigate('/terms-and-policies');
                     } else {
                         navigate('/dashboard');

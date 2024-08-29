@@ -21,8 +21,12 @@ const TwoFactorAuth = () => {
                 // Store the JWT token and user data in localStorage
                 localStorage.setItem('user', JSON.stringify(response.data));
                 
-                // Redirect the user to the dashboard after successful 2FA verification
-                navigate('/dashboard');
+                // Redirect the user after successful 2FA verification
+                if (response.data.user.newUser) {
+                    navigate('/terms-and-policies'); // Redirect new users to terms and policies
+                } else {
+                    navigate('/dashboard'); // Redirect existing users to dashboard
+                }
             } else {
                 setError(response.data.message);
             }

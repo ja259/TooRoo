@@ -35,7 +35,8 @@ export const register = async (req, res) => {
             avatar: '', 
             following: [], 
             followers: [], 
-            posts: [] 
+            posts: [],
+            newUser: true // Mark user as new
         });
         await newUser.save();
 
@@ -55,7 +56,8 @@ export const register = async (req, res) => {
                 followers: newUser.followers,
                 posts: newUser.posts,
                 createdAt: newUser.createdAt,
-                updatedAt: newUser.updatedAt
+                updatedAt: newUser.updatedAt,
+                newUser: newUser.newUser
             } 
         });
     } catch (error) {
@@ -109,10 +111,14 @@ export const verifyTwoFactorAuth = async (req, res) => {
     try {
         const { userId, twoFactorCode } = req.body;
 
+        if (!userId || !twoFactorCode) {
+            return res.status(400).json({ success: false, message: 'User ID and 2FA code are required' });
+        }
+
         const user = await User.findById(userId);
 
         if (!user || !user.twoFactorCode) {
-            return res.status(400).json({ success: false, message: '2FA code is invalid or has expired' });
+            return res.status(400).json({ success: false, message: 'Invalid or expired 2FA code' });
         }
 
         // Check if the code has expired
@@ -121,7 +127,7 @@ export const verifyTwoFactorAuth = async (req, res) => {
         }
 
         // Verify the 2FA code
-        const hashedCode = crypto.createHash('sha256').update(twoFactorCode).digest('hex');
+        const hashedCode = crypto.createHash('sha256').update(twoFactorCode.trim()).digest('hex');
         if (hashedCode !== user.twoFactorCode) {
             return res.status(400).json({ success: false, message: 'Invalid 2FA code' });
         }
@@ -129,14 +135,16 @@ export const verifyTwoFactorAuth = async (req, res) => {
         // Clear 2FA code from the user's document after successful verification
         user.twoFactorCode = undefined;
         user.twoFactorExpires = undefined;
+        const isNewUser = user.newUser; // Determine if the user is new
+        user.newUser = false; // Mark user as no longer new after verification
         await user.save();
 
         // Generate JWT token
         const token = generateToken(user._id);
-        res.status(200).json({ 
-            success: true, 
-            message: '2FA verified successfully', 
-            token, 
+        res.status(200).json({
+            success: true,
+            message: '2FA verified successfully',
+            token,
             user: {
                 _id: user._id,
                 username: user.username,
@@ -148,8 +156,9 @@ export const verifyTwoFactorAuth = async (req, res) => {
                 followers: user.followers,
                 posts: user.posts,
                 createdAt: user.createdAt,
-                updatedAt: user.updatedAt
-            } 
+                updatedAt: user.updatedAt,
+                newUser: isNewUser // Return whether the user is new
+            }
         });
     } catch (error) {
         console.error('2FA verification error:', error);
@@ -202,12 +211,14 @@ export const resetPassword = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Token is invalid or has expired' });
         }
 
+        // Validate security answers
         for (let i = 0; i < securityAnswers.length; i++) {
             if (user.securityQuestions[i].answer !== securityAnswers[i]) {
                 return res.status(400).json({ success: false, message: 'Invalid security answer' });
             }
         }
 
+        // Hash and set the new password
         user.password = await bcrypt.hash(password, 12);
         user.resetPasswordToken = undefined;
         user.resetPasswordExpires = undefined;
