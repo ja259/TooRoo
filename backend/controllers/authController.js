@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import User from '../models/User.js';
 import emailService from '../utils/emailService.js';
+import smsService from '../utils/smsService.js'; // Importing the SMS service
 import config from '../config/config.js';
 
 // Helper function to generate JWT
@@ -90,13 +91,18 @@ export const login = async (req, res) => {
         user.twoFactorExpires = Date.now() + 5 * 60 * 1000; // Code valid for 5 minutes
         await user.save();
 
-        // Send 2FA code to the user's email
+        // Send 2FA code based on user preference
         const message = `Your TooRoo 2FA code is: ${twoFactorCode}`;
-        await emailService.sendEmail(user.email, 'Your 2FA Code', message);
+        if (user.preferred2FAMethod === 'email' || user.preferred2FAMethod === 'both') {
+            await emailService.sendEmail(user.email, 'Your 2FA Code', message);
+        }
+        if (user.preferred2FAMethod === 'sms' || user.preferred2FAMethod === 'both') {
+            await smsService(user.phone, message);
+        }
 
         res.status(200).json({ 
             success: true, 
-            message: '2FA code sent to your email', 
+            message: '2FA code sent to your preferred method', 
             twoFactorRequired: true, 
             userId: user._id 
         });

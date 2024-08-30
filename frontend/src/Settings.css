@@ -20,9 +20,19 @@
     font-size: 1.2em;
 }
 
-.settings-item input[type="checkbox"] {
+.settings-item input[type="checkbox"],
+.settings-item select {
     width: 20px;
     height: 20px;
+}
+
+.settings-item select {
+    background-color: #222;
+    color: #ffffff;
+    border: 1px solid #555;
+    border-radius: 4px;
+    padding: 8px;
+    width: auto;
 }
 
 .settings-item button {
@@ -37,4 +47,12 @@
 
 .settings-item button:hover {
     background-color: #0056b3;
+}
+
+.error-message,
+.loading-message {
+    margin-top: 20px;
+    color: red;
+    font-size: 14px;
+    text-align: center;
 }

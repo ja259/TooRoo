@@ -2,6 +2,7 @@ import User from '../models/User.js';
 import Post from '../models/Post.js';
 import mongoose from 'mongoose';
 
+// Get User Profile
 export const getUserProfile = async (req, res) => {
     try {
         if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
@@ -19,6 +20,7 @@ export const getUserProfile = async (req, res) => {
     }
 };
 
+// Update User Profile
 export const updateUserProfile = async (req, res) => {
     const { username, bio, avatar } = req.body;
     if (!username && !bio && !avatar) {
@@ -48,6 +50,7 @@ export const updateUserProfile = async (req, res) => {
     }
 };
 
+// Follow User
 export const followUser = async (req, res) => {
     const { id: userId } = req.params;
     const { userId: currentUserId } = req.body;
@@ -80,6 +83,7 @@ export const followUser = async (req, res) => {
     }
 };
 
+// Unfollow User
 export const unfollowUser = async (req, res) => {
     const { id: userId } = req.params;
     const { userId: currentUserId } = req.body;
@@ -112,6 +116,7 @@ export const unfollowUser = async (req, res) => {
     }
 };
 
+// Get User Analytics
 export const getUserAnalytics = async (req, res) => {
     const { userId } = req.user;
     try {
@@ -135,5 +140,32 @@ export const getUserAnalytics = async (req, res) => {
     } catch (error) {
         console.error('Failed to retrieve user analytics:', error);
         res.status(500).json({ success: false, message: 'Failed to retrieve user analytics', error: error.message });
+    }
+};
+
+// Get User Settings
+export const getUserSettings = async (req, res) => {
+    try {
+        const user = await User.findById(req.params.userId).select('darkMode enable2FA preferred2FAMethod');
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        res.status(200).json(user);
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+// Update User Settings
+export const updateUserSettings = async (req, res) => {
+    try {
+        const updates = req.body;
+        const user = await User.findByIdAndUpdate(req.params.userId, updates, { new: true }).select('darkMode enable2FA preferred2FAMethod');
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        res.status(200).json(user);
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
     }
 };

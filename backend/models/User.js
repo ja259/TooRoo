@@ -16,9 +16,15 @@ const userSchema = new mongoose.Schema({
     securityQuestions: [securityQuestionSchema],
     following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-    posts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],  // Ensure 'posts' field is defined
+    posts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],
     resetPasswordToken: String,
-    resetPasswordExpires: Date
+    resetPasswordExpires: Date,
+    darkMode: { type: Boolean, default: false },
+    enable2FA: { type: Boolean, default: false },
+    preferred2FAMethod: { type: String, enum: ['email', 'sms', 'both'], default: 'email' },
+    twoFactorCode: { type: String, select: false },
+    twoFactorExpires: { type: Date, select: false },
+    newUser: { type: Boolean, default: true }
 }, { timestamps: true });
 
 // Generate auth token

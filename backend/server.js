@@ -1,4 +1,4 @@
-import dotenv from 'dotenv';  
+import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
@@ -33,14 +33,14 @@ const io = new Server(server, {
 const port = config.port || 5000;
 
 // Security Middleware
-app.use(helmet());
-app.use(xss());
-app.use(hpp());
+app.use(helmet());  // Helps secure the app by setting various HTTP headers
+app.use(xss());  // Sanitizes user input coming from POST body, GET queries, and URL parameters
+app.use(hpp());  // Protects against HTTP Parameter Pollution attacks
 
 // Rate Limiting
 const limiter = rateLimit({
     windowMs: 10 * 60 * 1000,  // 10 minutes
-    max: 100,
+    max: 100,  // Limit each IP to 100 requests per windowMs
 });
 app.use(limiter);
 
@@ -58,7 +58,7 @@ app.use(cors({
     optionsSuccessStatus: 200
 }));
 
-app.options('*', cors());
+app.options('*', cors());  // Handle preflight requests
 
 // Body Parser Middleware
 app.use(bodyParser.json());
@@ -92,8 +92,8 @@ app.post('/subscribe', (req, res) => {
 });
 
 // Error Handling Middleware
-app.use(notFound);
-app.use(errorHandler);
+app.use(notFound);  // Handles 404 errors
+app.use(errorHandler);  // Custom error handler
 
 // Serve Static Assets in Production
 if (process.env.NODE_ENV === 'production') {
