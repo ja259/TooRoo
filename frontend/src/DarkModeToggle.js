@@ -1,15 +1,19 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { FaMoon, FaSun } from 'react-icons/fa';
 import './DarkModeToggle.css';
 
-const DarkModeToggle = ({ darkMode, setDarkMode }) => {
+const DarkModeToggle = () => {
+    const [darkMode, setDarkMode] = useState(false);
+    const navigate = useNavigate();
+
     useEffect(() => {
         const savedMode = JSON.parse(localStorage.getItem('darkMode'));
         if (savedMode) {
             setDarkMode(savedMode);
             document.body.classList.add('dark-mode');
         }
-    }, [setDarkMode]);
+    }, []);
 
     const toggleDarkMode = () => {
         const newMode = !darkMode;
@@ -18,10 +22,18 @@ const DarkModeToggle = ({ darkMode, setDarkMode }) => {
         localStorage.setItem('darkMode', JSON.stringify(newMode));
     };
 
+    const handleNext = () => {
+        navigate('/dashboard');
+    };
+
     return (
-        <button className="dark-mode-toggle" onClick={toggleDarkMode}>
-            {darkMode ? <FaSun /> : <FaMoon />}
-        </button>
+        <div className="dark-mode-toggle-container">
+            <h2>Toggle Dark Mode</h2>
+            <button className="dark-mode-toggle" onClick={toggleDarkMode}>
+                {darkMode ? <FaSun /> : <FaMoon />}
+            </button>
+            <button onClick={handleNext}>Next</button>
+        </div>
     );
 };
 

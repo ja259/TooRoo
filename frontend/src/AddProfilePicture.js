@@ -35,13 +35,10 @@ const AddProfilePicture = () => {
             });
 
             if (response.data.success) {
-                // Update user profile picture in localStorage
                 const user = JSON.parse(localStorage.getItem('user'));
                 user.profilePicture = response.data.profilePictureUrl;
                 localStorage.setItem('user', JSON.stringify(user));
-
-                // Redirect to the dashboard
-                navigate('/dashboard');
+                navigate('/two-factor-auth');
             } else {
                 setError('Failed to upload the image. Please try again.');
             }
@@ -53,8 +50,7 @@ const AddProfilePicture = () => {
     };
 
     const handleSkip = () => {
-        // Simply navigate to the dashboard without uploading a profile picture
-        navigate('/dashboard');
+        navigate('/two-factor-auth');
     };
 
     return (

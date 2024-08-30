@@ -18,21 +18,18 @@ const TwoFactorAuth = () => {
             const response = await axios.post('http://localhost:5000/api/auth/verify-2fa', { userId, twoFactorCode: code });
 
             if (response.data.success) {
-                // Store the JWT token and user data in localStorage
                 localStorage.setItem('user', JSON.stringify(response.data));
-                
-                // Redirect the user after successful 2FA verification
-                if (response.data.user.newUser) {
-                    navigate('/terms-and-policies'); // Redirect new users to terms and policies
-                } else {
-                    navigate('/dashboard'); // Redirect existing users to dashboard
-                }
+                navigate('/toggle-dark-mode');
             } else {
                 setError(response.data.message);
             }
         } catch (err) {
             setError('Verification failed. Please try again.');
         }
+    };
+
+    const handleSkip = () => {
+        navigate('/toggle-dark-mode');
     };
 
     return (
@@ -48,6 +45,7 @@ const TwoFactorAuth = () => {
                 />
                 <button type="submit">Verify</button>
                 {error && <div className="error-message">{error}</div>}
+                <button type="button" onClick={handleSkip}>Skip</button>
             </form>
         </div>
     );
