@@ -36,9 +36,9 @@ const Login = () => {
                 localStorage.setItem('user', JSON.stringify(response.data));
 
                 // Redirect based on user status
-                if (user.newUser) {
+                if (response.data.newUser) {
                     navigate('/terms-and-policies');
-                } else if (user.twoFactorEnabled) {
+                } else if (response.data.twoFactorRequired) {
                     navigate('/two-factor-auth', { state: { userId: user._id } });
                 } else {
                     navigate('/dashboard');

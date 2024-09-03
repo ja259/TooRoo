@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import User from '../models/User.js';
 import emailService from '../utils/emailService.js';
-import smsService from '../utils/smsService.js'; // Importing the SMS service
+import smsService from '../utils/smsService.js';
 import config from '../config/config.js';
 
 // Helper function to generate JWT
@@ -37,7 +37,9 @@ export const register = async (req, res) => {
             following: [], 
             followers: [], 
             posts: [],
-            newUser: true // Mark user as new
+            newUser: true,  // Mark user as new
+            enable2FA: false,  // 2FA is not enabled by default
+            preferred2FAMethod: null  // No preferred 2FA method initially
         });
         await newUser.save();
 
@@ -58,7 +60,9 @@ export const register = async (req, res) => {
                 posts: newUser.posts,
                 createdAt: newUser.createdAt,
                 updatedAt: newUser.updatedAt,
-                newUser: newUser.newUser
+                newUser: newUser.newUser,
+                enable2FA: newUser.enable2FA,
+                preferred2FAMethod: newUser.preferred2FAMethod
             } 
         });
     } catch (error) {
@@ -67,7 +71,7 @@ export const register = async (req, res) => {
     }
 };
 
-// Login Controller with 2FA
+// Login Controller with conditional 2FA
 export const login = async (req, res) => {
     try {
         const { emailOrPhone, password } = req.body;
@@ -83,28 +87,79 @@ export const login = async (req, res) => {
             return res.status(401).json({ success: false, message: 'Invalid credentials' });
         }
 
-        // Generate a 6-digit 2FA code
-        const twoFactorCode = Math.floor(100000 + Math.random() * 900000).toString();
-
-        // Store the 2FA code and expiration time in the user's document
-        user.twoFactorCode = crypto.createHash('sha256').update(twoFactorCode).digest('hex');
-        user.twoFactorExpires = Date.now() + 5 * 60 * 1000; // Code valid for 5 minutes
-        await user.save();
-
-        // Send 2FA code based on user preference
-        const message = `Your TooRoo 2FA code is: ${twoFactorCode}`;
-        if (user.preferred2FAMethod === 'email' || user.preferred2FAMethod === 'both') {
-            await emailService.sendEmail(user.email, 'Your 2FA Code', message);
+        if (user.newUser) {
+            // If the user is new, skip 2FA and redirect to terms and policies
+            return res.status(200).json({ 
+                success: true, 
+                message: 'Welcome, new user!', 
+                newUser: true, 
+                user: {
+                    _id: user._id,
+                    username: user.username,
+                    email: user.email,
+                    phone: user.phone,
+                    bio: user.bio,
+                    avatar: user.avatar,
+                    following: user.following,
+                    followers: user.followers,
+                    posts: user.posts,
+                    createdAt: user.createdAt,
+                    updatedAt: user.updatedAt,
+                    newUser: user.newUser,
+                    enable2FA: user.enable2FA,
+                    preferred2FAMethod: user.preferred2FAMethod
+                }
+            });
         }
-        if (user.preferred2FAMethod === 'sms' || user.preferred2FAMethod === 'both') {
-            await smsService(user.phone, message);
+
+        if (user.enable2FA) {
+            // Generate a 6-digit 2FA code
+            const twoFactorCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+            // Store the 2FA code and expiration time in the user's document
+            user.twoFactorCode = crypto.createHash('sha256').update(twoFactorCode).digest('hex');
+            user.twoFactorExpires = Date.now() + 5 * 60 * 1000; // Code valid for 5 minutes
+            await user.save();
+
+            // Send 2FA code based on user preference
+            const message = `Your TooRoo 2FA code is: ${twoFactorCode}`;
+            if (user.preferred2FAMethod === 'email' || user.preferred2FAMethod === 'both') {
+                await emailService.sendEmail(user.email, 'Your 2FA Code', message);
+            }
+            if (user.preferred2FAMethod === 'sms' || user.preferred2FAMethod === 'both') {
+                await smsService(user.phone, message);
+            }
+
+            return res.status(200).json({ 
+                success: true, 
+                message: '2FA code sent to your preferred method', 
+                twoFactorRequired: true, 
+                userId: user._id 
+            });
         }
 
-        res.status(200).json({ 
-            success: true, 
-            message: '2FA code sent to your preferred method', 
-            twoFactorRequired: true, 
-            userId: user._id 
+        // If no 2FA is required, log in the user
+        const token = generateToken(user._id);
+        res.status(200).json({
+            success: true,
+            message: 'Login successful',
+            token,
+            user: {
+                _id: user._id,
+                username: user.username,
+                email: user.email,
+                phone: user.phone,
+                bio: user.bio,
+                avatar: user.avatar,
+                following: user.following,
+                followers: user.followers,
+                posts: user.posts,
+                createdAt: user.createdAt,
+                updatedAt: user.updatedAt,
+                newUser: user.newUser,
+                enable2FA: user.enable2FA,
+                preferred2FAMethod: user.preferred2FAMethod
+            }
         });
     } catch (error) {
         console.error('Login error:', error);
