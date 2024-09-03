@@ -27,18 +27,14 @@ const AddProfilePicture = () => {
 
         try {
             const user = JSON.parse(localStorage.getItem('user'));
-            const token = user?.token;
-
-            if (!token) {
-                setError('You are not authorized. Please log in again.');
-                navigate('/login');
-                return;
+            if (!user || !user.token) {
+                throw new Error('User authentication failed. Please log in again.');
             }
 
             const response = await axios.post('http://localhost:5000/api/users/upload-profile-picture', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
-                    'Authorization': `Bearer ${token}`,
+                    'Authorization': `Bearer ${user.token}`,
                 },
             });
 
@@ -47,14 +43,19 @@ const AddProfilePicture = () => {
                 user.profilePicture = response.data.profilePictureUrl;
                 localStorage.setItem('user', JSON.stringify(user));
 
-                // Redirect to the next step (e.g., two-factor authentication)
+                // Redirect to the two-factor authentication setup page
                 navigate('/two-factor-auth');
             } else {
                 setError('Failed to upload the image. Please try again.');
             }
         } catch (err) {
-            if (err.response && err.response.status === 401) {
+            if (err.message === 'User authentication failed. Please log in again.') {
+                setError(err.message);
+                localStorage.removeItem('user'); // Clear user data
+                navigate('/login');
+            } else if (err.response && err.response.status === 401) {
                 setError('Unauthorized. Please log in again.');
+                localStorage.removeItem('user'); // Clear user data
                 navigate('/login');
             } else {
                 setError('An error occurred while uploading the image. Please try again.');
