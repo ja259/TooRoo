@@ -21,11 +21,14 @@ const Login = () => {
 
         try {
             const response = await authService.login(emailOrPhone, password);
-            if (response.success) {
-                const user = response.data?.user;
+            console.log('Login response:', response); // Log the full response for debugging
+
+            if (response.success && response.data) {
+                const user = response.data.user;
 
                 if (!user) {
                     setError('Login failed. User data is missing.');
+                    console.error('User data is missing in the response:', response.data);
                     return;
                 }
 
@@ -41,7 +44,8 @@ const Login = () => {
                     navigate('/dashboard');
                 }
             } else {
-                setError(response.message);
+                setError(response.message || 'Login failed.');
+                console.error('Login failed. Response:', response);
             }
         } catch (error) {
             setError('An error occurred during login. Please try again.');
