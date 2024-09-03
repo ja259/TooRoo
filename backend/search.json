@@ -3,35 +3,109 @@
         {
             "_id": "userId",
             "username": "username",
-            "avatar": "avatarUrl",
-            "bio": "User bio",
-            "followers": ["followerId1", "followerId2"],
-            "following": ["followingId1", "followingId2"],
-            "posts": ["postId1", "postId2"]
+            "email": "user@example.com",
+            "phone": "+1234567890",
+            "profilePicture": "profilePictureUrl",  
+            "bio": "User bio",  
+            "website": "https://userwebsite.com",  
+            "location": "City, Country",  
+            "followers": [
+                {
+                    "_id": "followerId1",
+                    "username": "followerUsername1",
+                    "profilePicture": "followerProfilePictureUrl1"
+                },
+                {
+                    "_id": "followerId2",
+                    "username": "followerUsername2",
+                    "profilePicture": "followerProfilePictureUrl2"
+                }
+            ],  
+            "following": [
+                {
+                    "_id": "followingId1",
+                    "username": "followingUsername1",
+                    "profilePicture": "followingProfilePictureUrl1"
+                },
+                {
+                    "_id": "followingId2",
+                    "username": "followingUsername2",
+                    "profilePicture": "followingProfilePictureUrl2"
+                }
+            ],  
+            "posts": [
+                {
+                    "_id": "postId1",
+                    "content": "Post content",  
+                    "mediaUrl": "mediaUrl",  
+                    "createdAt": "2024-08-24T14:15:22Z",  
+                    "updatedAt": "2024-08-25T14:15:22Z" 
+                },
+                {
+                    "_id": "postId2",
+                    "content": "Another post content",
+                    "mediaUrl": "mediaUrl",
+                    "createdAt": "2024-08-24T14:15:22Z",
+                    "updatedAt": "2024-08-25T14:15:22Z"
+                }
+            ], 
+            "settings": {
+                "darkMode": true,  
+                "enable2FA": true,  
+                "preferred2FAMethod": "email"  
+            },
+            "createdAt": "2023-08-24T14:15:22Z",  
+            "updatedAt": "2024-08-24T14:15:22Z"  
         }
     ],
     "posts": [
         {
             "_id": "postId",
-            "content": "post content",
-            "videoUrl": "videoUrl",
-            "imageUrl": "imageUrl",
+            "content": "Post content",  
+            "videoUrl": "videoUrl",  
+            "imageUrl": "imageUrl",  
             "author": {
                 "_id": "authorId",
                 "username": "authorUsername",
-                "avatar": "authorAvatarUrl"
-            },
-            "likes": ["likeId1", "likeId2"],
+                "profilePicture": "authorProfilePictureUrl"  
+            },  
+            "likes": [
+                {
+                    "_id": "likeId1",
+                    "username": "likeUsername1",
+                    "profilePicture": "likeProfilePictureUrl1"
+                },
+                {
+                    "_id": "likeId2",
+                    "username": "likeUsername2",
+                    "profilePicture": "likeProfilePictureUrl2"
+                }
+            ],  
             "comments": [
                 {
+                    "_id": "commentId1",
                     "author": {
                         "_id": "commentAuthorId",
                         "username": "commentAuthorUsername",
-                        "avatar": "commentAuthorAvatarUrl"
+                        "profilePicture": "commentAuthorProfilePictureUrl"
                     },
-                    "content": "comment content"
+                    "content": "Comment content",  
+                    "createdAt": "2024-08-24T14:15:22Z"  
+                },
+                {
+                    "_id": "commentId2",
+                    "author": {
+                        "_id": "commentAuthorId2",
+                        "username": "commentAuthorUsername2",
+                        "profilePicture": "commentAuthorProfilePictureUrl2"
+                    },
+                    "content": "Another comment content",
+                    "createdAt": "2024-08-25T14:15:22Z"
                 }
-            ]
+            ],  
+            "createdAt": "2024-08-24T14:15:22Z",  
+            "updatedAt": "2024-08-25T14:15:22Z", 
+            "isPublic": true  
         }
     ]
 }
