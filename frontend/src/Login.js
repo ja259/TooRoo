@@ -22,19 +22,16 @@ const Login = () => {
         try {
             const response = await authService.login(emailOrPhone, password);
             if (response.success) {
-                if (response.data.twoFactorRequired) {
-                    // Navigate to the 2FA page if 2FA is required
+                // Store the JWT token and user data in localStorage
+                localStorage.setItem('user', JSON.stringify(response.data));
+
+                // Redirect based on user status
+                if (response.data.user.newUser) {
+                    navigate('/terms-and-policies');
+                } else if (response.data.user.twoFactorRequired) {
                     navigate('/two-factor-auth', { state: { userId: response.data.userId } });
                 } else {
-                    // Store the JWT token and user data in localStorage
-                    localStorage.setItem('user', JSON.stringify(response.data));
-                    
-                    // Redirect based on user status
-                    if (response.data.user.newUser) {
-                        navigate('/terms-and-policies');
-                    } else {
-                        navigate('/dashboard');
-                    }
+                    navigate('/dashboard');
                 }
             } else {
                 setError(response.message);
