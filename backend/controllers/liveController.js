@@ -23,7 +23,7 @@ export const startLiveStream = async (req, res) => {
 export const getLiveVideos = async (req, res) => {
     try {
         const liveVideos = await LiveVideo.find({ isLive: true })
-            .populate('author', 'username avatar');
+            .populate('author', 'username profilePicture');
         res.json({ videos: liveVideos }); // Always return an array
     } catch (error) {
         console.error('Error fetching live videos:', error);

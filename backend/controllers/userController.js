@@ -1,6 +1,7 @@
 import User from '../models/User.js';
 import Post from '../models/Post.js';
 import mongoose from 'mongoose';
+import uploadMiddleware from '../middlewares/uploadMiddleware.js';
 
 // Get User Profile
 export const getUserProfile = async (req, res) => {
@@ -22,33 +23,39 @@ export const getUserProfile = async (req, res) => {
 
 // Update User Profile
 export const updateUserProfile = async (req, res) => {
-    const { username, bio } = req.body;
-    const profilePicture = req.file ? `/uploads/${req.file.filename}` : undefined;
-
-    if (!username && !bio && !profilePicture) {
-        return res.status(400).json({ success: false, message: 'Update information cannot be empty.' });
-    }
-
-    try {
-        const updatedUser = await User.findByIdAndUpdate(
-            req.params.id,
-            {
-                username,
-                bio,
-                ...(profilePicture && { profilePicture }),
-            },
-            { new: true, runValidators: true }
-        ).select('-password');
-
-        if (!updatedUser) {
-            return res.status(404).json({ success: false, message: 'User not found.' });
+    uploadMiddleware(req, res, async (err) => {
+        if (err) {
+            return res.status(400).json({ success: false, message: err.message });
         }
 
-        res.json({ success: true, message: 'User profile updated successfully.', user: updatedUser });
-    } catch (error) {
-        console.error('Failed to update user profile:', error);
-        res.status(500).json({ success: false, message: 'Failed to update user profile.', error: error.message });
-    }
+        const { username, bio } = req.body;
+        const profilePicture = req.file ? `/uploads/${req.file.filename}` : undefined;
+
+        if (!username && !bio && !profilePicture) {
+            return res.status(400).json({ success: false, message: 'Update information cannot be empty.' });
+        }
+
+        try {
+            const updatedUser = await User.findByIdAndUpdate(
+                req.params.id,
+                {
+                    username,
+                    bio,
+                    ...(profilePicture && { profilePicture }),
+                },
+                { new: true, runValidators: true }
+            ).select('-password');
+
+            if (!updatedUser) {
+                return res.status(404).json({ success: false, message: 'User not found.' });
+            }
+
+            res.json({ success: true, message: 'User profile updated successfully.', user: updatedUser });
+        } catch (error) {
+            console.error('Failed to update user profile:', error);
+            res.status(500).json({ success: false, message: 'Failed to update user profile.', error: error.message });
+        }
+    });
 };
 
 // Follow User
@@ -173,4 +180,42 @@ export const updateUserSettings = async (req, res) => {
         console.error('Failed to update user settings:', error);
         res.status(500).json({ success: false, message: 'Failed to update user settings.', error: error.message });
     }
+};
+
+// Upload Profile Picture
+export const uploadProfilePicture = async (req, res) => {
+    uploadMiddleware(req, res, async (err) => {
+        if (err) {
+            return res.status(400).json({ success: false, message: err.message });
+        }
+
+        const token = req.headers.authorization?.split(' ')[1];
+        if (!token) {
+            return res.status(401).json({ success: false, message: 'Authorization token is missing or invalid.' });
+        }
+
+        try {
+            const decoded = jwt.verify(token, config.jwtSecret);
+            const user = await User.findById(decoded.userId);
+
+            if (!user) {
+                return res.status(404).json({ success: false, message: 'User not found.' });
+            }
+
+            // Update the user's profile picture
+            if (req.file) {
+                user.profilePicture = `/uploads/${req.file.filename}`;
+                await user.save();
+                return res.json({ success: true, message: 'Profile picture uploaded successfully.', profilePictureUrl: user.profilePicture });
+            } else {
+                return res.status(400).json({ success: false, message: 'No file uploaded.' });
+            }
+        } catch (error) {
+            console.error('Error uploading profile picture:', error);
+            if (error.name === 'TokenExpiredError') {
+                return res.status(401).json({ success: false, message: 'Session expired. Please log in again.' });
+            }
+            return res.status(500).json({ success: false, message: 'Server error.', error: error.message });
+        }
+    });
 };

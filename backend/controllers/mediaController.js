@@ -1,36 +1,43 @@
 import Video from '../models/Video.js';
 import mongoose from 'mongoose';
+import uploadMiddleware from '../middlewares/uploadMiddleware.js';
 
 export const uploadVideo = async (req, res) => {
-    try {
-        if (!req.file) {
-            return res.status(400).json({ message: 'No file provided' });
+    uploadMiddleware(req, res, async (err) => {
+        if (err) {
+            return res.status(400).json({ message: err.message });
         }
 
-        const { description, authorId } = req.body;
+        try {
+            if (!req.file) {
+                return res.status(400).json({ message: 'No file provided' });
+            }
 
-        if (!mongoose.Types.ObjectId.isValid(authorId)) {
-            return res.status(400).json({ message: 'Invalid author ID' });
+            const { description, authorId } = req.body;
+
+            if (!mongoose.Types.ObjectId.isValid(authorId)) {
+                return res.status(400).json({ message: 'Invalid author ID' });
+            }
+
+            const newVideo = new Video({
+                videoUrl: `/uploads/${req.file.filename}`,
+                description,
+                author: authorId
+            });
+
+            await newVideo.save();
+
+            return res.status(201).json({ message: 'Video uploaded successfully', video: newVideo });
+        } catch (error) {
+            console.error('Error uploading video:', error);
+            return res.status(500).json({ message: 'Internal server error', error: error.message });
         }
-
-        const newVideo = new Video({
-            videoUrl: `/uploads/${req.file.filename}`,
-            description,
-            author: authorId
-        });
-
-        await newVideo.save();
-
-        return res.status(201).json({ message: 'Video uploaded successfully', video: newVideo });
-    } catch (error) {
-        console.error('Error uploading video:', error);
-        return res.status(500).json({ message: 'Internal server error', error: error.message });
-    }
+    });
 };
 
 export const getAllVideos = async (req, res) => {
     try {
-        const videos = await Video.find().populate('author', 'username email avatar');
+        const videos = await Video.find().populate('author', 'username email profilePicture');
 
         if (!videos.length) {
             return res.status(404).json({ message: 'No videos found' });

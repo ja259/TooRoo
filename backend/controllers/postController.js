@@ -1,45 +1,52 @@
 import Post from '../models/Post.js';
 import User from '../models/User.js';
 import mongoose from 'mongoose';
+import uploadMiddleware from '../middlewares/uploadMiddleware.js';
 
 export const createPost = async (req, res) => {
-    const { content, authorId } = req.body;
-
-    if (!content || !authorId) {
-        return res.status(400).json({ message: 'Content and author ID are required.' });
-    }
-
-    try {
-        if (!mongoose.Types.ObjectId.isValid(authorId)) {
-            return res.status(400).json({ message: 'Invalid author ID' });
+    uploadMiddleware(req, res, async (err) => {
+        if (err) {
+            return res.status(400).json({ message: err.message });
         }
 
-        const author = await User.findById(authorId);
-        if (!author) {
-            return res.status(404).json({ message: 'Author not found.' });
+        const { content, authorId } = req.body;
+
+        if (!content || !authorId) {
+            return res.status(400).json({ message: 'Content and author ID are required.' });
         }
 
-        const newPost = new Post({
-            content,
-            author: authorId,
-            videoUrl: req.file ? `/uploads/${req.file.filename}` : undefined,
-        });
+        try {
+            if (!mongoose.Types.ObjectId.isValid(authorId)) {
+                return res.status(400).json({ message: 'Invalid author ID' });
+            }
 
-        await newPost.save();
-        author.posts.push(newPost._id);
-        await author.save();
+            const author = await User.findById(authorId);
+            if (!author) {
+                return res.status(404).json({ message: 'Author not found.' });
+            }
 
-        res.status(201).json({ message: 'Post created successfully', post: newPost });
-    } catch (error) {
-        console.error('Error creating post:', error);
-        res.status(500).json({ message: 'Internal server error', error: error.message });
-    }
+            const newPost = new Post({
+                content,
+                author: authorId,
+                videoUrl: req.file ? `/uploads/${req.file.filename}` : undefined,
+            });
+
+            await newPost.save();
+            author.posts.push(newPost._id);
+            await author.save();
+
+            res.status(201).json({ message: 'Post created successfully', post: newPost });
+        } catch (error) {
+            console.error('Error creating post:', error);
+            res.status(500).json({ message: 'Internal server error', error: error.message });
+        }
+    });
 };
 
 export const getPosts = async (req, res) => {
     try {
         const posts = await Post.find()
-            .populate('author', 'username email')
+            .populate('author', 'username email profilePicture')
             .populate('comments.author', 'username');
 
         if (!posts.length) {
@@ -69,7 +76,7 @@ export const getTimelinePosts = async (req, res) => {
 export const getYouAllVideos = async (req, res) => {
     try {
         const videos = await Post.find({ videoUrl: { $exists: true } })
-            .populate('author', 'username avatar')
+            .populate('author', 'username profilePicture')
             .sort({ createdAt: -1 })
             .limit(20);
 
@@ -91,7 +98,7 @@ export const getFollowingVideos = async (req, res) => {
             author: { $in: user.following },
             videoUrl: { $exists: true }
         })
-            .populate('author', 'username avatar')
+            .populate('author', 'username profilePicture')
             .sort({ createdAt: -1 })
             .limit(20);
 
