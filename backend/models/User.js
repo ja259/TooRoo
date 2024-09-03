@@ -12,7 +12,7 @@ const userSchema = new mongoose.Schema({
     phone: { type: String, required: true, unique: true },
     password: { type: String, required: true, select: false },
     bio: String,
-    avatar: String,
+    profilePicture: String,
     securityQuestions: [securityQuestionSchema],
     following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],

@@ -9,7 +9,7 @@ export const getUserProfile = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Invalid user ID' });
         }
 
-        const user = await User.findById(req.params.id).populate('posts');
+        const user = await User.findById(req.params.id).populate('posts').select('-password');
         if (!user) {
             return res.status(404).json({ success: false, message: 'User not found!' });
         }
@@ -22,27 +22,28 @@ export const getUserProfile = async (req, res) => {
 
 // Update User Profile
 export const updateUserProfile = async (req, res) => {
-    const { username, bio, avatar } = req.body;
-    if (!username && !bio && !avatar) {
+    const { username, bio } = req.body;
+    const profilePicture = req.file ? `/uploads/${req.file.filename}` : undefined;
+
+    if (!username && !bio && !profilePicture) {
         return res.status(400).json({ success: false, message: 'Update information cannot be empty.' });
     }
-    try {
-        if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-            return res.status(400).json({ success: false, message: 'Invalid user ID' });
-        }
 
+    try {
         const updatedUser = await User.findByIdAndUpdate(
             req.params.id,
             {
                 username,
                 bio,
-                avatar: req.file ? `/uploads/${req.file.filename}` : avatar
+                ...(profilePicture && { profilePicture }),
             },
             { new: true, runValidators: true }
-        );
+        ).select('-password');
+
         if (!updatedUser) {
             return res.status(404).json({ success: false, message: 'User not found.' });
         }
+
         res.json({ success: true, message: 'User profile updated successfully.', user: updatedUser });
     } catch (error) {
         console.error('Failed to update user profile:', error);
@@ -58,6 +59,7 @@ export const followUser = async (req, res) => {
     if (!currentUserId) {
         return res.status(400).json({ success: false, message: 'User ID is required for following.' });
     }
+
     try {
         if (!mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(currentUserId)) {
             return res.status(400).json({ success: false, message: 'Invalid user ID' });
@@ -91,15 +93,15 @@ export const unfollowUser = async (req, res) => {
     if (!currentUserId) {
         return res.status(400).json({ success: false, message: 'User ID is required for unfollowing.' });
     }
+
     try {
         if (!mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(currentUserId)) {
             return res.status(400).json({ success: false, message: 'Invalid user ID' });
         }
 
-        const targetUser = await User.findById(userId);
         const currentUser = await User.findById(currentUserId);
 
-        if (!targetUser || !currentUser) {
+        if (!currentUser) {
             return res.status(404).json({ success: false, message: 'User not found.' });
         }
 
@@ -119,6 +121,7 @@ export const unfollowUser = async (req, res) => {
 // Get User Analytics
 export const getUserAnalytics = async (req, res) => {
     const { userId } = req.user;
+
     try {
         if (!mongoose.Types.ObjectId.isValid(userId)) {
             return res.status(400).json({ success: false, message: 'Invalid user ID' });
@@ -135,11 +138,11 @@ export const getUserAnalytics = async (req, res) => {
             followers: user.followers.length,
             following: user.following.length,
             likes,
-            comments
+            comments,
         });
     } catch (error) {
         console.error('Failed to retrieve user analytics:', error);
-        res.status(500).json({ success: false, message: 'Failed to retrieve user analytics', error: error.message });
+        res.status(500).json({ success: false, message: 'Failed to retrieve user analytics.', error: error.message });
     }
 };
 
@@ -148,11 +151,12 @@ export const getUserSettings = async (req, res) => {
     try {
         const user = await User.findById(req.params.userId).select('darkMode enable2FA preferred2FAMethod');
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            return res.status(404).json({ success: false, message: 'User not found.' });
         }
-        res.status(200).json(user);
+        res.json({ success: true, user });
     } catch (error) {
-        res.status(500).json({ message: 'Server error', error: error.message });
+        console.error('Failed to retrieve user settings:', error);
+        res.status(500).json({ success: false, message: 'Failed to retrieve user settings.', error: error.message });
     }
 };
 
@@ -162,10 +166,11 @@ export const updateUserSettings = async (req, res) => {
         const updates = req.body;
         const user = await User.findByIdAndUpdate(req.params.userId, updates, { new: true }).select('darkMode enable2FA preferred2FAMethod');
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            return res.status(404).json({ success: false, message: 'User not found.' });
         }
-        res.status(200).json(user);
+        res.json({ success: true, message: 'User settings updated successfully.', user });
     } catch (error) {
-        res.status(500).json({ message: 'Server error', error: error.message });
+        console.error('Failed to update user settings:', error);
+        res.status(500).json({ success: false, message: 'Failed to update user settings.', error: error.message });
     }
 };

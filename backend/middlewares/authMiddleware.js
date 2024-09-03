@@ -11,7 +11,7 @@ export const authenticate = (req, res, next) => {
 
     try {
         const decoded = jwt.verify(token, config.jwtSecret);
-        req.user = decoded.userId;  // Store userId in req.user
+        req.user = decoded.userId; // Store userId in req.user
         next();
     } catch (err) {
         res.status(401).json({ success: false, message: 'Token is not valid' });
@@ -20,13 +20,13 @@ export const authenticate = (req, res, next) => {
 
 export const protect = async (req, res, next) => {
     try {
-        const user = await User.findById(req.user);  // Retrieve full user object
+        const user = await User.findById(req.user); // Retrieve full user object
 
         if (!user) {
             return res.status(401).json({ success: false, message: 'Not authorized, user not found' });
         }
 
-        req.user = user;  // Replace userId with full user object
+        req.user = user; // Replace userId with full user object
         next();
     } catch (error) {
         res.status(401).json({ success: false, message: 'Not authorized' });

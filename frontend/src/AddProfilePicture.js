@@ -26,7 +26,15 @@ const AddProfilePicture = () => {
         formData.append('profilePicture', image);
 
         try {
-            const token = JSON.parse(localStorage.getItem('user'))?.token;
+            const user = JSON.parse(localStorage.getItem('user'));
+            const token = user?.token;
+
+            if (!token) {
+                setError('You are not authorized. Please log in again.');
+                navigate('/login');
+                return;
+            }
+
             const response = await axios.post('http://localhost:5000/api/users/upload-profile-picture', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
@@ -35,15 +43,22 @@ const AddProfilePicture = () => {
             });
 
             if (response.data.success) {
-                const user = JSON.parse(localStorage.getItem('user'));
+                // Update the user's profile picture in localStorage
                 user.profilePicture = response.data.profilePictureUrl;
                 localStorage.setItem('user', JSON.stringify(user));
+
+                // Redirect to the next step (e.g., two-factor authentication)
                 navigate('/two-factor-auth');
             } else {
                 setError('Failed to upload the image. Please try again.');
             }
         } catch (err) {
-            setError('An error occurred while uploading the image. Please try again.');
+            if (err.response && err.response.status === 401) {
+                setError('Unauthorized. Please log in again.');
+                navigate('/login');
+            } else {
+                setError('An error occurred while uploading the image. Please try again.');
+            }
         } finally {
             setUploading(false);
         }

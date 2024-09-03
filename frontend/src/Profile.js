@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FaEdit, FaShare, FaThumbsUp, FaComment, FaHome, FaInbox, FaBell, FaUser, FaVideo } from 'react-icons/fa';
-import { NavLink, useNavigate, useParams } from 'react-router-dom';
+import { FaEdit, FaShare, FaThumbsUp, FaComment, FaInbox, FaVideo } from 'react-icons/fa';
+import { useNavigate, useParams } from 'react-router-dom';
 import './Profile.css';
 
 const Profile = () => {
@@ -19,7 +19,7 @@ const Profile = () => {
                 const response = await axios.get(`http://localhost:5000/api/users/${id}`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
-                setUser(response.data);
+                setUser(response.data.user);
             } catch (err) {
                 setError('Failed to fetch user');
             } finally {
@@ -56,7 +56,7 @@ const Profile = () => {
                     {user.posts.map((post) => (
                         <div className="post" key={post._id}>
                             <div className="post-header">
-                                <img src={user.avatar} alt="Avatar" className="avatar" />
+                                <img src={user.profilePicture} alt="Profile" className="avatar" />
                                 <div>
                                     <span className="username">{user.username}</span>
                                     <span className="timestamp">{new Date(post.createdAt).toLocaleString()}</span>
@@ -108,7 +108,7 @@ const Profile = () => {
     return (
         <div className="profile-page">
             <div className="profile-header">
-                <img src={user.avatar} alt="Profile" className="profile-avatar" />
+                <img src={user.profilePicture} alt="Profile" className="profile-avatar" />
                 <div className="profile-info">
                     <h2>{user.username}</h2>
                     <button className="follow" onClick={handleFollow}>
