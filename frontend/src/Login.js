@@ -22,14 +22,21 @@ const Login = () => {
         try {
             const response = await authService.login(emailOrPhone, password);
             if (response.success) {
+                const user = response.data?.user;
+
+                if (!user) {
+                    setError('Login failed. User data is missing.');
+                    return;
+                }
+
                 // Store the JWT token and user data in localStorage
                 localStorage.setItem('user', JSON.stringify(response.data));
 
                 // Redirect based on user status
-                if (response.data.user.newUser) {
+                if (user.newUser) {
                     navigate('/terms-and-policies');
-                } else if (response.data.user.twoFactorRequired) {
-                    navigate('/two-factor-auth', { state: { userId: response.data.userId } });
+                } else if (user.twoFactorEnabled) {
+                    navigate('/two-factor-auth', { state: { userId: user._id } });
                 } else {
                     navigate('/dashboard');
                 }
